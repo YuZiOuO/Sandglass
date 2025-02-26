@@ -1,0 +1,5 @@
+DB_URI = "mongodb+srv://pyuser:rT9yvudfGwdF22h6@cluster0.bcpu2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+DB_DATABASE_NAME = "sandglass"
+DB_PROJECT_COLLECTION_NAME = "project"
+DB_TASK_COLLECTION_NAME = "task"
+DB_USER_COLLECTION_NAME = "user"
