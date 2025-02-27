@@ -1,23 +1,28 @@
-from dataclasses import dataclass, asdict, field
 from datetime import datetime
-from uuid import uuid4
+from enum import Enum
 
-from pymongo.results import InsertOneResult
-from pymongo.synchronous.database import Database
-
-from sandglass_api.env import DB_USER_COLLECTION_NAME
+import mongoengine as me
+from mongoengine import ReferenceField, IntField, EnumField, ListField, DateTimeField
 
 
-@dataclass
-class User:
-    nickname: str
-    email: str
-    pwd: str
-    avatarUrl: str = ""
-    pwd_salt: uuid4 = field(default_factory=lambda: uuid4())
-    enrollTime: datetime = field(default_factory=lambda: datetime.now())
+class SessionStatus(str,Enum):
+    VALID = 'VALID'
+    INVALID = 'INVALID'
+    EXPIRED = 'EXPIRED'
 
-    def db_insert(self, db: Database) -> InsertOneResult:
-        c = db.get_collection(DB_USER_COLLECTION_NAME)
-        return c.insert_one(asdict(self))
+class Session(me.Document):
+    issuance_time = DateTimeField(default=datetime.now())
+    expire_in = IntField(default=3600)
+    status = EnumField(SessionStatus)
+
+class User(me.Document):
+    nickname = me.StringField()
+    email = me.EmailField()
+    pwd = me.StringField()
+    avatarUrl = me.URLField()
+    pwd_salt = me.UUIDField()
+    signup_timestamp = me.DateTimeField(default=datetime.now())
+    sessions = ListField(ReferenceField(Session))
+
+
 
