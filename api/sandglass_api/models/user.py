@@ -2,8 +2,6 @@ from datetime import datetime
 from enum import Enum
 
 import mongoengine as me
-from mongoengine import ReferenceField, IntField, EnumField, ListField, DateTimeField
-
 
 class SessionStatus(str,Enum):
     VALID = 'VALID'
@@ -11,18 +9,18 @@ class SessionStatus(str,Enum):
     EXPIRED = 'EXPIRED'
 
 class Session(me.Document):
-    issuance_time = DateTimeField(default=datetime.now())
-    expire_in = IntField(default=3600)
-    status = EnumField(SessionStatus)
+    issuance_time = me.DateTimeField(default=datetime.now())
+    expire_in = me.IntField(default=3600)
+    status = me.EnumField(SessionStatus)
 
 class User(me.Document):
     nickname = me.StringField()
-    email = me.EmailField()
-    pwd = me.StringField()
+    email = me.EmailField(required=True,unique=True)
+    pwd = me.StringField(required=True)
     avatarUrl = me.URLField()
-    pwd_salt = me.UUIDField()
+    pwd_salt = me.UUIDField(required=True)
     signup_timestamp = me.DateTimeField(default=datetime.now())
-    sessions = ListField(ReferenceField(Session))
+    sessions = me.ListField(me.ReferenceField(Session))
 
 
 

@@ -1,4 +1,6 @@
-from flask import request, Blueprint
+from uuid import uuid4, UUID
+
+from flask import request, Blueprint,session
 from mongoengine import QuerySet
 
 from sandglass_api.models.user import User, Session, SessionStatus
@@ -15,9 +17,11 @@ def login():
 
     query_set:QuerySet = User.objects(email=requested_email)
     user:User = query_set.first()
-    if user is not None and user.pwd == salting(requested_pwd,user.pwd_salt):
-        user.current_session = Session(user,SessionStatus.VALID)
-        return "Logged in."
+    if user is not None and user.pwd == salting(requested_pwd,user.pwd_salt.hex):
+        user.current_session = Session(status=SessionStatus.VALID)
+
+        session['sandglass_session'] = user.current_session.to_json()
+        return "Logged in"
     else:
         return "Invalid Email or Password."
 

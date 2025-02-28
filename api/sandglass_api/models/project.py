@@ -2,6 +2,7 @@ import mongoengine as me
 
 from enum import Enum
 
+from sandglass_api.models.resource import Resource
 from sandglass_api.models.tasks import Task
 
 class ProjectStatus(str,Enum):
@@ -10,7 +11,7 @@ class ProjectStatus(str,Enum):
     COMPLETED = 'COMPLETED'
     ON_HOLD = 'ON_HOLD'
 
-class Project(me.Document):
+class Project(Resource):
     name = me.StringField(required=True)
     avatarUrl = me.URLField()
     description = me.StringField()
