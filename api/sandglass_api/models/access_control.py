@@ -3,7 +3,6 @@ from enum import Enum
 import mongoengine as me
 from mongoengine import ReferenceField, EnumField, EmbeddedDocumentListField
 
-from sandglass_api.models.resource import Resource
 from sandglass_api.models.user import User
 
 
@@ -19,5 +18,4 @@ class AccessControlEntry(me.EmbeddedDocument):
 
 
 class AccessControlList(me.Document):
-    res = ReferenceField(Resource, required=True, unique=True)
     ACEs = EmbeddedDocumentListField(AccessControlEntry)  # 这里不用Reference,因为希望ACE失效时从数据库中删除.
