@@ -18,7 +18,7 @@ def login():
     query_set: QuerySet = User.objects(email=requested_email)
     user: User = query_set.first()
     if user is not None and user.pwd == salting(requested_pwd, user.pwd_salt.hex):
-        access_token = create_access_token(identity=user.to_json())  # TODO:改为传id
+        access_token = create_access_token(identity=user)
         return jsonify(access_token=access_token)
     else:
         return "Invalid Email or Password.", 401

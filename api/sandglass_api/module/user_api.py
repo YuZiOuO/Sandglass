@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required
 from mongoengine import QuerySet
 
 from sandglass_api.models.user import User
@@ -10,8 +11,10 @@ user_api = Blueprint('user_api', __name__)
 
 
 @user_api.route('/user', methods=['GET'])
-def list_user():
-    return User.objects().to_json()
+@jwt_required()
+def get_user_info():
+    # TODO:查询当前用户信息
+    return "OK"
 
 
 @user_api.route('/user', methods=['POST'])

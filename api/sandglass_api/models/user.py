@@ -10,3 +10,4 @@ class User(me.Document):
     avatarUrl = me.URLField()
     pwd_salt = me.UUIDField(required=True)
     signup_timestamp = me.DateTimeField(default=datetime.now())
+
