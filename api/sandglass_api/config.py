@@ -10,6 +10,9 @@ DB_DATABASE_NAME = "sandglass"
 # (the collections listed will be dropped when starting a test)
 ALL_DOCUMENTED_TYPE = [User, Resource, AccessControlList]
 
+JWT_EXPIRE_TIME = 3600  # unit:second
+JWT_INVALIDATE_FRESHNESS_FACTOR = 0.2  # If a token is still valid for LESS than 80%(1-20%) of its lifetime, it will be set as not fresh
+JWT_REFRESH_FACTOR = 0.8  # If a token is still valid for LESS than 20% of its lifetime, it will be refreshed
 
 class FlaskConfig:
     DEBUG = True
