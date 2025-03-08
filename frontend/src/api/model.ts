@@ -14,3 +14,18 @@ export type Task = {
   deadline: string
   description: string
 }
+
+export type UserAuth = {
+  email: string
+  pwd: string
+}
+
+export type UserProfile = {
+  nickname: string
+  avatarUrl: string
+}
+
+export type User = {
+  auth: UserAuth
+  profile: UserProfile
+}
