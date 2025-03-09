@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask import Flask
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt, create_access_token, \
     set_access_cookies, current_user
 from mongoengine import QuerySet
@@ -58,6 +59,9 @@ def create_app(db_uri: str, db_name: str):
     app.register_blueprint(project_api)
 
     connect_to(db_uri, db_name)
+
+    # 测试时允许跨域
+    CORS(app)
 
     return app
 

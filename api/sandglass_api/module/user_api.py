@@ -5,17 +5,29 @@ from flask_jwt_extended import jwt_required
 from mongoengine import QuerySet
 
 from sandglass_api.models.user import User
+from sandglass_api.module.auth_util import authentication
 from sandglass_api.util import salting
 
 user_api = Blueprint('user_api', __name__)
 
-
 @user_api.route('/user', methods=['GET'])
 @jwt_required()
-def get_user_info():
-    # TODO:查询当前用户信息
-    return "OK"
+@authentication
+def get_all_user():
+    return "Not Implemented"
 
+
+@user_api.route('/user/<string:user_id>')
+@jwt_required()
+def get_user_by_id(user_id: str):
+    # TODO
+    return "Not Implemented"
+
+
+@user_api.patch('/user/<string:user_id>')
+@jwt_required()
+def modify_user_info(user_id: str):
+    return "Not Implemented"
 
 @user_api.route('/user', methods=['POST'])
 def signup():
@@ -32,4 +44,4 @@ def signup():
         salt: UUID = uuid4()
         user = User(email=requested_email, pwd_salt=salt, pwd=salting(requested_pwd, salt.hex))
         user.save()
-    return "Registration confirmation sent", 200
+    return "Registration confirmation sent."

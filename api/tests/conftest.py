@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 import pytest
 from flask.testing import EnvironBuilder
 from werkzeug.datastructures import Authorization
@@ -44,10 +46,11 @@ def token(_signup, client) -> str:
     """
     login to the test account and offers a token.
     """
-    res = client.post('token', json={
+    params = urlencode({
         "email": "test@example.com",
         "pwd": "test_pwd",
     })
+    res = client.get('/token?' + params)
     assert res.status == '200 OK'
     return res.json['access_token']
 

@@ -11,21 +11,19 @@ from sandglass_api.util import salting
 auth_api = Blueprint('auth_api', __name__)
 
 
-@auth_api.post('/token')
+@auth_api.get('/token')
 def login():
-    req = request.json
-
-    requested_email = req['email']
-    requested_pwd = req['pwd']
-
-    query_set: QuerySet = User.objects(email=requested_email)
+    query_set: QuerySet = User.objects(email=request.args['email'])
     user: User = query_set.first()
-    if user is not None and user.pwd == salting(requested_pwd, user.pwd_salt.hex):
+
+    if (user is not None
+            and user.pwd == salting(request.args['pwd'], user.pwd_salt.hex)):
         access_token = create_access_token(identity=user,
                                            fresh=timedelta(seconds=JWT_EXPIRE_TIME * JWT_INVALIDATE_FRESHNESS_FACTOR),
                                            expires_delta=timedelta(seconds=JWT_EXPIRE_TIME))
         res = jsonify(access_token=access_token)
         set_access_cookies(res, access_token)
+        # TODO: 缓存控制
         return res
     else:
         return "Invalid Email or Password.", 401
