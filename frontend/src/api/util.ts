@@ -1,6 +1,6 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
 
-const BASE_URL = 'http://localhost:5000'
+const BASE_URL = 'http://127.0.0.1:5000'
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -11,9 +11,9 @@ const apiClient = axios.create({
 })
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
-type Response<T> = {status:number;data:T | string}
+type Response<T> = { status: number; data: T | string }
 
-export async function request<T>(
+async function request<T>(
   method: RequestMethod,
   url: string,
   data?: object,
@@ -27,8 +27,8 @@ export async function request<T>(
       ...config,
     })
     return {
-      status:response.status,
-      data:response.data
+      status: response.status,
+      data: response.data,
     }
   } catch (error) {
     console.error('API 请求失败:', error)
@@ -36,12 +36,12 @@ export async function request<T>(
   }
 }
 
-type StringObject = {[key: string]: string}
-
-export const encodeURIParams = (dict:StringObject) => {
+const encodeURIParams = (dict: Record<string, string>) => {
   const params = new URLSearchParams()
-  Object.entries(dict).forEach(
-    ([key, value]) => {params.set(key, value)}
-  )
+  Object.entries(dict).forEach(([key, value]) => {
+    params.set(key, value)
+  })
   return params.toString()
 }
+
+export { request, encodeURIParams }
