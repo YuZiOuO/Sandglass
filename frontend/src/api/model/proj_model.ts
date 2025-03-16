@@ -1,11 +1,17 @@
 export interface Project {
-  projName: string
-  ID: string
-  startTimestamp: string
-  endTimestamp: string
+  name: string
+  start_timestamp: number
+  end_timestamp: number
   avatarUrl: string
   description: string
-  tasks: Array<Task>
+  task: Array<Task>
+  status: string
+}
+
+export interface NewProject {
+  name: string
+  start_timestamp: number
+  end_timestamp: number
 }
 
 export interface Task {

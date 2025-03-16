@@ -1,40 +1,5 @@
-<script lang="ts">
-import {
-  createTheme, datePickerDark, inputDark, NConfigProvider,
-  zhCN as NzhCN,
-  dateZhCN as NdateZhCN,
-  NLayout,
-  NLayoutHeader,
-  NLayoutFooter,
-  NFlex,
-} from "naive-ui"
-import NavBar from "./components/layout/NavBar.vue";
-import { RouterView } from "vue-router";
-import GeneralFooter from "./components/layout/GeneralFooter.vue";
-
-export default {
-  components: {
-    RouterView,
-    NConfigProvider,
-    NFlex,
-    NLayout,
-    NLayoutHeader,
-    NLayoutFooter,
-    NavBar,
-    GeneralFooter
-  },
-  data() {
-    return {
-      darkTheme: createTheme([inputDark, datePickerDark]),
-      NzhCN,
-      NdateZhCN
-    }
-  }
-}
-</script>
-
 <template>
-  <n-config-provider :locale="NzhCN" :date-locale="NdateZhCN">
+  <n-config-provider :locale="zhCN" :date-locale="dateZhCN">
     <n-flex vertical class="full-screen-space">
       <n-layout>
         <n-layout-header bordered class="header">
@@ -50,6 +15,24 @@ export default {
     </n-flex>
   </n-config-provider>
 </template>
+
+<script setup lang="ts">
+import {
+  createTheme, datePickerDark, inputDark, NConfigProvider,
+  zhCN,
+  dateZhCN,
+  NLayout,
+  NLayoutHeader,
+  NLayoutFooter,
+  NFlex,
+} from "naive-ui"
+import NavBar from "./components/layout/NavBar.vue";
+import { RouterView } from "vue-router";
+import GeneralFooter from "./components/layout/GeneralFooter.vue";
+import { ref } from "vue";
+
+const darkTheme = ref(createTheme([inputDark, datePickerDark]))
+</script>
 
 <style scoped>
 html,

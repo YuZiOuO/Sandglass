@@ -8,6 +8,7 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 })
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -26,6 +27,7 @@ async function request<T>(
       data,
       ...config,
     })
+    console.log(response) //FIXME:debug
     return {
       status: response.status,
       data: response.data,
