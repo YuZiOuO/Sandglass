@@ -60,8 +60,9 @@ def create_app(db_uri: str, db_name: str):
 
     connect_to(db_uri, db_name)
 
-    # 测试时允许跨域
-    CORS(app)
+    # FIXME:测试时允许跨域
+    CORS(app, supports_credentials=True)
+    app.config.update(JWT_COOKIE_SAMESITE='None', JWT_COOKIE_SECURE=True)
 
     return app
 

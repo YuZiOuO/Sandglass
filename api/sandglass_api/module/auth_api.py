@@ -22,7 +22,7 @@ def login():
                                            fresh=timedelta(seconds=JWT_EXPIRE_TIME * JWT_INVALIDATE_FRESHNESS_FACTOR),
                                            expires_delta=timedelta(seconds=JWT_EXPIRE_TIME))
         res = jsonify(access_token=access_token)
-        set_access_cookies(res, access_token)
+        set_access_cookies(res, access_token, max_age=JWT_EXPIRE_TIME)
         # TODO: 缓存控制
         return res
     else:
