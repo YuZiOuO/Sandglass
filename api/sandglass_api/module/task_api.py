@@ -68,7 +68,6 @@ def create_task_by_proj(proj_id: str):
 
     return id_if_created
 
-
 @task_api.get('/task')
 @jwt_required()
 def get_unfinished_tasks_by_current_user():

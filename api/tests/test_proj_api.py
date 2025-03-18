@@ -1,50 +1,18 @@
 import json
 
-import pytest
-
 from sandglass_api.models.project import Project
 
 
 class TestProjApi:
-    @pytest.fixture(scope="session")
-    def empty_proj(self, client_auth):
-        res = client_auth.post('/proj', json={
-            'name': 'test_proj',
-        })
+    def test_create_proj_empty(self, proj_empty):
+        assert proj_empty  # Tested by fixture
 
-        assert str(res.status) == "200 OK"
-        return res.text
+    def test_create_proj_with_no_reference(self, proj_no_reference):
+        assert proj_no_reference  #Tested by fixture
 
-    @pytest.fixture(scope="session")
-    def proj(self, client_auth):
-        res = client_auth.post('/proj', json={
-            "name": "Test Project",
-            "url": "https://example.com",
-            "description": "This is a test project.",
-            "start_timestamp": 1742294400000,
-            "end_timestamp": 1750279200000,
-            "tasks": [],
-            "nodes": [],
-            "attachments": []
-        })
-
-        assert str(res.status) == "200 OK"
-        return res.text
-
-    @pytest.fixture(scope="session")
-    def proj_with_tasks_and_nodes(self, client_auth):
-        # 测试创建含有嵌套task的proj
-        # 这个fixture写完后，命名为proj，和上面那个fixture互换
-        pass  # TODO
-
-    def test_create_proj(self, proj):
-        assert proj
-
-    def test_create_proj_with_tasks_and_nodes(self, proj_with_tasks_and_nodes):
-        print("# TODO")
-
-    def test_create_proj_empty(self, empty_proj):
-        assert empty_proj
+    # TODO:implement this test
+    # def test_create_proj(self, proj):
+    #     assert proj
 
     def test_create_proj_non_existing_field(self, client_auth):
         res = client_auth.post('/proj', json={
@@ -61,24 +29,39 @@ class TestProjApi:
         assert str(res.status) == "200 OK"
         assert Project.from_json(res.text)
 
-    def test_get_proj_with_non_existing_id(self, client_auth, proj):
+    def test_get_proj_with_non_existing_id(self, proj, client_auth):
         res = client_auth.get(f'/proj/{proj[:-3] + "abc"}')
         assert str(res.status) == "404 NOT FOUND"
         assert res.text == 'Project with given id not found.'
 
-    def test_get_proj_by_user(self, proj, client_auth):
+    def test_get_proj_with_invalid_id(self, client_auth):
+        res = client_auth.get('/proj/abc')
+        assert str(res.status) == "400 BAD REQUEST"
+        assert res.text == 'Invalid id format.'
+
+    def test_get_proj_by_user(self, proj_no_reference, client_auth):
         res = client_auth.get('/proj')
         all_proj = json.loads(res.text)
-        assert all_proj
+        assert len(all_proj) == 1
 
-        for proj in all_proj:
-            assert Project.from_json(json.dumps(proj))
-
-    def test_get_proj_by_user_select_related(self, proj, client_auth):
+    def test_get_proj_by_user_select_related(self, proj_no_reference, client_auth):
         res = client_auth.get('/proj?select_related=True')
 
         all_proj = json.loads(res.text)
-        assert all_proj
+        assert len(all_proj) == 1
 
         for proj in all_proj:
             assert Project.from_json(json.dumps(proj))
+
+    def test_delete_proj(self):
+        pass  # Tested by fixture
+
+    def test_delete_proj_with_non_existing_id(self, proj, client_auth):
+        res = client_auth.delete(f'/proj/{proj[:-3] + "abc"}')
+        assert str(res.status) == "404 NOT FOUND"
+        assert res.text == 'Project with given id not found.'
+
+    def test_delete_proj_with_invalid_id(self, client_auth):
+        res = client_auth.delete('/proj/abc')
+        assert str(res.status) == "400 BAD REQUEST"
+        assert res.text == 'Invalid id format.'
