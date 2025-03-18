@@ -10,8 +10,9 @@ project_api = Blueprint('project_api', __name__)
 @project_api.get('/proj')
 @jwt_required()
 def get_proj_by_current_user():
+    select_related: bool = request.args.get('select_related', False, bool)
     proj: QuerySet = Project.objects(owner=current_user)
-    return proj.to_json()
+    return proj.to_json() if select_related else proj.only('id').to_json()
 
 
 @project_api.get('/proj/<string:proj_id>')
@@ -21,7 +22,6 @@ def get_proj_by_id(proj_id: str):
     if not p:
         return 'Project with given id not found.', 404
     return p.to_json()
-
 
 @project_api.post('/proj')
 @jwt_required()

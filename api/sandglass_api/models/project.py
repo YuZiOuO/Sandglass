@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 
 import mongoengine as me
@@ -19,15 +18,14 @@ class Project(Resource):
     nodes = me.ListField(me.ReferenceField(Node))
     attachments = me.EmbeddedDocumentListField(Attachment)
 
-    def to_json(self, *args, **kwargs):
-        raw = json.loads(super().to_json())
-        raw['id'] = str(super().id)
-        raw['owner'] = str(self.owner.id)
-        return json.dumps(raw)
-
     def clean(self):
         super().clean()
         if type(self.start_timestamp) == str:
-            self.start_timestamp = datetime.fromtimestamp(self.start_timestamp)
+            self.start_timestamp = int(self.start_timestamp)
         if type(self.end_timestamp) == str:
-            self.end_timestamp = datetime.fromtimestamp(self.end_timestamp)
+            self.end_timestamp = int(self.end_timestamp)
+
+        if type(self.start_timestamp) == int:
+            self.start_timestamp = datetime.fromtimestamp(self.start_timestamp / 1000)
+        if type(self.end_timestamp) == int:
+            self.end_timestamp = datetime.fromtimestamp(self.end_timestamp / 1000)

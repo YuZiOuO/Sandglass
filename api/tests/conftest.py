@@ -17,9 +17,9 @@ def app():
         "TESTING": True,
     })
 
-    RESET_DATABASE()  # Reset before test
+    RESET_DATABASE(app.config)  # Reset before test
     yield app
-    RESET_DATABASE()  # Reset after tests
+    RESET_DATABASE(app.config)  # Reset after tests
 
 
 @pytest.fixture(scope="session")
@@ -41,7 +41,7 @@ def _signup(client):
     assert res.status == '200 OK'
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def token(_signup, client) -> str:
     """
     login to the test account and offers a token.
@@ -55,7 +55,7 @@ def token(_signup, client) -> str:
     return res.json['access_token']
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def client_auth(app, token):
     """
     Offers a authorized client.
