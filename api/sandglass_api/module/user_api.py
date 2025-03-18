@@ -20,7 +20,6 @@ def get_all_user():
 @user_api.route('/user/<string:user_id>')
 @jwt_required()
 def get_user_by_id(user_id: str):
-    # TODO
     return "Not Implemented"
 
 

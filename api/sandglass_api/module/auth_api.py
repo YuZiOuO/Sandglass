@@ -21,7 +21,7 @@ def login():
         access_token = create_access_token(identity=user,
                                            fresh=timedelta(seconds=JWT_EXPIRE_TIME * JWT_INVALIDATE_FRESHNESS_FACTOR),
                                            expires_delta=timedelta(seconds=JWT_EXPIRE_TIME))
-        res = jsonify(access_token=access_token)
+        res = jsonify(access_token=access_token, user_id=str(user.id))
         set_access_cookies(res, access_token, max_age=JWT_EXPIRE_TIME)
         # TODO: 缓存控制
         return res

@@ -1,11 +1,13 @@
 import mongoengine as me
 
-from sandglass_api.models.resource import Resource
+from sandglass_api.models.attachment import Attachment
 
 
-class Task(Resource):
-    name = me.StringField()
-    end_timestamp = me.DateTimeField()
-    status = me.StringField()  # TODO:more...
+class Task(me.Document):
+    name = me.StringField(required=True)
+    end_timestamp = me.DateTimeField(required=True)
+    finished = me.BooleanField(default=False)
+    url = me.URLField()
+    attachment = me.EmbeddedDocumentListField(Attachment)
+    start_timestamp = me.DateTimeField()
     description = me.StringField()
-    parent_id = me.UUIDField()

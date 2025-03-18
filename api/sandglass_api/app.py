@@ -1,10 +1,8 @@
 from datetime import datetime
 
 from flask import Flask
-from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt, create_access_token, \
     set_access_cookies, current_user
-from mongoengine import QuerySet
 
 from sandglass_api.config import FlaskConfig, DB_DATABASE_NAME, DB_URI, JWT_EXPIRE_TIME, JWT_REFRESH_FACTOR
 from sandglass_api.db import connect_to
@@ -19,6 +17,7 @@ def create_app(db_uri: str, db_name: str):
     app.config.from_object(FlaskConfig)
 
     jwt = JWTManager(app)
+    app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
 
     # register callback func to create jwt from user obj.
     @jwt.user_identity_loader
@@ -28,8 +27,7 @@ def create_app(db_uri: str, db_name: str):
     # register callback func to query user obj from jwt.
     @jwt.user_lookup_loader
     def get_user_by_id(_jwt_header, jwt_data) -> User | None:
-        query_set: QuerySet = User.objects(id=jwt_data["sub"])
-        user: User = query_set.first()
+        user = User.objects.with_id(jwt_data["sub"])
         return user
 
     # This is a test interface,only valid when "TESTING"==True
@@ -59,10 +57,6 @@ def create_app(db_uri: str, db_name: str):
     app.register_blueprint(project_api)
 
     connect_to(db_uri, db_name)
-
-    # FIXME:测试时允许跨域
-    CORS(app, supports_credentials=True)
-    app.config.update(JWT_COOKIE_SAMESITE='None', JWT_COOKIE_SECURE=True)
 
     return app
 

@@ -6,6 +6,8 @@ from mongoengine import ReferenceField, EnumField, EmbeddedDocumentListField
 from sandglass_api.models.user import User
 
 
+# TODO:暂时不使用
+
 class Permission(Enum):
     NO_ACCESS = 0
     READ = 1

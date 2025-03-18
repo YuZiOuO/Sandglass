@@ -1,9 +1,11 @@
 import mongoengine as me
-from mongoengine import ReferenceField
 
-from sandglass_api.models.access_control import AccessControlList
+from sandglass_api.models.user import User
 
+
+# TODO:暂时不使用
 
 class Resource(me.Document):
     meta = {'allow_inheritance': True}
-    ACL = ReferenceField(AccessControlList, unique=True)
+    # ACL = EmbeddedDocumentField(AccessControlList, unique=True)
+    owner = me.ReferenceField(User, required=True)

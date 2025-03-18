@@ -24,15 +24,18 @@ def authentication(func):
     return wrapper
 
 
-def authorization(func):
+def authorization(func, res: Resource, permission: Permission):
     """
-    Use to wrap view function to indicate the user should be authorized,
-    i.e. users must have access to the resource.Assume the token is valid.
+    Check if the user has appropriate permission to perform an action.
+    :param func: the view function to be wrapped.
+    :param res: the resource to be accessed.
+    :param permission: the permission level to perform an action.
+    :return: the wrapped function,with arguments `res` and `permission` passed.
     """
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        return func(*args, **kwargs)
+        return func(*args, **kwargs, res=res, permission=permission)
 
     return wrapper
 
