@@ -6,6 +6,9 @@ from sandglass_api.models.attachment import Attachment
 
 
 class Task(me.Document):
+    """
+    Represents a task that is part of a project.
+    """
     name = me.StringField(required=True)
     end_timestamp = me.DateTimeField(required=True)
     finished = me.BooleanField(default=False)

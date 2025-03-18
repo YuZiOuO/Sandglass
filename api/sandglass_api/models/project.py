@@ -9,6 +9,9 @@ from sandglass_api.models.task import Task
 
 
 class Project(Resource):
+    """
+    Represents a project.
+    """
     name = me.StringField(required=True)
     url = me.URLField()
     description = me.StringField()

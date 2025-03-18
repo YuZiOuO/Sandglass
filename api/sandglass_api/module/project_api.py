@@ -10,14 +10,22 @@ project_api = Blueprint('project_api', __name__)
 @project_api.get('/proj')
 @jwt_required()
 def get_proj_by_current_user():
+    """
+    Get projects owned by the current user.
+    """
     select_related: bool = request.args.get('select_related', False, bool)
     proj: QuerySet = Project.objects(owner=current_user)
     return proj.to_json() if select_related else proj.only('id').to_json()
 
-
 @project_api.get('/proj/<string:proj_id>')
 @jwt_required()
 def get_proj_by_id(proj_id: str):
+    """
+    Get project with given id.
+
+    SPECIAL STATUS CODES:
+    404 - Project with given id not found.
+    """
     p: Project = Project.objects().with_id(proj_id)
     if not p:
         return 'Project with given id not found.', 404
@@ -26,6 +34,12 @@ def get_proj_by_id(proj_id: str):
 @project_api.post('/proj')
 @jwt_required()
 def create_proj():
+    """
+    Create a new project.
+
+    SPECIAL STATUS CODES:
+    400 - An invalid field was passed.
+    """
     try:
         p = Project(owner=current_user, **request.json).save(cascade=True)
     except FieldDoesNotExist as e:

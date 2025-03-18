@@ -12,6 +12,12 @@ task_api = Blueprint('task_api', __name__)
 @task_api.get('/task/<str:task_id>')
 @jwt_required()
 def get_task_by_id(task_id: str):
+    """
+    Get a task by id.
+
+    SPECIAL STATUS CODES:
+    404 - Task with given id not found.
+    """
     t: Task = Task.objects().with_id(task_id)
     if not t:
         return 'Task with given id not found.', 404
@@ -21,6 +27,12 @@ def get_task_by_id(task_id: str):
 @task_api.get('/proj/<str:proj_id>/task')
 @jwt_required()
 def get_tasks_by_proj(proj_id: str):
+    """
+    Get a tasks in given project.
+
+    SPECIAL STATUS CODES:
+    404 - Project with given id not found.
+    """
     p: Project = Project.objects().with_id(proj_id)
     if not p:
         return 'Project with given id not found.', 404
@@ -31,6 +43,12 @@ def get_tasks_by_proj(proj_id: str):
 @task_api.post('/proj/<str:proj_id>/task')
 @jwt_required()
 def create_task_by_proj(proj_id: str):
+    """
+    Create a task in given project.
+
+    SPECIAL STATUS CODES:
+    404 - Project with given id not found.
+    """
     p: Project = Project.objects().with_id(proj_id)
     if not p:
         return 'Project with given id not found.', 404
@@ -54,6 +72,9 @@ def create_task_by_proj(proj_id: str):
 @task_api.get('/task')
 @jwt_required()
 def get_unfinished_tasks_by_current_user():
+    """
+    Get unfinished tasks of current user.
+    """
     tasks = Task.objects(owner=current_user, finished=False)
     select_related: bool = request.args.get('select_related', False, bool)
     return tasks.tasks.to_json() if select_related else tasks.tasks.only('id').to_json()

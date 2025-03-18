@@ -13,6 +13,9 @@ auth_api = Blueprint('auth_api', __name__)
 
 @auth_api.get('/token')
 def login():
+    """
+    Acquire a fresh JWT token.
+    """
     query_set: QuerySet = User.objects(email=request.args['email'])
     user: User = query_set.first()
 
@@ -31,6 +34,9 @@ def login():
 
 @auth_api.delete('/token')
 def logout():
+    """
+    Delete tokens saved in cookies.
+    """
     response = jsonify("Successfully logged out.")
     unset_access_cookies(response)
     return response

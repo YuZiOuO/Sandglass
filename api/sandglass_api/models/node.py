@@ -4,6 +4,10 @@ import mongoengine as me
 
 
 class Node(me.Document):
+    """
+    Represents a time node in the timeline.
+    Originally meant to be used for courses.
+    """
     name = me.StringField(required=True)
     timestamp = me.DateTimeField(required=True)
     finished = me.BooleanField(default=False)

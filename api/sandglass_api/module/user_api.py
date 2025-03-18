@@ -30,6 +30,10 @@ def modify_user_info(user_id: str):
 
 @user_api.route('/user', methods=['POST'])
 def signup():
+    """
+    Create a new user.
+    Always return "200 OK" to prevent email enumeration.
+    """
     req = request.json
 
     requested_email = req['email']

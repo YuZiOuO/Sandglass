@@ -12,6 +12,12 @@ node_api = Blueprint('node_api', __name__)
 @node_api.get('/node/<str:node_id>')
 @jwt_required()
 def get_node_by_id(node_id: str):
+    """
+    Get node with given id.
+
+    SPECIAL STATUS CODES:
+    404 - Node with given id not found.
+    """
     n = Node.objects().with_id(node_id)
     if not n:
         return 'Node with given id not found', 404
@@ -21,6 +27,12 @@ def get_node_by_id(node_id: str):
 @node_api.get('/proj/<str:proj_id>/node')
 @jwt_required()
 def get_nodes_by_proj(proj_id: str):
+    """
+    Get nodes of a project.
+
+    SPECIAL STATUS CODES:
+    404 - Project with given id not found.
+    """
     p: Project = Project.objects().with_id(proj_id)
     if not p:
         return 'Project with given id not found.', 404
@@ -31,6 +43,13 @@ def get_nodes_by_proj(proj_id: str):
 @node_api.post('/proj/<str:proj_id>/node')
 @jwt_required()
 def create_task_by_proj(proj_id: str):
+    """
+    Create a new task in a project.
+
+    SPECIAL STATUS CODES:
+    404 - Project with given id not found.
+    400 - An invalid field was passed.
+    """
     p: Project = Project.objects().with_id(proj_id)
     if not p:
         return 'Project with given id not found.', 404
@@ -53,6 +72,9 @@ def create_task_by_proj(proj_id: str):
 @node_api.get('/node')
 @jwt_required()
 def get_unfinished_nodes_by_current_user():
+    """
+    Get all unfinished nodes of the current user.
+    """
     nodes = Node.objects(owner=current_user, finished=False)
     select_related: bool = request.args.get('select_related', False, bool)
     return nodes.tasks.to_json() if select_related else nodes.tasks.only('id').to_json()
