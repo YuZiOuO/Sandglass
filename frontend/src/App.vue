@@ -26,9 +26,9 @@ import {
   NLayoutFooter,
   NFlex,
 } from "naive-ui"
-import NavBar from "./components/layout/NavBar.vue";
+import NavBar from "./components/layout/NavBarLayout.vue";
 import { RouterView } from "vue-router";
-import GeneralFooter from "./components/layout/GeneralFooter.vue";
+import GeneralFooter from "./components/layout/FooterLayout.vue";
 import { ref } from "vue";
 
 const darkTheme = ref(createTheme([inputDark, datePickerDark]))

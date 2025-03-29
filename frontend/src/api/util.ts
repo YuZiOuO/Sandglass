@@ -1,6 +1,6 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
 
-const BASE_URL = 'http://127.0.0.1:5000'
+const BASE_URL = 'http://127.0.0.1:5173/api'
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -45,5 +45,19 @@ const encodeURIParams = (dict: Record<string, string>) => {
   })
   return params.toString()
 }
+
+function getCookie(name: string) {
+  const value: string = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) {
+    //FIXME
+    return parts.pop().split(';').shift()
+  }
+}
+
+apiClient.interceptors.request.use((config) => {
+  config.headers.set('X-CSRF-TOKEN', getCookie('csrf_access_token'), true)
+  return config
+})
 
 export { request, encodeURIParams }

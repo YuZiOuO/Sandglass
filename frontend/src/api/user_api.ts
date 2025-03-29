@@ -1,5 +1,16 @@
 import { encodeURIParams, request } from '@/api/util.ts'
-import type { User, UserAuth } from '@/api/model/user_model.ts'
+
+export interface UserAuth {
+  email: string
+  pwd: string
+}
+
+export interface UserProfile {
+  nickname: string
+  avatarUrl: string
+}
+
+export interface User extends UserAuth, UserProfile {}
 
 export async function login(authInfo: UserAuth) {
   // FIXME: 不安全的类型转换

@@ -19,10 +19,10 @@
         <n-input v-model:value="model.name" placeholder="请输入名称" />
       </n-form-item>
       <n-form-item label="开始于" path="startTimestamp">
-        <n-date-picker type="date" v-model:value="model.startTimestamp" />
+        <n-date-picker type="date" v-model:formatted-value="model.start_timestamp" value-format="t" />
       </n-form-item>
       <n-form-item label="截止于" path="endTimestamp">
-        <n-date-picker type="date" v-model:value="model.endTimestamp" />
+        <n-date-picker type="date" v-model:formatted-value="model.end_timestamp" value-format="t" />
       </n-form-item>
       <n-form-item>
         <n-button @click="submit">
@@ -40,13 +40,17 @@ import { NBreadcrumb, NBreadcrumbItem, NFormItem, NForm, NInput, NDatePicker, NB
 import { ref } from 'vue';
 const formRef = ref<FormInst | null>(null)
 const model = ref({
+  //FIXME:不够优雅
   name: null,
-  startTimestamp: null,
-  endTimestamp: null
+  start_timestamp: null,
+  end_timestamp: null
 })
 
 async function new_proj(model: NewProject) {
-  const proj = { ...model, avatarUrl: "", description: "", task: [], status: "NOT_STARTED" };
+  const proj = {
+    ...model,
+    avatarUrl: "", description: "", task: [], status: "NOT_STARTED"
+  };
   const id = await create_proj(proj);
   console.log(id);
 }
