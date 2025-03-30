@@ -3,8 +3,8 @@ import { request } from './util'
 export interface Project {
   id: string
   name: string
-  url: string | null
-  description: string | null
+  url: string | undefined
+  description: string | undefined
   start_timestamp: number
   end_timestamp: number
   tasks: Array<Task>
@@ -18,24 +18,19 @@ export interface Node {
   name: string
   timestamp: number
   finished: boolean
-  description: string | null
-  url: string | null
+  description: string | undefined
+  url: string | undefined
+  attachment: Array<Attachment> | undefined
 }
 
-export interface Task {
-  id: string
-  name: string
-  end_timestamp: number
-  finished: boolean
-  url: string | null
-  attachment: Array<Attachment> | null
-  start_timestamp: number | null
-  description: string | null
+export interface Task extends Node {
+  start_timestamp: number | undefined
 }
 
 export interface Attachment {
   id: string
   name: string
+  timestamp: number
   url: string
 }
 

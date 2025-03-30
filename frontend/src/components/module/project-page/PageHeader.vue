@@ -12,7 +12,7 @@
     </template>
     <template #extra>
       <n-space>
-        <n-button>更改</n-button>
+        <n-button>进入网站</n-button>
         <n-dropdown :options="options" placement="bottom-start">
           <n-button :bordered="false" style="padding: 0 4px">
             ···
@@ -26,21 +26,15 @@
     <n-hr />
     <n-grid :cols="2">
       <n-gi>
-        <n-statistic label="截止于" :value="formatTimestampString(props.proj.end_timestamp)" />
+        <n-statistic label="节点" :value="unfinished_nodes + ' 个'" />
       </n-gi>
       <n-gi>
-        <n-statistic label="开始于" :value="formatTimestampString(props.proj.start_timestamp)" />
-      </n-gi>
-      <n-gi>
-        <n-statistic label="未完成节点" :value="unfinished_nodes + ' 个'" />
-      </n-gi>
-      <n-gi>
-        <n-statistic label="未完成任务" :value="unfinished_tasks + ' 个'" />
+        <n-statistic label="任务" :value="unfinished_tasks + ' 个'" />
       </n-gi>
     </n-grid>
-    <n-hr />
     <template #footer>
-      <!-- TODO:footer,也不知道放啥，可以不放。 -->
+      <n-progress type="line" status="success"
+        :percentage="100 * (unfinished_nodes + unfinished_tasks) / all_tasks_and_nodes" indicator-placement="inside" />
     </template>
   </n-page-header>
 </template>
@@ -50,10 +44,9 @@ import type { Project } from '@/api/proj_api';
 import {
   NBreadcrumb, NBreadcrumbItem,
   NButton, NDropdown, NGi, NGrid,
-  NHr, NPageHeader, NSpace, NStatistic, NText
+  NHr, NPageHeader, NSpace, NStatistic, NText, NProgress
 } from 'naive-ui';
-import { computed, ref, type PropType } from 'vue';
-import { formatTimestampString } from '@/util';
+import { computed, type PropType } from 'vue';
 
 const props = defineProps({
   proj: {
@@ -62,15 +55,21 @@ const props = defineProps({
   }
 })
 
+// 缓存总节点数和任务数
+const all_tasks_and_nodes = computed(() => props.proj.nodes.length + props.proj.tasks.length)
 // 缓存未完成的节点和任务的数量
 const unfinished_tasks = computed(() => props.proj.tasks.filter(task => !task.finished).length)
 const unfinished_nodes = computed(() => props.proj.nodes.filter(node => !node.finished).length)
 
 // 选项菜单
-const options = ref([
+const options = [
   {
-    label: '归档',
+    label: '更改',
     key: '1'
   },
-])
+  {
+    label: '归档',
+    key: '2'
+  },
+]
 </script>

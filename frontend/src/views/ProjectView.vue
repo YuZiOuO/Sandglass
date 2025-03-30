@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import ProjectDetailModule from '@/components/module/projectDeatil/ProjectDetailModule.vue';
+import ProjectDetailModule from '@/components/module/project-page/ProjectDetailModule.vue';
 
 //TODO: fetch proj obj from api
 
@@ -79,32 +79,32 @@ const proj = {
       id: "node2",
       name: "节点2",
       timestamp: Date.now() - 86400000 * 3,
-      finished: true,
-      description: "节点2描述",
+      finished: false,
+      description: "未完成的过期节点",
       url: "https://example.com/node2",
     },
     {
       id: "node3",
       name: "节点3",
-      timestamp: Date.now() - 86400000 * 2,
+      timestamp: Date.now() + 86400000 * 40,
       finished: false,
-      description: "节点3描述",
+      description: "未完成的很远节点",
       url: null,
     },
     {
       id: "node4",
       name: "节点4",
-      timestamp: Date.now() - 86400000,
-      finished: true,
-      description: "节点4描述",
+      timestamp: Date.now() + 86400000 * 15,
+      finished: false,
+      description: "未完成的远节点",
       url: "https://example.com/node4",
     },
     {
       id: "node5",
       name: "节点5",
-      timestamp: Date.now(),
+      timestamp: Date.now() + 86400000 * 0.5,
       finished: false,
-      description: "节点5描述",
+      description: "未完成的邻近节点",
       url: null,
     },
   ],

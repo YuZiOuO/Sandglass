@@ -38,10 +38,12 @@
     "naive-ui": "^2.41.0",
     "npm-run-all2": "^7.0.2",
     "prettier": "^3.4.2",
+    "tippy.js": "^6.3.7",
     "typescript": "~5.7.3",
     "vite": "^6.0.11",
     "vite-plugin-vue-devtools": "^7.7.1",
     "vitest": "^3.0.5",
-    "vue-tsc": "^2.2.0"
+    "vue-tsc": "^2.2.0",
+    "vue3-calendar-heatmap": "^2.0.5"
   }
 }
