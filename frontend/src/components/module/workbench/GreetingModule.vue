@@ -1,5 +1,5 @@
 <template>
-  <n-h1 prefix="bar" align-text>
+  <n-h1 prefix="bar">
     <n-text type="primary">
       早上好，{{ props.name }}。
     </n-text>

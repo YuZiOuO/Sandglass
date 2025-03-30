@@ -1,5 +1,3 @@
-import './assets/main.css'
-
 // 引入热力图插件css
 import 'vue3-calendar-heatmap/dist/style.css'
 
