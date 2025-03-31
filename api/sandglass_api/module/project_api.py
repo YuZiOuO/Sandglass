@@ -12,6 +12,9 @@ project_api = Blueprint('project_api', __name__)
 def get_proj_by_current_user():
     """
     Get projects owned by the current user.
+
+    STATUS CODES:
+    200 - Success.
     """
     select_related: bool = request.args.get('select_related', False, bool)
     proj: QuerySet = Project.objects(owner=current_user)
@@ -21,11 +24,12 @@ def get_proj_by_current_user():
 @jwt_required()
 def get_proj_by_id(proj_id: str):
     """
-    Get project with given id.
+    Get the project with given id.
 
-    SPECIAL STATUS CODES:
-    404 - Project with given id not found.
+    STATUS CODES:
+    200 - Success.
     400 - Invalid id format.
+    404 - Project with given id not found.
     """
     try:
         p: Project = Project.objects().with_id(proj_id)
@@ -40,15 +44,17 @@ def get_proj_by_id(proj_id: str):
 def create_proj():
     """
     Create a new project.
+    Return the id of the created project.
 
-    SPECIAL STATUS CODES:
+    STATUS CODES:
+    201 - Project created.
     400 - An invalid field was passed.
     """
     try:
         p = Project(owner=current_user, **request.json).save(cascade=True)
     except FieldDoesNotExist as e:
         return f'Invalid field name.{e}', 400
-    return str(p.id)
+    return str(p.id), 201
 
 
 @project_api.delete('/proj/<string:proj_id>')
@@ -57,9 +63,10 @@ def delete_proj(proj_id: str):
     """
     Delete project with given id.
 
-    SPECIAL STATUS CODES:
-    404 - Project with given id not found.
+    STATUS CODES:
+    204 - Project deleted.
     400 - Invalid id format.
+    404 - Project with given id not found.
     """
     try:
         p: Project = Project.objects().with_id(proj_id)
@@ -69,4 +76,4 @@ def delete_proj(proj_id: str):
         return 'Invalid id format.', 400
 
     p.delete()
-    return 'Project deleted.'
+    return 'Project deleted.', 204

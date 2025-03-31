@@ -32,7 +32,10 @@ def modify_user_info(user_id: str):
 def signup():
     """
     Create a new user.
-    Always return "200 OK" to prevent email enumeration.
+    Always return Accepted to prevent email enumeration.
+
+    STATUS CODE:
+    202 - Registration confirmation sent.
     """
     req = request.json
 
@@ -47,4 +50,4 @@ def signup():
         salt: UUID = uuid4()
         user = User(email=requested_email, pwd_salt=salt, pwd=salting(requested_pwd, salt.hex))
         user.save()
-    return "Registration confirmation sent."
+    return "Registration confirmation sent.", 202

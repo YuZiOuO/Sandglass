@@ -2,8 +2,10 @@ from datetime import datetime
 
 import mongoengine as me
 
+from sandglass_api.models.resource import Resource
 
-class Node(me.Document):
+
+class Node(Resource):
     """
     Represents a time node in the timeline.
     Originally meant to be used for courses.

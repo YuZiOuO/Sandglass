@@ -19,7 +19,7 @@ class TestAuthApi:
             "email": "test@example.com",
             "pwd": "test_pwd",
         })
-        assert res.status == '200 OK'
+        assert res.status == '202 ACCEPTED'
 
     @pytest.fixture(scope="session")
     def token(self, _signup, client) -> str:

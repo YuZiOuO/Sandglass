@@ -39,7 +39,7 @@ def _signup(client):
         "email": "test@example.com",
         "pwd": "test_pwd",
     })
-    assert res.status == '200 OK'
+    assert res.status == '202 ACCEPTED'
 
 
 @pytest.fixture(scope="session")
@@ -74,15 +74,15 @@ def proj_empty(client_auth):
     create_res = client_auth.post("/proj", json={
         "name": "test_project",
     })
-    assert create_res.status == '200 OK'
+    assert create_res.status == '201 CREATED'
 
     yield create_res.text
 
     delete_res = client_auth.delete("/proj/" + create_res.text)
-    assert delete_res.status == '200 OK'
+    assert delete_res.status == '204 NO CONTENT'
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def proj_no_reference(client_auth):
     """
     Create a project without any tasks, nodes, or attachments.
@@ -97,15 +97,29 @@ def proj_no_reference(client_auth):
         "nodes": [],
         "attachments": []
     })
-    assert str(create_res.status) == "200 OK"
+    assert str(create_res.status) == "201 CREATED"
 
     yield create_res.text
 
     deleted_res = client_auth.delete("/proj/" + create_res.text)
-    assert deleted_res.status == "200 OK"
+    assert deleted_res.status == "204 NO CONTENT"
 
 
 @pytest.fixture()
 def proj(proj_no_reference):
     yield proj_no_reference
     # TODO:Implement this(proj with reference) fixture.
+
+
+@pytest.fixture()
+def node(proj_no_reference, client_auth):
+    create_res = client_auth.post('/proj/' + proj_no_reference + '/node', json={
+        "name": "Test Node",
+        "timestamp": 1742294400000,
+    })
+    assert create_res.status == "201 CREATED"
+
+    yield create_res.text
+
+    delete_res = client_auth.delete('/node/' + create_res.text)
+    assert delete_res.status == "204 NO CONTENT"

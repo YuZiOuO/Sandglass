@@ -8,6 +8,7 @@ from sandglass_api.config import FlaskConfig, DB_DATABASE_NAME, DB_URI, JWT_EXPI
 from sandglass_api.db import connect_to
 from sandglass_api.models.user import User
 from sandglass_api.module.auth_api import auth_api
+from sandglass_api.module.node_api import node_api
 from sandglass_api.module.project_api import project_api
 from sandglass_api.module.user_api import user_api
 
@@ -55,6 +56,7 @@ def create_app(db_uri: str, db_name: str):
     app.register_blueprint(auth_api)
     app.register_blueprint(user_api)
     app.register_blueprint(project_api)
+    app.register_blueprint(node_api)
 
     connect_to(db_uri, db_name)
 

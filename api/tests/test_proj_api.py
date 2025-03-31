@@ -1,4 +1,5 @@
 import json
+from random import randint
 
 from sandglass_api.models.project import Project
 
@@ -11,8 +12,11 @@ class TestProjApi:
         assert proj_no_reference  #Tested by fixture
 
     # TODO:implement this test
-    # def test_create_proj(self, proj):
-    #     assert proj
+    def test_create_proj(self, proj):
+        assert proj
+
+    def test_create_proj_missing_field(self, client_auth):
+        pass
 
     def test_create_proj_non_existing_field(self, client_auth):
         res = client_auth.post('/proj', json={
@@ -39,19 +43,40 @@ class TestProjApi:
         assert str(res.status) == "400 BAD REQUEST"
         assert res.text == 'Invalid id format.'
 
-    def test_get_proj_by_user(self, proj_no_reference, client_auth):
+    def test_get_proj_by_user(self, client_auth):
+        # Randomly create projects
+        id_arr = []
+        repeat = randint(5, 10)
+        for i in range(repeat):
+            res = client_auth.post('/proj', json={
+                'name': f'test_proj_{i}',
+            })
+            assert res.status == "201 CREATED"
+            id_arr.append(res.text)
+
+
         res = client_auth.get('/proj')
         all_proj = json.loads(res.text)
-        assert len(all_proj) == 1
+        assert len(all_proj) == repeat
+        for i in range(repeat):
+            assert all_proj[i]['_id']['$oid'] in id_arr
+
+        # Tear down
+        for i in range(repeat):
+            res = client_auth.delete(f'/proj/{id_arr[i]}')
+            assert str(res.status) == "204 NO CONTENT"
 
     def test_get_proj_by_user_select_related(self, proj_no_reference, client_auth):
+        # Mainly tests the select_related query parameter
         res = client_auth.get('/proj?select_related=True')
 
         all_proj = json.loads(res.text)
         assert len(all_proj) == 1
 
         for proj in all_proj:
-            assert Project.from_json(json.dumps(proj))
+            p: Project = Project.from_json(json.dumps(proj))
+            assert p.start_timestamp is not None
+            assert p.end_timestamp is not None
 
     def test_delete_proj(self):
         pass  # Tested by fixture
