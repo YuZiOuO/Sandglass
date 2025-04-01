@@ -1,9 +1,6 @@
 import re
-from urllib.parse import urlencode
 
 import jwt
-import pytest
-from flask.testing import EnvironBuilder
 from werkzeug.datastructures import Authorization
 
 import sandglass_api.config
@@ -13,37 +10,6 @@ from tests.util import now
 
 
 class TestAuthApi:
-    @pytest.fixture(scope="session")
-    def _signup(self, client):
-        res = client.post("/user", json={
-            "email": "test@example.com",
-            "pwd": "test_pwd",
-        })
-        assert res.status == '202 ACCEPTED'
-
-    @pytest.fixture(scope="session")
-    def token(self, _signup, client) -> str:
-        """
-        login to the test account and offers a token.
-        """
-        params = urlencode({
-            "email": "test@example.com",
-            "pwd": "test_pwd",
-        })
-        res = client.get('/token?' + params)
-        assert res.status == '200 OK'
-        return res.json['access_token']
-
-    @pytest.fixture(scope="session")
-    def client_auth(self, app, token):
-        """
-        Offers a authorized client.
-        """
-        cli = app.test_client()
-        builder = EnvironBuilder(app, auth=Authorization("Bearer", token=token))
-        cli.environ_base = builder.get_environ()
-        return cli
-
     def test_login(self, client_auth):
         assert client_auth.get('/').text == "Hello,world!"
         assert client_auth is not None

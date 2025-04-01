@@ -7,13 +7,13 @@ from sandglass_api.models.project import Project
 project_api = Blueprint('project_api', __name__)
 
 
-def abstract_get_proj_by_id(proj_id: str) -> tuple[str | Project, int]:
+def abstract_get_proj_by_id(proj_id: str):
     try:
         p: Project = Project.objects().with_id(proj_id)
         if not p:
-            return 'Project with given id not found.', 404
-    except ValidationError:
-        return 'Invalid id format.', 400
+            return b'', 404
+    except ValidationError as e:
+        return str(e), 400
     return p, 200
 
 
@@ -58,9 +58,8 @@ def create_proj():
     try:
         p = Project(owner=current_user, **request.json).save(cascade=True)
     except FieldDoesNotExist as e:
-        return f'Invalid field name.{e}', 400
+        return str(e), 400
     return str(p.id), 201
-
 
 @project_api.delete('/proj/<string:proj_id>')
 @jwt_required()
@@ -77,4 +76,4 @@ def delete_proj(proj_id: str):
     if code != 200:
         return result, code
     result.delete()
-    return 'Project deleted.', 204
+    return b'', 204

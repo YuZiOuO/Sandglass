@@ -5,7 +5,7 @@ import mongoengine as me
 from sandglass_api.models.attachment import Attachment
 
 
-class Node(me.EmbeddedDocument):
+class Node(me.Document):
     """
     Represents a time node in the timeline.
     Originally meant to be used for courses.

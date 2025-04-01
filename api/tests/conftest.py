@@ -1,3 +1,4 @@
+from random import randint
 from urllib.parse import urlencode
 
 import pytest
@@ -7,10 +8,10 @@ from werkzeug.datastructures import Authorization
 from sandglass_api.app import create_app
 from sandglass_api.db import RESET_DATABASE
 from tests.config import TEST_DB_URI, TEST_DB_DATABASE_NAME
+from tests.util import random_timestamp_ms
 
 
-# 每次测试前，清空数据库。
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app():
     app = create_app(TEST_DB_URI, TEST_DB_DATABASE_NAME)
     app.config.update({
@@ -22,17 +23,17 @@ def app():
     RESET_DATABASE(app.config)  # Reset after tests
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def client(app):
     return app.test_client()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def runner(app):
     return app.test_cli_runner()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def _signup(client):
     # No Teardown here because the database will be reset after the test.
     res = client.post("/user", json={
@@ -42,7 +43,7 @@ def _signup(client):
     assert res.status == '202 ACCEPTED'
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def token(_signup, client) -> str:
     """
     login to the test account and offers a token.
@@ -57,7 +58,7 @@ def token(_signup, client) -> str:
     return res.json['access_token']
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def client_auth(app, token):
     """
     Offers a authorized client.
@@ -68,32 +69,17 @@ def client_auth(app, token):
     cli.environ_base = builder.get_environ()
     return cli
 
-
 @pytest.fixture()
-def proj_empty(client_auth):
-    create_res = client_auth.post("/proj", json={
-        "name": "test_project",
-    })
-    assert create_res.status == '201 CREATED'
-
-    yield create_res.text
-
-    delete_res = client_auth.delete("/proj/" + create_res.text)
-    assert delete_res.status == '204 NO CONTENT'
-
-
-@pytest.fixture()
-def proj_no_reference(client_auth):
+def proj(client_auth):
     """
-    Create a project without any tasks, nodes, or attachments.
+    Create a project with no nodes, or attachments.
     """
     create_res = client_auth.post('/proj', json={
         "name": "Test Project",
         "url": "https://example.com",
         "description": "This is a test project.",
-        "start_timestamp": 1742294400000,
-        "end_timestamp": 1750279200000,
-        "tasks": [],
+        "start_timestamp": random_timestamp_ms(),
+        "end_timestamp": random_timestamp_ms(),
         "nodes": [],
         "attachments": []
     })
@@ -104,22 +90,25 @@ def proj_no_reference(client_auth):
     deleted_res = client_auth.delete("/proj/" + create_res.text)
     assert deleted_res.status == "204 NO CONTENT"
 
-
 @pytest.fixture()
-def proj(proj_no_reference):
-    yield proj_no_reference
-    # TODO:Implement this(proj with reference) fixture.
+def node(proj, client_auth):
+    """
+    Create a fixture containing a proj with random nodes.
+    :return: a tuple of (proj_id,node_id:List)
+    """
+    # Randomly create nodes
+    nodes = []
+    for i in range(randint(5, 10)):
+        res = client_auth.post(f'/proj/{proj}/node', json={
+            'name': f'test_node_{i}',
+            'timestamp': random_timestamp_ms(),
+        })
+        assert res.status == "201 CREATED"
+        nodes.append(res.text)
 
+    yield proj, nodes
 
-@pytest.fixture()
-def node(proj_no_reference, client_auth):
-    create_res = client_auth.post('/proj/' + proj_no_reference + '/node', json={
-        "name": "Test Node",
-        "timestamp": 1742294400000,
-    })
-    assert create_res.status == "201 CREATED"
-
-    yield create_res.text
-
-    delete_res = client_auth.delete('/node/' + create_res.text)
-    assert delete_res.status == "204 NO CONTENT"
+    # Teardown,delete all nodes created
+    delete_result = list(map(lambda n: client_auth.delete('/node/' + n).status, nodes))
+    for r in delete_result:
+        assert r == '204 NO CONTENT'

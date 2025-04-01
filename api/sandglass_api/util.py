@@ -20,9 +20,9 @@ def transaction(func):
             with session.start_transaction():
                 try:
                     return func(*args, **kwargs)
-                except Exception as e:
+                except Exception:
                     session.abort_transaction()
-                    return e
+                    raise
 
     return wrapper
 
