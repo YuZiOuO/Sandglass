@@ -26,7 +26,7 @@ class TestProjApi:
 
         assert str(res.status) == '400 BAD REQUEST'
         assert res.text == ('Invalid field name.'
-                            + 'The fields "{\'non_existing_field\'}" do not exist on the document "Resource.Project"')
+                            + 'The fields "{\'non_existing_field\'}" do not exist on the document "Project"')
 
     def test_get_proj_by_id(self, client_auth, proj):
         res = client_auth.get(f'/proj/{proj}')

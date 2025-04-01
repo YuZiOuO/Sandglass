@@ -7,6 +7,16 @@ from sandglass_api.models.project import Project
 project_api = Blueprint('project_api', __name__)
 
 
+def abstract_get_proj_by_id(proj_id: str) -> tuple[str | Project, int]:
+    try:
+        p: Project = Project.objects().with_id(proj_id)
+        if not p:
+            return 'Project with given id not found.', 404
+    except ValidationError:
+        return 'Invalid id format.', 400
+    return p, 200
+
+
 @project_api.get('/proj')
 @jwt_required()
 def get_proj_by_current_user():
@@ -31,13 +41,8 @@ def get_proj_by_id(proj_id: str):
     400 - Invalid id format.
     404 - Project with given id not found.
     """
-    try:
-        p: Project = Project.objects().with_id(proj_id)
-        if not p:
-            return 'Project with given id not found.', 404
-    except ValidationError:
-        return 'Invalid id format.', 400
-    return p.to_json()
+    result, code = abstract_get_proj_by_id(proj_id)
+    return result.to_json() if code == 200 else (result, code)
 
 @project_api.post('/proj')
 @jwt_required()
@@ -68,12 +73,8 @@ def delete_proj(proj_id: str):
     400 - Invalid id format.
     404 - Project with given id not found.
     """
-    try:
-        p: Project = Project.objects().with_id(proj_id)
-        if not p:
-            return 'Project with given id not found.', 404
-    except ValidationError:
-        return 'Invalid id format.', 400
-
-    p.delete()
+    result, code = abstract_get_proj_by_id(proj_id)
+    if code != 200:
+        return result, code
+    result.delete()
     return 'Project deleted.', 204

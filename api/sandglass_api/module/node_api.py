@@ -3,11 +3,20 @@ from flask_jwt_extended import jwt_required, current_user
 from mongoengine import FieldDoesNotExist, ValidationError
 
 from sandglass_api.models.node import Node
-from sandglass_api.models.project import Project
+from sandglass_api.module.project_api import abstract_get_proj_by_id
 from sandglass_api.util import transaction, dereference
 
 node_api = Blueprint('node_api', __name__)
 
+
+def abstract_get_node_by_id(node_id: str):
+    try:
+        n = Node.objects().with_id(node_id)
+    except ValidationError:
+        return 'Invalid node id format.', 400
+    if not n:
+        return 'Node with given id not found.', 404
+    return n, 200
 
 @node_api.get('/node/<string:node_id>')
 @jwt_required()
@@ -20,13 +29,8 @@ def get_node_by_id(node_id: str):
     400 - Invalid node id format.
     404 - Node with given id not found.
     """
-    try:
-        n = Node.objects().with_id(node_id)
-    except ValidationError:
-        return 'Invalid node id format.', 400
-    if not n:
-        return 'Node with given id not found.', 404
-    return n.to_json()
+    n, code = abstract_get_node_by_id(node_id)
+    return n.to_json() if code == 200 else n, code
 
 
 @node_api.get('/proj/<string:proj_id>/node')
@@ -40,12 +44,9 @@ def get_nodes_by_proj(proj_id: str):
     400 - Invalid project id format.
     404 - Project with given id not found.
     """
-    try:
-        p: Project = Project.objects().with_id(proj_id)
-    except ValidationError:
-        return 'Invalid project id format.', 400
-    if not p:
-        return 'Project with given id not found.', 404
+    p, code = abstract_get_proj_by_id(proj_id)
+    if code != 200:
+        return p, code
     select_related: bool = request.args.get('select_related', False, bool)
     if select_related:
         return dereference(p.nodes, dump=True)
@@ -65,12 +66,9 @@ def create_node_by_proj(proj_id: str):
     400 - An invalid field was passed, or the project id is invalid, or missing required fields.
     404 - Project with given id not found.
     """
-    try:
-        p: Project = Project.objects().with_id(proj_id)
-    except ValidationError:
-        return 'Invalid project id format.', 400
-    if not p:
-        return 'Project with given id not found.', 404
+    p, code = abstract_get_proj_by_id(proj_id)
+    if code != 200:
+        return p, code
     @transaction
     def create_task():
         n = Node(owner=current_user, **request.json)
@@ -78,7 +76,6 @@ def create_node_by_proj(proj_id: str):
         p.nodes.append(n.id)
         p.save()
         return str(n.id)
-
     try:
         id_if_created = create_task()
     except FieldDoesNotExist as e:
@@ -114,11 +111,8 @@ def delete_node_by_id(node_id: str):
     400 - Invalid node id.
     404 - Node with given id not found.
     """
-    try:
-        n = Node.objects().with_id(node_id)
-    except ValidationError:
-        return 'Invalid node id.', 400
-    if not n:
-        return 'Node with given id not found.', 404
+    n, code = abstract_get_node_by_id(node_id)
+    if code != 200:
+        return n, code
     n.delete()
     return 'Node deleted.', 204

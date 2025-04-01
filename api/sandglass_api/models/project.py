@@ -1,24 +1,23 @@
 from datetime import datetime
 
 import mongoengine as me
+from flask_jwt_extended import current_user
 
 from sandglass_api.models.attachment import Attachment
 from sandglass_api.models.node import Node
-from sandglass_api.models.resource import Resource
-from sandglass_api.models.task import Task
 
 
-class Project(Resource):
+class Project(me.Document):
     """
     Represents a project.
     """
     name = me.StringField(required=True)
+    owner = me.ReferenceField('User', default=current_user)
     url = me.URLField()
     description = me.StringField()
     start_timestamp = me.DateTimeField()
     end_timestamp = me.DateTimeField()
-    tasks = me.ListField(me.ReferenceField(Task))
-    nodes = me.ListField(me.ReferenceField(Node))
+    nodes = me.EmbeddedDocumentListField(Node)
     attachments = me.EmbeddedDocumentListField(Attachment)
 
     def clean(self):
