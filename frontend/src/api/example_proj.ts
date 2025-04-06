@@ -1,10 +1,12 @@
 export const proj = {
-  id: '1',
+  id: 'abc481',
   name: '示例项目',
   url: 'https://example.com',
-  description: '这是一个测试项目',
+  description:
+    '这是一个测试项目。非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的描述',
   start_timestamp: 1672531200,
   end_timestamp: 1675219600,
+  tags: ['abc', 'tag1'],
   tasks: [
     {
       id: 'task1',

@@ -2,7 +2,7 @@
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN">
     <n-layout>
       <n-layout-header bordered class="header">
-        <NavBar />
+        <NavBarLayout :login="false" />
       </n-layout-header>
       <n-layout-content class="content">
         <RouterView />
@@ -21,7 +21,7 @@ import {
   dateZhCN,
   NLayout, NLayoutHeader, NLayoutFooter, NLayoutContent,
 } from "naive-ui"
-import NavBar from "./components/layout/NavBarLayout.vue";
+import NavBarLayout from "./components/layout/NavBarLayout.vue";
 import { RouterView } from "vue-router";
 import GeneralFooter from "./components/layout/FooterLayout.vue";
 import { ref } from "vue";
