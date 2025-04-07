@@ -3,41 +3,53 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ProjectListView from '@/views/ProjectListView.vue'
 import ProjectView from '@/views/ProjectView.vue'
+import { loadingBar } from '@/ui_api'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Workbench',
       component: HomeView,
     },
     {
       path: '/login',
-      name: 'login',
+      name: 'Login',
       component: LoginView,
     },
     {
-      path: '/proj/:proj_id',
-      name: 'project',
-      component: ProjectListView,
-    },
-    {
-      path: '/proj/test',
-      name: 'test_proj',
-      component: ProjectView,
+      path: '/proj',
+      children: [
+        {
+          path: '/:proj_id',
+          name: 'Project#',
+          component: ProjectView,
+          props: true,
+        },
+        {
+          path: '',
+          name: 'ProjectList',
+          component: ProjectListView,
+        },
+      ],
     },
     // {
     //   path: '/proj/new',
     //   name: 'createProject',
     //   component: MCreateProject,
     // },
-    // {
-    //   path: '/proj',
-    //   name: 'user_proj_list',
-    //   component: MListProject,
-    // },
   ],
+})
+
+router.beforeEach(() => {
+  loadingBar.start()
+  return true
+})
+
+router.afterEach(() => {
+  loadingBar.finish()
+  return true
 })
 
 export default router

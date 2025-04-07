@@ -8,8 +8,8 @@
           </n-h1>
           <n-auto-complete @input="handle_email_input" placeholder="邮箱" clearable />
           <n-input @input="handle_pwd_input" type="password" show-password-on="mousedown" placeholder="密码" clearable />
-          <n-button @click="login_api">登录</n-button>
-          <n-button @click="signup_api">注册</n-button>
+          <n-button @click="trigger_login" :loading="login_loading">登录</n-button>
+          <n-button>注册</n-button>
         </n-flex>
         <n-divider dashed>
           第三方OAuth
@@ -27,47 +27,47 @@
   </div>
 </template>
 
-<script lang="ts">
-import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput } from 'naive-ui';
-import { login, signup } from '@/api/user_api.ts'
+<script setup lang="ts">
+import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui';
+import { login } from '@/api/user_api.ts'
+import { ref } from 'vue';
+import { useLoginStatus } from '@/stores/login_status';
+import router from '@/router';
 
-export default {
-  data() {
-    return {
-      email: "",
-      pwd: ""
-    }
-  },
-  components: {
-    NCard,
-    NH1,
-    NAutoComplete,
-    NInput,
-    NFlex,
-    NDivider,
-    NButton,
-  },
-  methods: {
-    login_api() {
-      login({ email: this.email, pwd: this.pwd }).then((r) => console.log(r))
-    },
-    signup_api() {
-      signup(
-        {
-          email: this.email,
-          pwd: this.pwd,
-          avatarUrl: "",
-          nickname: "神人"
-        }
-      ).then((r) => console.log(r))
-    },
-    handle_email_input(e: string) {
-      this.email = e
-    },
-    handle_pwd_input(p: string) {
-      this.pwd = p
-    }
+const message = useMessage()
+
+const email = ref("")
+const pwd = ref("")
+
+const login_loading = ref(false)
+const signup_loading = ref(false)
+
+const { status, reverseStatus } = useLoginStatus()
+
+function trigger_login() {
+  if (status) {
+    message.error('你已登录，将跳转到首页...')
+    router.push('/')
+  } else {
+    login_loading.value = true
+    login({
+      email: email.value,
+      pwd: pwd.value
+    }).then(
+      () => {
+        reverseStatus()
+        message.info('登录成功')
+        router.push('/')
+      }
+    )
   }
+}
+
+function handle_email_input(e: string) {
+  email.value = e
+}
+function handle_pwd_input(p: string) {
+  pwd.value = p
 }
 </script>
 

@@ -7,4 +7,11 @@ import ProjectDetailModule from '@/components/module/project-page/ProjectDetailM
 import { proj } from '@/api/example_proj';
 //TODO: fetch proj obj from api
 
+const props = defineProps({
+  id: {
+    required: true,
+    type: String
+  }
+})
+
 </script>

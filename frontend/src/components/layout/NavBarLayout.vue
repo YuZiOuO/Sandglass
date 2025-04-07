@@ -10,9 +10,14 @@
     <n-gi :offset="1">
       <n-flex justify="center" align="center" style="width: 100%; height: 100%">
         <n-dropdown :disabled="!props.login" :options="dropdownOptions">
-          <n-button tertiary type="primary">
-            {{ props.login ? "我的" : "登录" }}
+          <n-button v-if="props.login" tertiary type="primary">
+            我的
           </n-button>
+          <RouterLink v-else to="/login">
+            <n-button tertiary type="primary">
+              登录
+            </n-button>
+          </RouterLink>
         </n-dropdown>
       </n-flex>
     </n-gi>
@@ -20,11 +25,10 @@
 </template>
 
 <script setup lang="ts">
-import { NGrid, NGi, NIcon, NMenu, type MenuOption } from 'naive-ui';
 import { h } from 'vue';
 import { RouterLink } from 'vue-router';
 import { renderIcon } from '@/util';
-import { NButton, NDropdown, NFlex } from 'naive-ui';
+import { NButton, NGrid, NGi, NIcon, NMenu, type MenuOption, NDropdown, NFlex } from 'naive-ui';
 import {
   Pencil as EditIcon,
   LogOutOutline as LogoutIcon,
@@ -33,29 +37,15 @@ import {
 
 const menuOptions: MenuOption[] = [
   {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: {
-            path: '/'
-          }
-        },
-        { default: () => '主页' }
-      ),
-    key: 'go-back-home',
+    label: () => h(RouterLink, { to: { path: '/' } },
+      { default: () => '主页' }
+    ),
+    key: '主页',  // fixme:要有key才能被点击,原因未知
   }, {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: {
-            path: '/proj/new'
-          }
-        },
-        { default: () => '项目列表' }
-      ),
-    key: 'go-to-work',
+    label: () => h(RouterLink, { to: { path: '/proj' } },
+      { default: () => '项目' }
+    ),
+    key: '项目',
   },
 ]
 
