@@ -1,11 +1,10 @@
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useLoginStatus = defineStore('loginStatus', () => {
-  const status = ref(true)
-  const getStatus = computed(() => status)
-  const reverseStatus = () => {
-    status.value = !status.value
+  const loginStatus = ref(true)
+  const reverseLoginStatus = () => {
+    loginStatus.value = !loginStatus.value
   }
-  return { status, getStatus, reverseStatus }
+  return { loginStatus, reverseLoginStatus }
 })

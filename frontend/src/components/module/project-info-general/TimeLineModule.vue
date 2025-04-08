@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Node } from '@/api/proj_api';
+import type { Node } from '@/api/model/node';
 import { timestamp2String } from '@/util';
 import { NTimeline, NTimelineItem, NButton, NIcon } from 'naive-ui';
 import { computed, type PropType } from 'vue';

@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Project } from '@/api/proj_api';
+import type { Project } from '@/api/model/proj';
 import {
   NBreadcrumb, NBreadcrumbItem,
   NButton, NDropdown, NGi, NGrid,
@@ -57,9 +57,14 @@ const props = defineProps({
 
 // 缓存总节点数和任务数
 const all_tasks_and_nodes = computed(() => props.proj.nodes.length + props.proj.tasks.length)
+
 // 缓存未完成的节点和任务的数量
-const unfinished_tasks = computed(() => props.proj.tasks.filter(task => !task.finished).length)
-const unfinished_nodes = computed(() => props.proj.nodes.filter(node => !node.finished).length)
+const unfinished_tasks = computed(
+  () => props.proj.tasks.filter(task => !task.finished).length
+)
+const unfinished_nodes = computed(
+  () => props.proj.nodes.filter(node => !node.finished).length
+)
 
 // 选项菜单
 const options = [

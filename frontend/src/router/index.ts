@@ -20,9 +20,10 @@ const router = createRouter({
     },
     {
       path: '/proj',
+      name: 'Project',
       children: [
         {
-          path: '/:proj_id',
+          path: ':proj_id',
           name: 'Project#',
           component: ProjectView,
           props: true,

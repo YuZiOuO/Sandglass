@@ -17,11 +17,20 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
-import TimeLineModule from '../project-info-general/TimeLineModule.vue';
-import { NCard, NH5, NHr, NProgress, NButton, NFlex } from 'naive-ui';
-import type { Project } from '@/api/proj_api';
+import type { PropType } from 'vue'
 
+import {
+  NButton,
+  NCard,
+  NFlex,
+  NH5,
+  NHr,
+  NProgress,
+} from 'naive-ui'
+
+import type { Project } from '@/api/model/proj'
+
+import TimeLineModule from '../project-info-general/TimeLineModule.vue'
 
 const props = defineProps({
   proj: {

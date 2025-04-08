@@ -1,7 +1,7 @@
 import type { Attachment } from './atmt'
 
 // 这个Node好像和JS的内置Node撞名了
-export interface Node {
+interface Node {
   id: string
 
   name: string
@@ -13,6 +13,8 @@ export interface Node {
   attachment: Attachment[]
 }
 
-export interface Task extends Node {
+interface Task extends Node {
   start_timestamp: number | undefined
 }
+
+export type { Node, Task }

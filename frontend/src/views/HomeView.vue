@@ -16,10 +16,6 @@
         </n-flex>
         <n-flex justify="flex-start">
           <ProjectCardModule :proj="proj" />
-          <ProjectCardModule :proj="proj" />
-          <ProjectCardModule :proj="proj" />
-          <ProjectCardModule :proj="proj" />
-          <ProjectCardModule :proj="proj" />
         </n-flex>
       </n-flex>
     </n-layout-content>
@@ -27,11 +23,16 @@
 </template>
 
 <script setup lang="ts">
-import { NLayout, NLayoutSider, NLayoutContent, NFlex } from 'naive-ui';
-import ProjectCardModule from '@/components/module/workbench/ProjectCardModule.vue';
-import HeatmapModule from '@/components/module/workbench/HeatmapModule.vue';
-import TodoListModule from '@/components/module/workbench/TodoListModule.vue';
-import GreetingModule from '@/components/module/workbench/GreetingModule.vue';
+import {
+  NFlex,
+  NLayout,
+  NLayoutContent,
+  NLayoutSider,
+} from 'naive-ui'
 
-import { proj } from '@/api/example_proj';
+import { proj } from '@/api/example_proj'
+import GreetingModule from '@/components/module/workbench/GreetingModule.vue'
+import HeatmapModule from '@/components/module/workbench/HeatmapModule.vue'
+import ProjectCardModule from '@/components/module/workbench/ProjectCardModule.vue'
+import TodoListModule from '@/components/module/workbench/TodoListModule.vue'
 </script>

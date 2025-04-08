@@ -1,6 +1,6 @@
 <template>
   <div>
-    <n-breadcrumb>
+    <!-- <n-breadcrumb>
       <n-breadcrumb-item>
         项目
       </n-breadcrumb-item>
@@ -10,9 +10,9 @@
     </n-breadcrumb>
     <n-h1>
       新建项目
-    </n-h1>
-    <n-form ref="formRef" :model="model" label-placement="left" label-width="auto"
-      require-mark-placement="right-hanging" size="medium" :style="{
+    </n-h1> -->
+    <n-form :model="model" label-placement="left" label-width="auto" require-mark-placement="right-hanging"
+      size="medium" :style="{
         maxWidth: '640px',
       }">
       <n-form-item label="名称" path="name" :rule="{ required: true, message: '请输入一个名称', trigger: ['blur'] }">
@@ -34,11 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import type { NewProject } from '@/api/model/proj_model';
-import { create_proj } from '@/api/proj_api';
+import { api, notifyApiError } from '@/api/api';
 import { NBreadcrumb, NBreadcrumbItem, NFormItem, NForm, NInput, NDatePicker, NButton, NH1, type FormInst } from 'naive-ui';
 import { ref } from 'vue';
-const formRef = ref<FormInst | null>(null)
 const model = ref({
   //FIXME:不够优雅
   name: null,
@@ -46,14 +44,19 @@ const model = ref({
   end_timestamp: null
 })
 
-async function new_proj(model: NewProject) {
-  const proj = {
-    ...model,
-    avatarUrl: "", description: "", task: [], status: "NOT_STARTED"
-  };
-  const id = await create_proj(proj);
-  console.log(id);
+const submit = () => {
+  api().post('/proj',
+    {
+      name: model.value.name,
+      start_timestamp: model.value.start_timestamp,
+      end_timestamp: model.value.end_timestamp
+    })
+    .then((res) => {
+      if (res.status === 201) {
+        emit('created', null)
+      }
+    })
+    .catch(notifyApiError)
 }
-
-const submit = ref(async () => { new_proj(model.value as unknown as NewProject) });
+const emit = defineEmits<{ created: [null] }>()
 </script>

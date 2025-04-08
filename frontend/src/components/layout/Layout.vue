@@ -1,7 +1,7 @@
 <template>
     <n-layout>
         <n-layout-header bordered class="header">
-            <NavBarLayout :login="status" />
+            <NavBarLayout />
         </n-layout-header>
         <n-layout-content class="content">
             <RouterView />
@@ -18,9 +18,6 @@ import { RouterView } from "vue-router";
 
 import NavBarLayout from "./NavBarLayout.vue";
 import FooterLayout from "./FooterLayout.vue";
-import { useLoginStatus } from "@/stores/login_status";
-
-const { status } = useLoginStatus()
 </script>
 
 <style scoped>

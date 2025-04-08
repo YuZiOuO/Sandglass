@@ -21,7 +21,6 @@
 
 <script setup lang="ts">
 import TimeLineModule from '../project-info-general/TimeLineModule.vue';
-import type { Project } from '@/api/proj_api';
 import {
   NCard, NLayout, NLayoutContent, NLayoutSider,
   NFlex, NHr, NButton
@@ -30,6 +29,7 @@ import { ref, type PropType } from 'vue';
 import CalendarModule from './CalendarModule.vue';
 import PageHeader from './PageHeader.vue';
 import AddNodeModule from './AddNodeModule.vue';
+import type { Project } from '@/api/model/proj';
 
 const props = defineProps({
   proj: {

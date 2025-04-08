@@ -1,16 +1,26 @@
-import { apiEncode } from './api'
+import { api, notifyApiError } from './api'
+import type { AxiosResponse } from 'axios'
 import type { UserAuth } from './model/user'
 
-export async function login(authInfo: UserAuth) {
-  return apiEncode().get('/token', {
-    params: authInfo,
-  })
+export async function login(
+  params: UserAuth,
+  callbackfn: (res: AxiosResponse<string, any>) => void,
+) {
+  api()
+    .get<string>('/token', {
+      params: params,
+    })
+    .then((res) => callbackfn(res))
+    .catch(notifyApiError)
 }
 
-// export async function logout() {
-//   return request<void>('DELETE', '/token')
-// }
+// export async function signup(
 
-// export async function signup(user: User) {
-//   return request<string>('POST', '/user', { email: user.email, pwd: user.pwd })
-// }
+// )
+
+export async function logout(callbackfn: (res: AxiosResponse<null, any>) => void) {
+  api()
+    .delete<null>('/token')
+    .then((res) => callbackfn(res))
+    .catch(notifyApiError)
+}

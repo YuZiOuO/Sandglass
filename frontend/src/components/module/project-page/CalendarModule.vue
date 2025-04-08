@@ -13,11 +13,21 @@
 </template>
 
 <script setup lang="ts">
-import type { Task, Node } from '@/api/proj_api';
-import { inGivenDate } from '@/util';
+import { type PropType } from 'vue'
+
+import {
+  NCalendar,
+  NDropdown,
+  NIcon,
+  NTag,
+} from 'naive-ui'
+
+import type {
+  Node,
+  Task,
+} from '@/api/model/node'
+import { inGivenDate } from '@/util'
 import { CheckmarkCircle } from '@vicons/ionicons5'
-import { NCalendar, NTag, NIcon, NDropdown } from 'naive-ui';
-import { type PropType } from 'vue';
 
 const props = defineProps({
   nodes: {

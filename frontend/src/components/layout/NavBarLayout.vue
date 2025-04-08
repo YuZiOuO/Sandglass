@@ -9,8 +9,8 @@
     </n-gi>
     <n-gi :offset="1">
       <n-flex justify="center" align="center" style="width: 100%; height: 100%">
-        <n-dropdown :disabled="!props.login" :options="dropdownOptions">
-          <n-button v-if="props.login" tertiary type="primary">
+        <n-dropdown :disabled="!store.loginStatus" :options="dropdownOptions" @select="handleDropdownSelect">
+          <n-button v-if="store.loginStatus" tertiary type="primary">
             我的
           </n-button>
           <RouterLink v-else to="/login">
@@ -26,14 +26,35 @@
 
 <script setup lang="ts">
 import { h } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { renderIcon } from '@/util';
-import { NButton, NGrid, NGi, NIcon, NMenu, type MenuOption, NDropdown, NFlex } from 'naive-ui';
+import { NButton, NGrid, NGi, NIcon, NMenu, type MenuOption, NDropdown, NFlex, useMessage } from 'naive-ui';
 import {
   Pencil as EditIcon,
   LogOutOutline as LogoutIcon,
   PersonCircleOutline as UserIcon
 } from '@vicons/ionicons5'
+import { useLoginStatus } from '@/stores/login_status';
+import { logout } from '@/api/user_api';
+
+const message = useMessage()
+const router = useRouter()
+const store = useLoginStatus()
+
+function handleDropdownSelect(key: string) {
+  if (key === "logout") {
+    logout((res) => {
+      if (res === null) {
+        message.error("注销失败")
+      } else {
+        if (res.status === 204) {
+          store.reverseLoginStatus()
+          router.push('/')
+        }
+      }
+    })
+  }
+}
 
 const menuOptions: MenuOption[] = [
   {
@@ -68,11 +89,4 @@ const dropdownOptions = [
     icon: renderIcon(LogoutIcon)
   }
 ]
-
-const props = defineProps({
-  login: {
-    type: Boolean,
-    required: true,
-  }
-})
 </script>

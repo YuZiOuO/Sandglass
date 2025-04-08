@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui';
-import { login } from '@/api/user_api.ts'
 import { ref } from 'vue';
 import { useLoginStatus } from '@/stores/login_status';
 import router from '@/router';
+import { login } from '@/api/user_api';
 
 const message = useMessage()
 
@@ -42,10 +42,10 @@ const pwd = ref("")
 const login_loading = ref(false)
 const signup_loading = ref(false)
 
-const { status, reverseStatus } = useLoginStatus()
+const store = useLoginStatus()
 
 function trigger_login() {
-  if (status) {
+  if (store.loginStatus) {
     message.error('你已登录，将跳转到首页...')
     router.push('/')
   } else {
@@ -53,13 +53,12 @@ function trigger_login() {
     login({
       email: email.value,
       pwd: pwd.value
-    }).then(
-      () => {
-        reverseStatus()
-        message.info('登录成功')
-        router.push('/')
-      }
-    )
+    }, () => {
+      store.reverseLoginStatus()
+      message.info('登录成功')
+      router.push('/')
+    })
+    login_loading.value = false
   }
 }
 

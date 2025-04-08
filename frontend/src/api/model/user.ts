@@ -1,11 +1,13 @@
-export interface UserAuth {
+interface UserAuth {
   email: string
   pwd: string
 }
 
-export interface UserProfile {
+interface UserProfile {
   nickname: string
   avatarUrl: string
 }
 
-export interface User extends UserAuth, UserProfile {}
+interface User extends UserAuth, UserProfile {}
+
+export type { User, UserAuth, UserProfile }
