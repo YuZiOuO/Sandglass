@@ -1,20 +1,26 @@
 import type { Attachment } from './atmt'
 
-// 这个Node好像和JS的内置Node撞名了
-interface Node {
-  id: string
-
+interface minimumNode {
   name: string
   timestamp: number
-  finished: boolean
+}
 
+interface optionalNode {
+  finished: boolean
   description: string | undefined
   url: string | undefined
   attachment: Attachment[]
 }
 
+interface controlledNode {
+  id: string
+}
+
+// 这个Node和JS的内置Node撞名了，需要手动导入才能在脚本中使用
+interface Node extends minimumNode, optionalNode, controlledNode {}
+
 interface Task extends Node {
   start_timestamp: number | undefined
 }
 
-export type { Node, Task }
+export type { minimumNode, optionalNode, controlledNode, Node, Task }

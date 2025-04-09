@@ -70,7 +70,7 @@ const props = defineProps({
     required: true
   },
   type: {
-    type: Object as PropType<'all' | 'unfinished'>,
+    type: String as PropType<'all' | 'unfinished'>,
     require: true
   }
 })

@@ -7,20 +7,26 @@
       </n-button>
     </template>
   </n-empty>
-  <n-drawer v-model:show="show_create_drawer" :width="502">
-    <n-drawer-content v-if="show_create_drawer" title="创建项目" closable>
-      <ProjectCreateModule @created="() => { update(); show_create_drawer = !show_create_drawer }" />
-    </n-drawer-content>
-  </n-drawer>
+
+  <n-float-button v-if="projs.length" :right="60" :bottom="60" type="primary" position="fixed" menu-trigger="click"
+    @update:show-menu="() => show_create_drawer = true" :show-menu="false">
+    <n-icon :size="30">
+      <AddOutline />
+    </n-icon>
+  </n-float-button>
+
+  <ProjectCreateModule v-model:show="show_create_drawer"
+    @created="() => { update(); show_create_drawer = !show_create_drawer }" />
 </template>
 
 <script setup lang="ts">
 import { parseProject, type Project, type ProjectBSON } from '@/api/model/proj';
 import ProjectListModule from '@/components/module/project-list/ProjectListModule.vue';
 import { computed, ref } from 'vue';
-import { NEmpty, NButton, NDrawer, NDrawerContent } from 'naive-ui';
+import { NEmpty, NButton, NFloatButton, NIcon } from 'naive-ui';
 import ProjectCreateModule from '@/components/module/ProjectCreateModule.vue';
 import { get_projs } from '@/api/proj_api';
+import { AddOutline } from '@vicons/ionicons5'
 
 const projs = ref<Project[]>([])
 const length = computed(() => projs.value.length)

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 import { message } from '@/ui_api'
 
@@ -17,8 +17,8 @@ export function api(useParams: boolean = false) {
 }
 
 //辅助函数，通过ui通知api错误.
-export function notifyApiError(err: Error) {
-  message.error('API请求失败。通过F12打开控制台来了解详情。')
+export function notifyApiError(err: AxiosError) {
+  message.error('API请求失败:' + err.message + '.打开控制台了解更多.')
   console.log(err)
   return null
 }

@@ -1,5 +1,11 @@
-interface Attachment {
-  id: string
+interface minimumAttachment {
   name: string
 }
-export type { Attachment }
+
+interface controlledAttachment {
+  id: string
+}
+
+interface Attachment extends minimumAttachment, controlledAttachment {}
+
+export type { minimumAttachment, controlledAttachment, Attachment }
