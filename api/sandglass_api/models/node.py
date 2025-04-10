@@ -16,7 +16,7 @@ class Node(me.Document):
     timestamp = me.DateTimeField(required=True)
     finished = me.BooleanField(default=False)
     start_timestamp = me.DateTimeField()  # if a node has a start timestamp, it represents a task
-    attachment = me.EmbeddedDocumentListField(Attachment)
+    attachment = me.ListField(me.ReferenceField(Attachment))
     description = me.StringField()
     url = me.URLField()
 

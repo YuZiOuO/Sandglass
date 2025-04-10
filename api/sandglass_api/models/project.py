@@ -20,7 +20,7 @@ class Project(me.Document):
     start_timestamp = me.DateTimeField()
     end_timestamp = me.DateTimeField()
     nodes = me.ListField(ReferenceField(Node))
-    attachments = me.EmbeddedDocumentListField(Attachment)
+    attachments = me.ListField(ReferenceField(Attachment))
 
     def clean(self):
         super().clean()

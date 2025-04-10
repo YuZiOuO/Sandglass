@@ -39,4 +39,4 @@ def logout():
     """
     response = jsonify("Successfully logged out.")
     unset_access_cookies(response)
-    return response
+    return response, 204

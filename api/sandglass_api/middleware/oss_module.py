@@ -1,5 +1,5 @@
 import oss2
-from oss2 import StaticCredentialsProvider
+from oss2 import StaticCredentialsProvider, Bucket
 from oss2.exceptions import NoSuchBucket
 
 from sandglass_api.config import OSS_ACCESS_KEY_ID, OSS_ACCESS_KEY_SECRET, OSS_REGION, OSS_BUCKET_NAME, OSS_ENDPOINT
@@ -18,3 +18,9 @@ def init_oss():
         bucket.create_bucket()
 
     return bucket
+
+
+def get_bucket() -> Bucket:
+    bkt = init_oss()
+    while True:
+        yield bkt
