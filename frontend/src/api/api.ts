@@ -1,15 +1,18 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, type CreateAxiosDefaults } from 'axios'
 
-import { message } from '@/ui_api'
+import { message } from '@/api/ui_api'
 
-axios.defaults.baseURL = 'http://127.0.0.1:5173/api'
-axios.defaults.timeout = 10000
-axios.defaults.xsrfHeaderName = 'X-CSRF-TOKEN'
-axios.defaults.xsrfCookieName = 'csrf_access_token'
-axios.defaults.responseEncoding = 'utf-8'
+const defaultConfig: CreateAxiosDefaults = {
+  baseURL: 'http://127.0.0.1:5173/api',
+  timeout: 10000,
+  xsrfHeaderName: 'X-CSRF-TOKEN',
+  xsrfCookieName: 'csrf_access_token',
+  responseEncoding: 'utf-8',
+}
 
 export function api(useParams: boolean = false) {
   return axios.create({
+    ...defaultConfig,
     headers: useParams
       ? { 'Content-Type': 'application/x-www-form-urlencoded' }
       : { 'Content-Type': 'application/json' },

@@ -2,7 +2,7 @@
   <n-card>
     <n-thing>
       <template #header-extra>
-        <n-button circle size="small">
+        <n-button @click="requestAuthorization" circle size="small">
           <template #icon>
             <LogoGithub />
           </template>
@@ -20,6 +20,7 @@ import { CalendarHeatmap, type Value } from 'vue3-calendar-heatmap'
 import { NCard, NThing, NButton } from 'naive-ui';
 
 import { LogoGithub } from '@vicons/ionicons5'
+import { requestAuthorization } from '@/api/github_api';
 
 const props = defineProps({
   values: {
