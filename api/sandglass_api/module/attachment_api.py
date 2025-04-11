@@ -1,8 +1,7 @@
 import flask
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
 from mongoengine import ValidationError
 
-from sandglass_api.config import OSS_SIGNATURE_EXPIRE_TIME
 from sandglass_api.middleware.oss_module import get_bucket
 from sandglass_api.models.attachment import Attachment
 from sandglass_api.module.project_api import abstract_get_proj_by_id
@@ -26,7 +25,7 @@ def get_download_sign_url(atmt_id: str):
     atmt, code = abstract_get_atmt_by_id(atmt_id)
     if code != 200:
         return atmt, code
-    return get_bucket().sign_url('GET', str(atmt.id), OSS_SIGNATURE_EXPIRE_TIME)
+    return get_bucket().sign_url('GET', str(atmt.id), current_app.config['OSS_SIGNATURE_EXPIRE_TIME'])
 
 
 @attachment_api.get('/<string:proj_id>/atmt')

@@ -51,3 +51,8 @@ def signup():
         user = User(email=requested_email, pwd_salt=salt, pwd=salting(requested_pwd, salt.hex))
         user.save()
     return "Registration confirmation sent.", 202
+
+
+@user_api.get('/user/<string:user_id>/github/req_state')
+def get_github_authorization():
+    pass

@@ -1,10 +1,11 @@
 import mongoengine as me
+from flask import Flask
 
 from sandglass_api.config import ALL_DOCUMENTED_TYPE
 
 
-def connect_to(db_uri: str, db_name):
-    me.connect(db_name, host=db_uri)
+def initialize_db(app: Flask):
+    me.connect(app.config["DB_DATABASE_NAME"], host=app.config["DB_URI"])
 
 # WARNING:THIS WILL DROP **ALL** COLLECTIONS
 # DO NOT USE IN PRODUCTION ENV

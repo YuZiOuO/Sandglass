@@ -1,10 +1,9 @@
 from datetime import timedelta
 
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, current_app
 from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies
 from mongoengine import QuerySet
 
-from sandglass_api.config import JWT_EXPIRE_TIME, JWT_INVALIDATE_FRESHNESS_FACTOR
 from sandglass_api.models.user import User
 from sandglass_api.util import salting
 
@@ -21,11 +20,16 @@ def login():
 
     if (user is not None
             and user.pwd == salting(request.args['pwd'], user.pwd_salt.hex)):
-        access_token = create_access_token(identity=user,
-                                           fresh=timedelta(seconds=JWT_EXPIRE_TIME * JWT_INVALIDATE_FRESHNESS_FACTOR),
-                                           expires_delta=timedelta(seconds=JWT_EXPIRE_TIME))
+        access_token = create_access_token(
+            identity=user,
+            fresh=timedelta(
+                seconds=current_app.config['JWT_EXPIRE_TIME']
+                        * current_app.config['JWT_INVALIDATE_FRESHNESS_FACTOR']
+            ),
+            expires_delta=timedelta(seconds=current_app.config['JWT_EXPIRE_TIME'])
+        )
         res = jsonify(access_token=access_token, user_id=str(user.id))
-        set_access_cookies(res, access_token, max_age=JWT_EXPIRE_TIME)
+        set_access_cookies(res, access_token, max_age=current_app.config['JWT_EXPIRE_TIME'])
         # TODO: 缓存控制
         return res
     else:

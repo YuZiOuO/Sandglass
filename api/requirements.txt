@@ -3,3 +3,4 @@ flask_jwt_extended
 
 oss2
 mongoengine
+dotenv

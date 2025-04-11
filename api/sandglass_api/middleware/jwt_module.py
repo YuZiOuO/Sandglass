@@ -3,13 +3,11 @@ from datetime import datetime
 from flask import Flask
 from flask_jwt_extended import JWTManager, get_jwt, create_access_token, current_user, set_access_cookies
 
-from sandglass_api.config import JWT_EXPIRE_TIME, JWT_REFRESH_FACTOR
 from sandglass_api.models.user import User
 
 
 def register_jwt_module_to(app: Flask):
     jwt = JWTManager(app)
-    app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies"]
 
     # register callback func to create jwt from user obj.
     @jwt.user_identity_loader
@@ -28,7 +26,7 @@ def register_jwt_module_to(app: Flask):
     def refresh_jwt(response):
         try:
             exp_timestamp = get_jwt()["exp"]
-            target = exp_timestamp - JWT_EXPIRE_TIME * (1 - JWT_REFRESH_FACTOR)
+            target = exp_timestamp - app.config["JWT_EXPIRE_TIME"] * (1 - app.config["JWT_REFRESH_FACTOR"])
             if datetime.now().timestamp() > target:
                 access_token = create_access_token(identity=current_user)
                 set_access_cookies(response, access_token)
