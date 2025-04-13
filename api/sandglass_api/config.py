@@ -12,7 +12,6 @@ ALL_DOCUMENTED_TYPE = [User, Project]
 
 ENV_FILE = '.env'
 
-
 def generate_secret_key():
     """
     Generate a random secret key and save it to the .env file if it doesn't exist.

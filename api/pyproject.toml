@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sandglass-api"
+version = "0.0.0"
+description = "RESTful API for Sandglass"
+authors = [
+    { name = "kanata", email = "cyz050312@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+dependencies = [
+    "flask",
+    "flask-jwt-extended",
+    "oss2",
+    "mongoengine",
+    "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "flake8"]
+
+[project.scripts]
+sandglass.dev = "sandglass_api.app:main"
