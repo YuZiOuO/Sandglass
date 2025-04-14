@@ -25,7 +25,8 @@ def generate_secret_key():
         set_key(ENV_FILE, "SG_SECRET_KEY", secret_key)
         print("⚠️ 生成并保存了新的 SECRET_KEY")
     else:
-        print("✅ 已存在 SECRET_KEY")
+        # print("✅ 已存在 SECRET_KEY")
+        return
 
 
 class Config(object):
