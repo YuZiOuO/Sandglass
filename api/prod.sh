@@ -1,1 +1,1 @@
-python3 -m gunicorn -w 4 'sandglass_api.app:create_app()'
+python3 -m gunicorn -b 0.0.0.0:8000 -w 4 'sandglass_api.app:create_app()'

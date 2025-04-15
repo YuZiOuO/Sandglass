@@ -49,7 +49,7 @@ def create_attachment_by_proj(proj_id: str):
         atmt = Attachment.from_json(request.json)
         atmt.save()
         p.attachments.append(atmt)
-        return get_bucket().sign_url('POST', str(atmt.id), OSS_SIGNATURE_EXPIRE_TIME)
+        return get_bucket().sign_url('POST', str(atmt.id), current_app.config['OSS_SIGNATURE_EXPIRE_TIME'])
 
     return create_attachment()
 

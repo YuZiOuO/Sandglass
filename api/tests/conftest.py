@@ -7,14 +7,16 @@ from werkzeug.datastructures import Authorization
 
 from sandglass_api.app import create_app
 from sandglass_api.middleware.db_module import RESET_DATABASE
-from tests.config import TEST_DB_URI, TEST_DB_DATABASE_NAME
+from tests.config import TEST_DB_URI
 from tests.util import random_timestamp_ms
 
 
 @pytest.fixture()
 def app():
-    app = create_app(TEST_DB_URI, TEST_DB_DATABASE_NAME)
+    app = create_app()
     app.config.update({
+        "SG_DB_URI": TEST_DB_URI,
+        "OSS_ACCESS_KEY_ID": "",
         "TESTING": True,
     })
 

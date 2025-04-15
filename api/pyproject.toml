@@ -19,7 +19,9 @@ dependencies = [
     "oss2",
     "mongoengine",
     "python-dotenv",
+    # for production
     "gunicorn",
+    # for gunicorn
     "cryptography < 42.0.0",
     "PyOpenSSL >= 23.2.0"
 ]
