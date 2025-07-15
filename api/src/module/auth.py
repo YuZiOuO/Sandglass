@@ -1,13 +1,15 @@
 from authx import AuthXConfig, AuthX
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 from module.user import UserInDB
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/token')
 
 config = AuthXConfig()
 config.JWT_ALGORITHM = "HS256"
 config.JWT_SECRET_KEY = "<SECRET_KEY_HERE>"
-Auth = AuthX(config = config)
+Auth = AuthX(config = config,model = UserInDB)
 
 @Auth.set_subject_getter
 async def get_current_user(uid:str):

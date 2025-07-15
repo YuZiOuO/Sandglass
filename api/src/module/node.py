@@ -14,3 +14,4 @@ class Node(Document):
     attachment:list[Link[Attachment]]
     description:str
     url:HttpUrl
+
