@@ -1,1 +1,2 @@
-python3 -m sandglass_api.app
+cd api/src
+fastapi dev main.py

@@ -15,6 +15,6 @@ async def signup(UserInfo: UserIn):
     user = await UserBase.find_one(UserBase.email == UserInfo.email)
     if user is None:
         # TODO:邮件验证
-        user = UserInDB(**UserInfo,pwd=get_pwd_hash(UserInfo.pwd))
+        user = UserInDB(**UserInfo.dict(),pwd=get_pwd_hash(UserInfo.pwd))
         user.save()
     return "Registration confirmation sent."
