@@ -1,12 +1,12 @@
 from datetime import datetime
 
 from beanie import Document, Link
-from pydantic import HttpUrl
+from pydantic import HttpUrl, BaseModel
 
 from module.attachments import Attachment
 
 
-class Node(Document):
+class NodeDTO(BaseModel):
     name:str
     timestamp:datetime
     finished:bool
@@ -14,4 +14,7 @@ class Node(Document):
     attachment:list[Link[Attachment]]
     description:str
     url:HttpUrl
+
+class Node(Document,NodeDTO):
+    pass
 

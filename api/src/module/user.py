@@ -1,12 +1,12 @@
 from datetime import datetime
 
 from beanie import Document
-from pydantic import EmailStr, HttpUrl, SecretBytes
+from pydantic import EmailStr, HttpUrl, BaseModel
 
 from util import verify_pwd
 
 
-class UserBase(Document):
+class UserBaseDTO(BaseModel):
     email:EmailStr
     signup_timestamp:datetime
     administrator:bool
@@ -14,8 +14,8 @@ class UserBase(Document):
     nickname:str
     avatar_url:HttpUrl
 
-class UserInDB(UserBase):
-    pwd: SecretBytes
+class User(Document, UserBaseDTO):
+    pwd: str
 
     @classmethod
     async def authenticate(cls, email: EmailStr, pwd: str):
@@ -24,9 +24,9 @@ class UserInDB(UserBase):
             return user
         return None
 
-class UserIn(UserBase):
+class UserInDTO(UserBaseDTO):
     pwd: str
 
-class UserOut(UserBase):
+class UserOutDTO(UserBaseDTO):
     pass
 

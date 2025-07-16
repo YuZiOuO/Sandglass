@@ -1,7 +1,9 @@
+from beanie import WriteRules
 from fastapi import APIRouter, Depends
 
+from module import Project
 from module.auth import oauth2_scheme, Auth
-from module.node import Node
+from module.node import NodeDTO, Node
 
 router = APIRouter()
 
@@ -11,19 +13,18 @@ async def get_node_by_id(node_id:str):
 
 @router.get('/proj/{proj_id}/node',dependencies=[Depends(oauth2_scheme),Auth.ACCESS_REQUIRED])
 async def get_node_by_proj(proj_id:str):
-    return await Node.find(Node.proj_id == proj_id).to_list()
+    return await Node.find(NodeDTO.proj_id == proj_id).to_list()
 
 @router.post('/proj/{proj_id}/node',dependencies=[Depends(oauth2_scheme),Auth.ACCESS_REQUIRED])
-async def create_node(proj_id:str, node:Node):
+async def create_node(proj_id:str, node:NodeDTO):
     # TODO: Transaction management
-    node.proj_id = proj_id
     proj = await Project.get(proj_id)
-    await node.insert()
-    proj.nodes.append(node)
-    await proj.save()
+    node_to_db = Node(**node.model_dump(),proj_id=proj_id)
+    proj.nodes.append(node_to_db)
+    await proj.save(link_rule = WriteRules.WRITE)
     return node
 
 @router.delete('/node/{node_id}',dependencies=[Depends(oauth2_scheme),Auth.ACCESS_REQUIRED])
 async def delete_node(node_id: str):
-    node = await Node.get(node_id)
+    node = await NodeDTO.get(node_id)
     return await node.delete()

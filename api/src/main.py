@@ -6,6 +6,8 @@ from db import db_lifespan
 from module import auth
 from route import user, project, node
 
+# TODO：migrate to SQLModel
+
 load_dotenv()
 
 app = FastAPI(lifespan=db_lifespan,debug=True)
