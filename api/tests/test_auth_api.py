@@ -1,11 +1,9 @@
 import re
 
 import jwt
-from werkzeug.datastructures import Authorization
-
 from sandglass_api.app import create_app
-from tests.conftest import client
 from tests.util import now
+from werkzeug.datastructures import Authorization
 
 # Constants
 current_app = create_app()
@@ -15,9 +13,10 @@ JWT_REFRESH_FACTOR = current_app.config['JWT_REFRESH_FACTOR']
 JWT_INVALIDATE_FRESHNESS_FACTOR = current_app.config['JWT_INVALIDATE_FRESHNESS_FACTOR']
 
 class TestAuthApi:
-    def test_login(self, client_auth):
-        assert client_auth.get('/').text == "Hello,world!"
-        assert client_auth is not None
+    def test_login(self, client, auth):
+        res = client.get('/user/me', auth=auth)
+        assert res.status_code == 200
+        print(res.text)
 
     def test_fresh_token(self, token):
         secret_key = SECRET_KEY

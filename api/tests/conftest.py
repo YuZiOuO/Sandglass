@@ -1,39 +1,25 @@
 from random import randint
-from urllib.parse import urlencode
 
 import pytest
-from flask.testing import EnvironBuilder
-from werkzeug.datastructures import Authorization
+from beanie import init_beanie
+from fastapi.testclient import TestClient
+from mongomock_motor import AsyncMongoMockClient
 
-from sandglass_api.app import create_app
-from sandglass_api.middleware.db_module import RESET_DATABASE
-from tests.config import TEST_DB_URI
-from tests.util import random_timestamp_ms
-
-
-@pytest.fixture()
-def app():
-    app = create_app()
-    app.config.update({
-        "SG_DB_URI": TEST_DB_URI,
-        "OSS_ACCESS_KEY_ID": "",
-        "TESTING": True,
-    })
-
-    RESET_DATABASE(app.config)  # Reset before test
-    yield app
-    RESET_DATABASE(app.config)  # Reset after tests
+import db
+import module
+from main import app
+from .util import random_timestamp_ms, OAuthScheme
 
 
 @pytest.fixture()
-def client(app):
-    return app.test_client()
+def client(monkeypatch):
+    async def mock_init_db():
+        mock_cli = AsyncMongoMockClient()
+        await init_beanie(mock_cli.get_default_database(), module.document_types)
 
-
-@pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()
-
+    monkeypatch.setattr(db, 'init_db', mock_init_db)
+    client = TestClient(app=app)
+    return client
 
 @pytest.fixture()
 def _signup(client):
@@ -42,41 +28,19 @@ def _signup(client):
         "email": "test@example.com",
         "pwd": "test_pwd",
     })
-    assert res.status == '202 ACCEPTED'
-
-
-@pytest.fixture()
-def token(_signup, client) -> str:
-    """
-    login to the test account and offers a token.
-    """
-    # No Teardown here because the token can not be revoked.
-    params = urlencode({
-        "email": "test@example.com",
-        "pwd": "test_pwd",
-    })
-    res = client.get('/token?' + params)
-    assert res.status == '200 OK'
-    return res.json['access_token']
-
+    assert res.status_code == 202
 
 @pytest.fixture()
-def client_auth(app, token):
-    """
-    Offers a authorized client.
-    """
-    # No Teardown here because the token can not be revoked.
-    cli = app.test_client()
-    builder = EnvironBuilder(app, auth=Authorization("Bearer", token=token))
-    cli.environ_base = builder.get_environ()
-    return cli
+def auth(_signup):
+    auth_scheme = OAuthScheme('test@example.com', 'test_pwd', '/token', '/token')
+    return auth_scheme
 
 @pytest.fixture()
-def proj(client_auth):
+def proj(client, auth):
     """
     Create a project with no nodes, or attachments.
     """
-    create_res = client_auth.post('/proj', json={
+    create_res = client.post('/proj', data={
         "name": "Test Project",
         "url": "https://example.com",
         "description": "This is a test project.",
@@ -84,16 +48,16 @@ def proj(client_auth):
         "end_timestamp": random_timestamp_ms(),
         "nodes": [],
         "attachments": []
-    })
-    assert str(create_res.status) == "201 CREATED"
+    }, auth=auth)
+    assert create_res.status_code == 201
 
     yield create_res.text
 
-    deleted_res = client_auth.delete("/proj/" + create_res.text)
-    assert deleted_res.status == "204 NO CONTENT"
+    deleted_res = client.delete("/proj/" + create_res.text)
+    assert deleted_res.status_code == 204
 
 @pytest.fixture()
-def node(proj, client_auth):
+def node(proj, client, auth):
     """
     Create a fixture containing a proj with random nodes.
     :return: a tuple of (proj_id,node_id:List)
@@ -101,16 +65,16 @@ def node(proj, client_auth):
     # Randomly create nodes
     nodes = []
     for i in range(randint(5, 10)):
-        res = client_auth.post(f'/proj/{proj}/node', json={
+        res = client.post(f'/proj/{proj}/node', data={
             'name': f'test_node_{i}',
             'timestamp': random_timestamp_ms(),
-        })
-        assert res.status == "201 CREATED"
+        }, auth=auth)
+        assert res.status_code == 201
         nodes.append(res.text)
 
     yield proj, nodes
 
     # Teardown,delete all nodes created
-    delete_result = list(map(lambda n: client_auth.delete('/node/' + n).status, nodes))
+    delete_result = list(map(lambda n: client.delete('/node/' + n).status_code, nodes))
     for r in delete_result:
-        assert r == '204 NO CONTENT'
+        assert r == 204

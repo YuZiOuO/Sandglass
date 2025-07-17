@@ -10,24 +10,19 @@ authors = [
     { name = "kanata", email = "cyz050312@gmail.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+# requires-python = ">=3.8"
 
 dependencies = [
-    "pip>=25.0.1",
-    "flask",
-    "flask-jwt-extended",
-    "oss2",
-    "mongoengine",
     "python-dotenv",
-    # for production
-    "gunicorn",
-    # for gunicorn
-    "cryptography < 42.0.0",
-    "PyOpenSSL >= 23.2.0"
+    "fastapi[stardard]",
+    "motor",
+    "beanie",
+    "authx",
+    "passlib"
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "flake8"]
+dev = ["pytest", "flake8", "mongomock"]
 
 # [project.scripts]
 # sandglass.dev = "sandglass_api.app:main"
