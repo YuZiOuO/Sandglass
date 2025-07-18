@@ -7,8 +7,9 @@ from module.node import NodeDTO, Node
 
 router = APIRouter()
 
-@router.get('/node/{node_id}',dependencies=[Depends(oauth2_scheme),Auth.ACCESS_REQUIRED])
-async def get_node_by_id(node_id:str):
+
+@router.get('/node/{node_id}', dependencies=[Depends(oauth2_scheme)])
+async def get_node_by_id(node_id: str, token=Auth.ACCESS_REQUIRED):
     return await Node.get(node_id)
 
 @router.get('/proj/{proj_id}/node',dependencies=[Depends(oauth2_scheme),Auth.ACCESS_REQUIRED])

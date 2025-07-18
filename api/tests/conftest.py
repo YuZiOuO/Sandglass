@@ -22,7 +22,7 @@ def client(monkeypatch):
     return client
 
 @pytest.fixture()
-def _signup(client):
+def signup(client):
     # No Teardown here because the database will be reset after the test.
     res = client.post("/user", json={
         "email": "test@example.com",
@@ -31,7 +31,7 @@ def _signup(client):
     assert res.status_code == 202
 
 @pytest.fixture()
-def auth(_signup):
+def auth(signup):
     auth_scheme = OAuthScheme('test@example.com', 'test_pwd', '/token', '/token')
     return auth_scheme
 
