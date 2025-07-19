@@ -1,54 +1,59 @@
-import re
+from starlette.testclient import TestClient
 
-import jwt
-from sandglass_api.app import create_app
-from tests.util import now
-from werkzeug.datastructures import Authorization
 
-# Constants
-current_app = create_app()
-SECRET_KEY = current_app.config['SECRET_KEY']
-JWT_EXPIRE_TIME = current_app.config['JWT_EXPIRE_TIME']
-JWT_REFRESH_FACTOR = current_app.config['JWT_REFRESH_FACTOR']
-JWT_INVALIDATE_FRESHNESS_FACTOR = current_app.config['JWT_INVALIDATE_FRESHNESS_FACTOR']
+def build_login_request(client: TestClient):
+    from api.tests.conftest import USER
+    return client.build_request(
+        "POST",
+        '/token',
+        data={
+            "username": USER["email"],
+            "password": USER["pwd"]
+        },
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    )
+
+
+def build_logout_request(client: TestClient):
+    return client.build_request(
+        "DELETE",
+        '/token'
+    )
 
 class TestAuthApi:
-    def test_login(self, client, auth):
-        res = client.get('/user/me', auth=auth)
+    def test_login(self, signup):
+        req = build_login_request(signup)
+        res = signup.send(req)
         assert res.status_code == 200
-        print(res.text)
 
-    def test_fresh_token(self, token):
-        secret_key = SECRET_KEY
-        decoded_jwt = jwt.decode(token, secret_key, algorithms=['HS256'])
-        fresh_until = decoded_jwt['fresh']
-        assert now() < fresh_until
-        assert now() + JWT_EXPIRE_TIME * JWT_INVALIDATE_FRESHNESS_FACTOR > fresh_until
-
-    def test_invalidate_freshness(self, token):
-        secret_key = SECRET_KEY
-        decoded_jwt = jwt.decode(token, secret_key, algorithms=['HS256'])
-        valid_until = decoded_jwt['fresh']
-        assert now() < valid_until
-        assert now() + JWT_EXPIRE_TIME > valid_until
-
-    def test_refresh_token(self, token, client):
-        secret_key = SECRET_KEY
-        decoded_jwt = jwt.decode(token, secret_key, algorithms=['HS256'])
-        decoded_jwt['exp'] = now() + (JWT_EXPIRE_TIME * (1 - JWT_REFRESH_FACTOR))
-        res = client.get('/', auth=Authorization("Bearer", token=jwt.encode(decoded_jwt, secret_key)))
-        set_cookie_items = res.headers.get_all('Set-Cookie')
-
-        match_token = re.search(r"access_token_cookie=([^;]+)", str(set_cookie_items))
-        match_csrf = re.search(r"csrf_access_token=([^;]+)", str(set_cookie_items))
-        assert match_token
-        assert match_csrf
-        assert match_token.group(1) != token
-        assert match_csrf.group(1) != decoded_jwt['csrf']
-
-    def test_logout(self, client_auth):
-        res = client_auth.delete('/token')
-        set_cookie_items = str(res.headers)
+    def test_refresh_token(self, auth):
+        # Get a new refresh token
+        req = build_login_request(auth)
+        res = auth.send(req)
         assert res.status_code == 200
-        assert "Set-Cookie: access_token_cookie=;" in str(set_cookie_items)
-        assert "Set-Cookie: csrf_access_token=;" in str(set_cookie_items)
+        assert "refreshToken" in res.headers
+
+        # Test refreshing token
+        refresh_token = res.json()["refresh_token"]
+        refresh_res = res.post('/token/refresh', json={"refresh_token": refresh_token})
+        assert refresh_res.status_code == 200
+        assert "access_token" in refresh_res.json()
+        assert "token_type" in refresh_res.json()
+
+        # Verify that the refresh token can not be used again
+        repeat_res = res.post('/token/refresh', json={"refresh_token": refresh_token})
+        assert repeat_res.status_code != 200
+
+        # Verify that new access token is valid
+        access_token = refresh_token.json()["access_token"]
+        valid_res = auth.get('/user/me', headers={"Authorization": f"Bearer {access_token}"})
+        assert valid_res.status_code == 200
+
+    # def test_logout(self, client_auth):
+    #     res = client_auth.delete('/token')
+    #     set_cookie_items = str(res.headers)
+    #     assert res.status_code == 200
+    #     assert "Set-Cookie: access_token_cookie=;" in str(set_cookie_items)
+    #     assert "Set-Cookie: csrf_access_token=;" in str(set_cookie_items)

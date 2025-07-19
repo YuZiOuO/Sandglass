@@ -8,32 +8,54 @@ from mongomock_motor import AsyncMongoMockClient
 import db
 import module
 from main import app
-from .util import random_timestamp_ms, OAuthScheme
+from .test_auth_api import build_login_request, build_logout_request
+from .util import random_timestamp_ms
 
+USER = {
+    "email":            "user@example.com",
+    "signup_timestamp": "2025-07-18T09:39:10.871Z",
+    "administrator":    True,
+    "nickname":         "string",
+    "avatar_url":       "https://example.com/",
+    "pwd":              "string"
+}
+DB_NAME = "test_db"
 
 @pytest.fixture()
 def client(monkeypatch):
     async def mock_init_db():
         mock_cli = AsyncMongoMockClient()
-        await init_beanie(mock_cli.get_default_database(), module.document_types)
+        await init_beanie(mock_cli.get_database(DB_NAME), document_models=module.document_types)
 
     monkeypatch.setattr(db, 'init_db', mock_init_db)
-    client = TestClient(app=app)
-    return client
+
+    with TestClient(app) as test_client:
+        # this will trigger the startup of app, initializing the database
+        yield test_client
 
 @pytest.fixture()
 def signup(client):
-    # No Teardown here because the database will be reset after the test.
-    res = client.post("/user", json={
-        "email": "test@example.com",
-        "pwd": "test_pwd",
-    })
-    assert res.status_code == 202
+    user = USER
+    res = client.post("/user", json=user)
+    assert res.status_code == 200
+    return client
+
 
 @pytest.fixture()
 def auth(signup):
-    auth_scheme = OAuthScheme('test@example.com', 'test_pwd', '/token', '/token')
-    return auth_scheme
+    req = build_login_request(signup)
+    res = signup.send(req)
+    assert res.status_code == 200
+    json = res.json()
+    assert "access_token" in json
+    assert "token_type" in json
+
+    yield signup
+
+    req = build_logout_request(signup)
+    res = signup.send(req)
+    assert res.status_code == 200
+
 
 @pytest.fixture()
 def proj(client, auth):

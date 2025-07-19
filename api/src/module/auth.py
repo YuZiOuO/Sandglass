@@ -26,7 +26,7 @@ class RefreshToken(Document):
 
     # Debug Info
     issued_at: Annotated[datetime, Field(default_factory=datetime.now)]
-    ip_addr: Optional[IPv4Address | IPv6Address] = None
+    ip_addr: Optional[IPv4Address | IPv6Address | str] = None
     user_agent: str
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/token')
