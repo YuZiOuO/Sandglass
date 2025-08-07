@@ -4,9 +4,9 @@ from typing import List
 from beanie import Document, Link
 from pydantic import HttpUrl, BaseModel
 
-from module.attachments import Attachment
-from module.node import Node
-from module.user import User
+from model.attachments_model import Attachment
+from model.node_model import Node
+from model.user_model import User
 
 
 class ProjectBase(BaseModel):

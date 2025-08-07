@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from mongomock_motor import AsyncMongoMockClient
 
 import db
-import module
+import model
 from main import app
 from .test_auth_api import build_login_request, build_logout_request
 from .util import random_timestamp_ms
@@ -25,7 +25,7 @@ DB_NAME = "test_db"
 def client(monkeypatch):
     async def mock_init_db():
         mock_cli = AsyncMongoMockClient()
-        await init_beanie(mock_cli.get_database(DB_NAME), document_models=module.document_types)
+        await init_beanie(mock_cli.get_database(DB_NAME), document_models=model.document_types)
 
     monkeypatch.setattr(db, 'init_db', mock_init_db)
 

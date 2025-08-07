@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 
-from module.auth import oauth2_scheme, Auth
-from module.user import UserOutDTO, UserInDTO, User
-from util import generate_hash
+from model.user_model import UserOutDTO, UserInDTO, User
+from service.auth_service import oauth2_scheme, Auth
+from service.util import generate_passlib_hash
 
 router = APIRouter()
 
@@ -17,6 +17,6 @@ async def signup(UserInfo: UserInDTO):
     user = await User.find_one(User.email == UserInfo.email)
     if user is None:
         # TODO:邮件验证
-        user = User(**UserInfo.model_dump(exclude={"pwd"}), pwd=generate_hash(UserInfo.pwd))
+        user = User(**UserInfo.model_dump(exclude={"pwd"}), pwd=generate_passlib_hash(UserInfo.pwd))
         await user.save()
     return "Registration confirmation sent."

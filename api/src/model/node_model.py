@@ -3,7 +3,7 @@ from datetime import datetime
 from beanie import Document, Link
 from pydantic import HttpUrl, BaseModel
 
-from module.attachments import Attachment
+from model.attachments_model import Attachment
 
 
 class NodeDTO(BaseModel):
