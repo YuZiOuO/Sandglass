@@ -20,7 +20,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/token')
 config = AuthXConfig()
 config.JWT_ALGORITHM = "HS256"
 config.JWT_SECRET_KEY = "<SECRET_KEY_HERE>"
-Auth = AuthX(config = config, model = User)
+Auth = AuthX(config=config, model=str)
+
+
+@Auth.set_subject_getter
+def get_user_id_from_jwt(uid: str):
+    return uid
 
 
 async def verify_refresh_token(user: User, refresh_token: str) -> Optional[RefreshToken]:
@@ -56,7 +61,3 @@ async def generate_access_token(user: User):
     return Auth.create_access_token(uid=str(user.id))
 
 
-@Auth.set_subject_getter
-async def get_current_user(uid: str):
-    user = await User.get(uid)
-    return user

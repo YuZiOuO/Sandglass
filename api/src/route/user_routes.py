@@ -1,13 +1,20 @@
 from fastapi import APIRouter, Depends
 
 from model.user_model import UserOutDTO, UserInDTO, User
+from route.util import AuthError
 from service.auth_service import oauth2_scheme, Auth
 from service.util import generate_passlib_hash
 
 router = APIRouter()
 
 
-@router.get('/user/me', dependencies=[Depends(oauth2_scheme), Auth.ACCESS_REQUIRED])
+@router.get(
+    '/user/me',
+    dependencies=[Depends(oauth2_scheme), Auth.ACCESS_REQUIRED],
+    responses={
+        401: AuthError
+    }
+)
 async def get_current_user(subject = Auth.CURRENT_SUBJECT):
     user = await subject
     return UserOutDTO(**user.model_dump())
