@@ -9,7 +9,7 @@
           <n-auto-complete @input="handle_email_input" placeholder="邮箱" clearable />
           <n-input @input="handle_pwd_input" type="password" show-password-on="mousedown" placeholder="密码" clearable />
           <n-button @click="trigger_login" :loading="login_loading">登录</n-button>
-          <n-button>注册</n-button>
+          <n-button @click="trigger_signup" :loading="signup_loading">注册</n-button>
         </n-flex>
         <n-divider dashed>
           第三方OAuth
@@ -28,11 +28,11 @@
 </template>
 
 <script setup lang="ts">
+import router from '@/router';
+import { createUser, login } from '@/services/auth';
+import { useUserCredentialStore } from '@/stores/userCredential';
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui';
 import { ref } from 'vue';
-import { useLoginStatus } from '@/stores/login_status';
-import router from '@/router';
-import { login } from '@/api/user_api';
 
 const message = useMessage()
 
@@ -42,24 +42,35 @@ const pwd = ref("")
 const login_loading = ref(false)
 const signup_loading = ref(false)
 
-const store = useLoginStatus()
+const userCredential = useUserCredentialStore()
 
-function trigger_login() {
-  if (store.loginStatus) {
+async function trigger_login() {
+  login(email.value,pwd.value);
+  if (userCredential.isSet()) {
     message.error('你已登录，将跳转到首页...')
     router.push('/')
   } else {
     login_loading.value = true
-    login({
-      email: email.value,
-      pwd: pwd.value
-    }, () => {
-      store.reverseLoginStatus()
+    const loginSuccess = await login(email.value, pwd.value);
+    if(loginSuccess){
       message.info('登录成功')
       router.push('/')
-    })
+    } else {
+      message.error('登录失败')
+    }
     login_loading.value = false
   }
+}
+async function trigger_signup() {
+  signup_loading.value = true
+  const signupSuccess = await createUser(email.value,pwd.value);
+  if(signupSuccess){
+    message.info('注册成功')
+    router.push('/')
+  }else{
+    message.error('注册失败')
+  }
+  signup_loading.value = false;
 }
 
 function handle_email_input(e: string) {
