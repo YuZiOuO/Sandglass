@@ -1,0 +1,13 @@
+{
+  "apphosting": {
+    "backendId": "sandglass-api",
+    "rootDir": "/api/src",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "functions"
+    ]
+  }
+}
