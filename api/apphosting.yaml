@@ -21,7 +21,3 @@ runConfig:
   # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
   # - variable: MY_SECRET
   #   secret: mySecretRef
-
-scripts:
-  buildCommand: echo 'No build command specified, skipping...'
-  runCommand: python3 -m gunicorn -b 0.0.0.0:8000 -w 4 'sandglass_api.app:create_app()'

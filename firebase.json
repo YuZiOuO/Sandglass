@@ -1,7 +1,7 @@
 {
   "apphosting": {
     "backendId": "sandglass-api",
-    "rootDir": "/api/src",
+    "rootDir": "/api",
     "ignore": [
       "node_modules",
       ".git",
