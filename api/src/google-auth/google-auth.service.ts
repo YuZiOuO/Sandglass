@@ -10,16 +10,20 @@ import { Repository } from 'typeorm';
 export class GoogleAuthService {
   constructor(
     private readonly firebaseService: FirebaseService,
-    @InjectRepository(GoogleAuth) private googleAuthRepo: Repository<GoogleAuth>
-  ) { };
+    @InjectRepository(GoogleAuth)
+    private googleAuthRepo: Repository<GoogleAuth>,
+  ) {}
 
   async create(createGoogleAuthDto: CreateGoogleAuthDto) {
-    const {uid,googleRefreshToken} = createGoogleAuthDto;
-    if(await this.googleAuthRepo.exists({where:{uid}})){
+    const { uid, googleRefreshToken } = createGoogleAuthDto;
+    if (await this.googleAuthRepo.exists({ where: { uid } })) {
       return 'Link Already Exists';
     }
 
-    this.googleAuthRepo.create({uid:uid,googleRefreshToken:googleRefreshToken})
+    this.googleAuthRepo.create({
+      uid: uid,
+      googleRefreshToken: googleRefreshToken,
+    });
     return 'This action adds a new googleAuth';
   }
 

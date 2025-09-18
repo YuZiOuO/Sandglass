@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { GoogleAuthService } from './google-auth.service';
 import { CreateGoogleAuthDto } from './dto/create-google-auth.dto';
 import { UpdateGoogleAuthDto } from './dto/update-google-auth.dto';
@@ -23,7 +31,10 @@ export class GoogleAuthController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGoogleAuthDto: UpdateGoogleAuthDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateGoogleAuthDto: UpdateGoogleAuthDto,
+  ) {
     return this.googleAuthService.update(+id, updateGoogleAuthDto);
   }
 

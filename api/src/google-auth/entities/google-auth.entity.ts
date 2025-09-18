@@ -1,9 +1,9 @@
-import { Column, PrimaryColumn } from "typeorm";
+import { Column, PrimaryColumn } from 'typeorm';
 
 export class GoogleAuth {
-    @PrimaryColumn()
-    uid:string
+  @PrimaryColumn()
+  uid: string;
 
-    @Column()
-    googleRefreshToken:string
+  @Column()
+  googleRefreshToken: string;
 }

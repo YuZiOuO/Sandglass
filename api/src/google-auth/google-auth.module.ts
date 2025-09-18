@@ -6,7 +6,7 @@ import { GoogleAuth } from './entities/google-auth.entity';
 import { FirebaseModule } from 'src/firebase/firebase.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([GoogleAuth]),FirebaseModule],
+  imports: [TypeOrmModule.forFeature([GoogleAuth]), FirebaseModule],
   controllers: [GoogleAuthController],
   providers: [GoogleAuthService],
 })
