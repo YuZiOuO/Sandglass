@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGoogleAuthDto } from './dto/create-google-auth.dto';
 import { UpdateGoogleAuthDto } from './dto/update-google-auth.dto';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,8 +13,13 @@ export class GoogleAuthService {
     private googleAuthRepo: Repository<GoogleAuth>,
   ) {}
 
-  async create(createGoogleAuthDto: CreateGoogleAuthDto) {
-    const { uid, googleRefreshToken } = createGoogleAuthDto;
+  /**
+   *
+   * @param uid 假设id有效
+   * @param googleRefreshToken
+   * @returns
+   */
+  async create(uid: string, googleRefreshToken: string) {
     if (await this.googleAuthRepo.exists({ where: { uid } })) {
       return 'Link Already Exists';
     }

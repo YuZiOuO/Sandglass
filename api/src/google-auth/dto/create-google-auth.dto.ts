@@ -1,4 +1,4 @@
 export class CreateGoogleAuthDto {
-  uid: string;
+  accessToken: string;
   googleRefreshToken: string;
 }
