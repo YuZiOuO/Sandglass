@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "pnpm: dev @backround",
+      "type": "shell",
+      "command": "cd web && pnpm run dev",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": {"regexp": ""},
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "VITE",
+            "endsPattern": ".+ready in.+",
+          }
+        }
+      ],
+      "presentation": {
+        // "reveal": "silent",
+        "panel": "dedicated" // 使用专用的终端面板
+      },
+    }
+  ]
+}
