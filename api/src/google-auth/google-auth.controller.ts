@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { GoogleAuthService } from './google-auth.service';
-import { CreateGoogleAuthDto } from './dto/create-google-auth.dto';
-import { UpdateGoogleAuthDto } from './dto/update-google-auth.dto';
 import { FirebaseService } from 'src/firebase/firebase.service';
+import { error } from 'console';
+import { AuthenticationGuard } from 'src/authentication/authentication.guard';
 
 @Controller('google-auth')
 export class GoogleAuthController {
@@ -19,44 +21,32 @@ export class GoogleAuthController {
     private readonly firebaseService: FirebaseService,
   ) {}
 
-  @Post()
-  async create(@Body() createGoogleAuthDto: CreateGoogleAuthDto) {
-    const { accessToken, googleRefreshToken } = createGoogleAuthDto;
-    try {
-      const decodedAccessToken = await this.firebaseService.auth.verifyIdToken(
-        accessToken,
-        true,
-      );
-      await this.googleAuthService.create(
-        decodedAccessToken.uid,
-        googleRefreshToken,
-      );
-    } catch {
-      return 'Error';
-    }
-    return 'OK';
+  @Get('authUrl/:uid')
+  // @UseGuards(AuthenticationGuard) //TODO
+  getAuthUrl(@Param('uid') uid: string) {
+    return this.googleAuthService.getAuthUrl(uid);
   }
 
-  @Get()
-  findAll() {
-    return this.googleAuthService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.googleAuthService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateGoogleAuthDto: UpdateGoogleAuthDto,
+  // Callback
+  @Get('verify')
+  async create(
+    @Query()
+    result: {
+      code: string;
+      error?: string;
+      scope?: string;
+      state: string;
+    },
   ) {
-    return this.googleAuthService.update(+id, updateGoogleAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.googleAuthService.remove(+id);
+    if (result.error || !result.code) {
+      return error;
+    } else {
+      const token = await this.googleAuthService.retriveRefreshToken(
+        result.code,
+      );
+      const r = await this.googleAuthService.create(result.state, token);
+      console.log(r);
+      return;
+    }
   }
 }

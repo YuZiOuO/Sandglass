@@ -1,7 +1,11 @@
-import { Column, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ObjectId, ObjectIdColumn } from 'typeorm';
 
+@Entity()
 export class GoogleAuth {
-  @PrimaryColumn()
+  @ObjectIdColumn()
+  _id: ObjectId;
+
+  @Column({ unique: true })
   uid: string;
 
   @Column()
