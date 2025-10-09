@@ -17,18 +17,5 @@
             },
             "preLaunchTask": "pnpm: dev @backround",
         },
-        {
-            "name": "Launch via PNPM",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api",
-            "runtimeArgs": [
-                "run","start:dev"
-            ],
-            "runtimeExecutable": "pnpm",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node",
-        },
     ]
 }

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GoogleAuthModule } from './google-auth/google-auth.module';
 import { UserService } from './user/user.service';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserService } from './user/user.service';
       inject: [ConfigService],
     }),
     GoogleAuthModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],

@@ -4,7 +4,7 @@
     {
       "label": "pnpm: dev @backround",
       "type": "shell",
-      "command": "cd web && pnpm run dev",
+      "command": "pnpm run dev",
       "isBackground": true,
       "problemMatcher": [
         {
