@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { FirebaseService } from 'src/firebase/firebase.service';
+import { InvalidTokenException } from './authentication.exception';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -18,15 +19,18 @@ export class AuthenticationGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    // try {
-    const decodedIdToken =
-      await this.firebaseService.auth.verifyIdToken(accessToken);
-    // } catch (e) {
-    //   throw e;
-    // }
-
-    req['uid'] = decodedIdToken.uid;
-
-    return true;
+    try {
+      const decodedIdToken = await this.firebaseService.auth.verifyIdToken(
+        accessToken,
+        true,
+      );
+      req['uid'] = decodedIdToken.uid;
+      return true;
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new InvalidTokenException(e);
+      }
+      throw e;
+    }
   }
 }

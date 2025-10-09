@@ -15,4 +15,9 @@ describe('UserService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('exists', () => {
+    it('returns true if uid matches a existing user.', () => {});
+    it('returns false if uid does not match', () => {});
+  });
 });

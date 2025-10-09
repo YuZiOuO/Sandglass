@@ -6,9 +6,9 @@ describe('AuthenticationGuard', () => {
     expect(new AuthenticationGuard(new FirebaseService())).toBeDefined();
   });
 
-  it('should pass if given a valid token', () => {});
-
+  // #1
   it('should raise error when token is invalid in format', () => {});
 
+  // if #1:
   it('should decode,parse the uid and extracts it to the request header', () => {});
 });

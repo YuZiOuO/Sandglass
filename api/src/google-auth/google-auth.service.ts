@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { FirebaseService } from 'src/firebase/firebase.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GoogleAuth } from './entities/google-auth.entity';
 import { Repository } from 'typeorm';
 import * as googleapis from 'googleapis';
 import { ConfigService } from '@nestjs/config';
+import {
+  InvalidAuthorizationCodeException,
+  LinkAlreadyExistException,
+} from './google-auth.exception';
 
 @Injectable()
 export class GoogleAuthService {
@@ -29,6 +32,7 @@ export class GoogleAuthService {
       access_type: 'offline',
       scope: this.scopes,
       state: uid,
+      response_type: 'code',
       prompt: 'consent', // Force to retrive refresh token every time.
     });
   }
@@ -40,23 +44,29 @@ export class GoogleAuthService {
         console.log(tokens.refresh_token);
         return tokens.refresh_token;
       }
-      throw 'Refresh Token not found.';
+      throw new InvalidAuthorizationCodeException(
+        new Error(
+          "Refresh Token not found. May caused by a authorization code of type 'online'",
+        ),
+      );
     } catch (e) {
-      console.log(e);
-      throw 'Unable to retrive Refresh Token.';
+      if (e instanceof Error) {
+        throw new InvalidAuthorizationCodeException(e);
+      }
+      throw e;
     }
   }
 
   async create(uid: string, refreshToken: string) {
     if (await this.isLinked(uid)) {
-      return 'Link Already Exists.';
+      throw new LinkAlreadyExistException();
     }
 
     await this.googleAuthRepo.save({
       uid: uid,
       googleRefreshToken: refreshToken,
     });
-    return 'This action adds a new googleAuth';
+    return true;
   }
 
   async isLinked(uid: string) {

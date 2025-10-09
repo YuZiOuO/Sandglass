@@ -1,18 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Query } from '@nestjs/common';
 import { GoogleAuthService } from './google-auth.service';
 import { FirebaseService } from 'src/firebase/firebase.service';
-import { error } from 'console';
 import { AuthenticationGuard } from 'src/authentication/authentication.guard';
+import {
+  InvalidAuthorizationCodeException,
+  InvalidVerifyRequestException,
+} from './google-auth.exception';
 
 @Controller('google-auth')
 export class GoogleAuthController {
@@ -32,21 +25,29 @@ export class GoogleAuthController {
   async create(
     @Query()
     result: {
-      code: string;
       error?: string;
-      scope?: string;
-      state: string;
+      code?: string;
+      state?: string;
     },
   ) {
-    if (result.error || !result.code) {
-      return error;
-    } else {
-      const token = await this.googleAuthService.retriveRefreshToken(
-        result.code,
-      );
-      const r = await this.googleAuthService.create(result.state, token);
-      console.log(r);
-      return;
+    if (result.error) {
+      throw new InvalidVerifyRequestException(new Error(result.error));
     }
+
+    if (!result.code) {
+      throw new InvalidAuthorizationCodeException(
+        new Error('Authorization Code not found.'),
+      );
+    }
+
+    if (!result.state) {
+      throw new InvalidVerifyRequestException(
+        new Error('State not set.Possible CSRF Attack.'),
+      );
+    }
+
+    const token = await this.googleAuthService.retriveRefreshToken(result.code);
+    const r = await this.googleAuthService.create(result.state, token);
+    console.log(r);
   }
 }
