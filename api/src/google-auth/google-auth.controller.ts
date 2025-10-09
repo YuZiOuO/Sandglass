@@ -50,4 +50,14 @@ export class GoogleAuthController {
     const r = await this.googleAuthService.create(result.state, token);
     console.log(r);
   }
+
+  @Get(':uid')
+  async getRefreshToken(@Param('uid') uid: string) {
+    return await this.googleAuthService.getRefreshToken(uid);
+  }
+
+  @Get('/accessToken/:uid')
+  async getAccessToken(@Param('uid') uid: string) {
+    return await this.googleAuthService.getAccessToken(uid);
+  }
 }

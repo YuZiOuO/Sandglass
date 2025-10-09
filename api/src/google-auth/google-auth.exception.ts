@@ -27,3 +27,27 @@ export class LinkAlreadyExistException extends GoogleAuthException {
     );
   }
 }
+
+export class LinkNotExistException extends GoogleAuthException {
+  constructor(cause?: Error) {
+    super(
+      { message: 'Given uid is not linked to Google.', code: 'GAuth#4' },
+      400,
+      cause,
+    );
+  }
+}
+
+export class InvalidLink extends GoogleAuthException {
+  constructor(cause?: Error) {
+    super(
+      {
+        message:
+          'Action to fetch new Access Token by the Link of the given uid is failed.May caused by expired RefreshToken.',
+        code: 'GAuth#5',
+      },
+      500,
+      cause,
+    );
+  }
+}
