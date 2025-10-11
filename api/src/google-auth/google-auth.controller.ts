@@ -1,12 +1,17 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { GoogleAuthService } from './google-auth.service';
 import { GoogleOAuth2CallbackDTO } from './dto/google-oauth-callback.dto';
-import { generateApiResponse } from 'src/app.exception';
 import {
   InvalidAuthorizationCodeException,
+  InvalidLink,
   LinkAlreadyExistException,
 } from './google-auth.exception';
-import { ApiBasicAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiResponseProperty,
+} from '@nestjs/swagger';
+import { generatedApiResponse } from 'src/app.swagger';
 
 @Controller('google-auth')
 export class GoogleAuthController {
@@ -14,14 +19,15 @@ export class GoogleAuthController {
 
   @Get('authUrl/:uid')
   // @UseGuards(AuthenticationGuard) //TODO
+  @ApiBearerAuth()
+  @ApiResponseProperty()
   getAuthUrl(@Param('uid') uid: string) {
     return this.googleAuthService.generateAuthUrl(uid);
   }
 
   // Callback
   @Get('verify')
-  @ApiBasicAuth()
-  @generateApiResponse([
+  @generatedApiResponse([
     InvalidAuthorizationCodeException,
     LinkAlreadyExistException,
   ])
@@ -35,6 +41,8 @@ export class GoogleAuthController {
   }
 
   @Get('/accessToken/:uid')
+  @ApiOkResponse({ type: String })
+  @generatedApiResponse([InvalidLink])
   async getAccessToken(@Param('uid') uid: string) {
     return await this.googleAuthService.getAccessToken(uid);
   }

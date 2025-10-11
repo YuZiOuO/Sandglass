@@ -1,6 +1,0 @@
-python-dotenv
-fastapi[stardard]
-motor
-beanie
-authx
-passlib
