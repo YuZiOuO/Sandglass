@@ -11,6 +11,9 @@ import {
   LinkNotExistException,
 } from './google-auth.exception';
 
+/**
+ * @throws GoogleAuthException
+ */
 @Injectable()
 export class GoogleAuthService {
   private readonly newCli: () => googleapis.Common.OAuth2Client;
@@ -30,7 +33,11 @@ export class GoogleAuthService {
 
   private readonly scopes = ['https://www.googleapis.com/auth/calendar'];
 
-  getAuthUrl(uid: string) {
+  /**
+   * Generates a authorization url for given user;
+   * @param uid assumed to be valid.
+   */
+  generateAuthUrl(uid: string) {
     return this.newCli().generateAuthUrl({
       access_type: 'offline',
       scope: this.scopes,
@@ -40,6 +47,12 @@ export class GoogleAuthService {
     });
   }
 
+  /**
+   * Retrive a refreshToken from google using given authorizationCode.
+   * @param authorizationCode not assumed to be valid.
+   * @returns a refreshToken.
+   * @throws InvalidAuthorizationCodeException if fails.
+   */
   async retriveRefreshToken(authorizationCode: string) {
     try {
       const { tokens } = await this.newCli().getToken(authorizationCode);
@@ -60,6 +73,13 @@ export class GoogleAuthService {
     }
   }
 
+  /**
+   * In DB,Records a new link of a given account to Google.
+   * @param uid assumed to be valid.
+   * @param refreshToken assumed to be valid.
+   * @returns true iff the record is successfully saved.
+   * @throws LinkAlreadyExistException if a link to given uid exists.
+   */
   async create(uid: string, refreshToken: string) {
     if (await this.isLinked(uid)) {
       throw new LinkAlreadyExistException();
@@ -72,11 +92,20 @@ export class GoogleAuthService {
     return true;
   }
 
+  /**
+   * In DB,Check if given uid is Linked to a google account.
+   * @param uid not assumed to be valid.
+   */
   async isLinked(uid: string) {
     return (await this.googleAuthRepo.findOne({ where: { uid } })) !== null;
   }
 
-  async getRefreshToken(uid: string) {
+  /**
+   * In DB, fetches refreshToken linked to given uid.
+   * @param uid assumed to be valid.
+   * @throws LinkNotExistException if given uid is not linked to any google account.
+   */
+  private async getRefreshToken(uid: string) {
     if (!(await this.isLinked(uid))) {
       throw new LinkNotExistException();
     }
@@ -89,6 +118,12 @@ export class GoogleAuthService {
     return record.googleRefreshToken;
   }
 
+  /**
+   * Fetch a accessToken to Google for given uid.
+   * @param uid assumed to be valid.
+   * @throws LinkNotExistException if given uid is not linked to any google account.
+   * @throws InvalidLink if given uid's link is invalid.
+   */
   async getAccessToken(uid: string) {
     const refreshToken = await this.getRefreshToken(uid);
 

@@ -12,12 +12,6 @@ export class InvalidAuthorizationCodeException extends GoogleAuthException {
   }
 }
 
-export class InvalidVerifyRequestException extends GoogleAuthException {
-  constructor(cause?: Error) {
-    super({ message: 'Invalid Verify Request.', code: 'GAuth#2' }, 400, cause);
-  }
-}
-
 export class LinkAlreadyExistException extends GoogleAuthException {
   constructor(cause?: Error) {
     super(
@@ -46,7 +40,7 @@ export class InvalidLink extends GoogleAuthException {
           'Action to fetch new Access Token by the Link of the given uid is failed.May caused by expired RefreshToken.',
         code: 'GAuth#5',
       },
-      500,
+      400,
       cause,
     );
   }
