@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GoogleAuthModule } from './google-auth/google-auth.module';
 import { UserService } from './user/user.service';
 import { FirebaseModule } from './firebase/firebase.module';
+import { GithubAuthModule } from './github-auth/github-auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FirebaseModule } from './firebase/firebase.module';
     }),
     GoogleAuthModule,
     FirebaseModule,
+    GithubAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],
