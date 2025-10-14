@@ -5,7 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserService } from './user/user.service';
 import { FirebaseModule } from './firebase/firebase.module';
-import { OauthModule } from './oauth/oauth.module';
+import { GithubModule } from './github/github.module';
+import { GithubAuthModule } from './oauth/github/github-auth.module';
+import { GoogleAuthModule } from './oauth/google/google-auth.module';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { OauthModule } from './oauth/oauth.module';
       inject: [ConfigService],
     }),
     FirebaseModule,
-    OauthModule,
+    GithubAuthModule,
+    GoogleAuthModule,
+    GithubModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],

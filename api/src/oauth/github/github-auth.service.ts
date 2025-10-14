@@ -6,12 +6,21 @@ import { GithubExchangeTokenDTO } from './dto/github-exchange-token-params.dto';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 import { GithubExchangeTokenResponseDTO } from './dto/github-exchange-token-response.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { GithubAuth } from './entity/github-auth.entity';
+import { Repository } from 'typeorm';
+import {
+  LinkAlreadyExistException,
+  LinkNotExistException,
+} from '../oauth.exception';
 
 @Injectable()
 export class GithubAuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    @InjectRepository(GithubAuth)
+    private readonly githubAuthRepo: Repository<GithubAuth>,
   ) {}
 
   private generateParams(uid: string): GithubAuthParamsDTO {
@@ -49,14 +58,39 @@ export class GithubAuthService {
 
     const endpoint = 'https://github.com/login/oauth/access_token';
 
-    const observable = this.httpService.post(endpoint, data).pipe(
-      map((res) => {
-        return res.data as GithubExchangeTokenResponseDTO;
-      }),
-    );
+    const observable = this.httpService
+      .post<GithubExchangeTokenResponseDTO>(endpoint, data, {
+        headers: { Accept: 'application/json' },
+      })
+      .pipe(map((res) => res.data));
 
     const responseBody = await lastValueFrom(observable);
 
     return responseBody;
+  }
+
+  async isLinked(uid: string) {
+    return await this.githubAuthRepo.findOne({ where: { uid } });
+  }
+
+  async create(uid: string, token: string) {
+    if (await this.isLinked(uid)) {
+      throw new LinkAlreadyExistException();
+    }
+
+    await this.githubAuthRepo.save({ uid: uid, accessToken: token });
+  }
+
+  async getAccessToken(uid: string) {
+    if (!(await this.isLinked(uid))) {
+      throw new LinkNotExistException();
+    }
+
+    const record = await this.githubAuthRepo.findOne({ where: { uid } });
+    if (record === null) {
+      throw new Error('Assertion failed.Record should not be null.');
+    }
+
+    return record.accessToken;
   }
 }
