@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { GithubAuthParamsDTO } from './dto/github-auth-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { URLSearchParams } from 'url';
-import { getGithubUserContribution } from '@snk/github-user-contribution';
 import { GithubExchangeTokenDTO } from './dto/github-exchange-token-params.dto';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';

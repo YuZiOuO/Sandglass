@@ -24,7 +24,7 @@ export class AuthenticationGuard implements CanActivate {
         accessToken,
         true,
       );
-      req['uid'] = decodedIdToken.uid;
+      req['_uid'] = decodedIdToken.uid;
       return true;
     } catch (e) {
       if (e instanceof Error) {

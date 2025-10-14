@@ -3,10 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GoogleAuthModule } from './google-auth/google-auth.module';
 import { UserService } from './user/user.service';
 import { FirebaseModule } from './firebase/firebase.module';
-import { GithubAuthModule } from './github-auth/github-auth.module';
+import { OauthModule } from './oauth/oauth.module';
 
 @Module({
   imports: [
@@ -19,9 +18,8 @@ import { GithubAuthModule } from './github-auth/github-auth.module';
       }),
       inject: [ConfigService],
     }),
-    GoogleAuthModule,
     FirebaseModule,
-    GithubAuthModule,
+    OauthModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],

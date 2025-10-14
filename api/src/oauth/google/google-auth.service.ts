@@ -9,7 +9,7 @@ import {
   InvalidLink,
   LinkAlreadyExistException,
   LinkNotExistException,
-} from './google-auth.exception';
+} from '../oauth.exception';
 
 /**
  * @throws GoogleAuthException
@@ -139,6 +139,4 @@ export class GoogleAuthService {
       throw e;
     }
   }
-
-  async remove(uid: string) {}
 }
