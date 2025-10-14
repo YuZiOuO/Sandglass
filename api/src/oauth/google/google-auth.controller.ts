@@ -1,11 +1,7 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { GoogleAuthService } from './google-auth.service';
 import { GoogleOAuth2CallbackDTO } from './dto/google-oauth-callback.dto';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiResponseProperty,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { generatedApiResponse } from 'src/app.swagger';
 import {
   InvalidAuthorizationCodeException,
@@ -22,8 +18,7 @@ export class GoogleAuthController {
   @Get()
   @UseGuards(AuthenticationGuard)
   @ApiBearerAuth()
-  @ApiResponseProperty()
-  getAuthUrl(@UserId() uid: string) {
+  getAuthUrl(@UserId() uid: string): string {
     return this.googleAuthService.generateAuthUrl(uid);
   }
 
@@ -35,7 +30,7 @@ export class GoogleAuthController {
   async create(
     @Query()
     dto: GoogleOAuth2CallbackDTO,
-  ) {
+  ): Promise<void> {
     const token = await this.googleAuthService.retriveRefreshToken(dto.code);
     const r = await this.googleAuthService.create(dto.state, token);
     console.log(r);
@@ -43,9 +38,8 @@ export class GoogleAuthController {
 
   @Get('/token')
   @UseGuards(AuthenticationGuard)
-  @ApiOkResponse({ type: String })
   @generatedApiResponse([InvalidLink])
-  async getAccessToken(@UserId() uid: string) {
-    return await this.googleAuthService.getAccessToken(uid);
+  async getAccessToken(@UserId() uid: string): Promise<string> {
+    return (await this.googleAuthService.getAccessToken(uid)) as string;
   }
 }
