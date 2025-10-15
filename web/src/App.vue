@@ -2,7 +2,7 @@
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="null">
     <n-loading-bar-provider>
       <n-message-provider>
-        <Layout />
+        <RootLayout />
       </n-message-provider>
     </n-loading-bar-provider>
   </n-config-provider>
@@ -10,13 +10,18 @@
 
 <script setup lang="ts">
 import {
-  createTheme, datePickerDark, inputDark, NConfigProvider,
-  zhCN, dateZhCN,
-  NLoadingBarProvider, NMessageProvider
-} from "naive-ui"
+  createTheme,
+  datePickerDark,
+  inputDark,
+  NConfigProvider,
+  zhCN,
+  dateZhCN,
+  NLoadingBarProvider,
+  NMessageProvider,
+} from 'naive-ui'
 
-import { ref } from "vue";
-import Layout from "./components/layout/Layout.vue";
+import { ref } from 'vue'
+import RootLayout from './components/layout/RootLayout.vue'
 
 const darkTheme = ref(createTheme([inputDark, datePickerDark]))
 </script>
