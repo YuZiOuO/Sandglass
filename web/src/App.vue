@@ -11,9 +11,9 @@
 
 <script setup lang="ts">
 import {
-  createTheme,
-  datePickerDark,
-  inputDark,
+  // createTheme,
+  // datePickerDark,
+  // inputDark,
   NConfigProvider,
   zhCN,
   dateZhCN,
@@ -22,8 +22,8 @@ import {
 } from 'naive-ui'
 import LoadingBarController from './components/common/LoadingBarController.vue'
 
-import { ref } from 'vue'
+// import { ref } from 'vue'
 import RootLayout from './components/layout/RootLayout.vue'
 
-const darkTheme = ref(createTheme([inputDark, datePickerDark]))
+// const darkTheme = ref(createTheme([inputDark, datePickerDark]))
 </script>

@@ -5,7 +5,7 @@
       <!-- sider与content间隔24px -->
       <n-flex>
         <GreetingModule :name="'test'" />
-        <TodoListModule :unfinished_nodes="15" :unfinished_tasks="2" />
+        <!-- <TodoListModule :unfinished_nodes="15" :unfinished_tasks="2" /> -->
       </n-flex>
     </n-layout-sider>
     <n-layout-content>
@@ -33,20 +33,21 @@ import {
 
 import GreetingModule from '@/components/module/workbench/GreetingModule.vue'
 import HeatmapModule from '@/components/common/HeatmapModule.vue'
-import TodoListModule from '@/components/module/workbench/TodoListModule.vue'
 import { GithubApi, type GithubContributionDTO } from '@/api'
 import { onMounted, ref } from 'vue'
 
-const api = new GithubApi();
-const data = ref<HeatmapData>([]);
+const api = new GithubApi()
+const data = ref<HeatmapData>([])
 
 function convert(data: GithubContributionDTO[]): HeatmapData {
-  const convertItem = (d:GithubContributionDTO):HeatmapDataItem => {return {timestamp:d.date,value:d.count}}
+  const convertItem = (d: GithubContributionDTO): HeatmapDataItem => {
+    return { timestamp: d.date, value: d.count }
+  }
   return data.map(convertItem)
 }
 
 onMounted(async () => {
-  const apiData = (await api.githubControllerGetActivities("6ziRUSavItalErW0uDQyk5qS5Ts1")).data
-  data.value = convert(apiData);
+  const apiData = (await api.githubControllerGetActivities('6ziRUSavItalErW0uDQyk5qS5Ts1')).data
+  data.value = convert(apiData)
 })
 </script>
