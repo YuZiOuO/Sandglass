@@ -1,6 +1,7 @@
 <template>
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="null">
     <n-loading-bar-provider>
+      <LoadingBarController />
       <n-message-provider>
         <RootLayout />
       </n-message-provider>
@@ -19,6 +20,7 @@ import {
   NLoadingBarProvider,
   NMessageProvider,
 } from 'naive-ui'
+import LoadingBarController from './components/common/LoadingBarController.vue'
 
 import { ref } from 'vue'
 import RootLayout from './components/layout/RootLayout.vue'
