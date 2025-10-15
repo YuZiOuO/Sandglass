@@ -9,8 +9,8 @@
     </n-gi>
     <n-gi :offset="1">
       <n-flex justify="center" align="center" style="width: 100%; height: 100%">
-        <n-dropdown :disabled="!userCredential.isSet()" :options="dropdownOptions" @select="handleDropdownSelect">
-          <n-button v-if="userCredential.isSet()" tertiary type="primary">
+        <n-dropdown :disabled="!isLogined" :options="dropdownOptions" @select="handleDropdownSelect">
+          <n-button v-if="isLogined" tertiary type="primary">
             我的
           </n-button>
           <RouterLink v-else to="/login">
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { h } from 'vue';
+import { h, onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { renderIcon } from '@/util';
 import { NButton, NGrid, NGi, NIcon, NMenu, type MenuOption, NDropdown, NFlex, useMessage } from 'naive-ui';
@@ -34,25 +34,25 @@ import {
   LogOutOutline as LogoutIcon,
   PersonCircleOutline as UserIcon
 } from '@vicons/ionicons5'
-import { logout } from '@/api/user_api';
-import { useUserCredentialStore } from '@/stores/userCredential';
+import { useAuthenticationStore } from '@/stores/authentication';
+import pinia from '@/stores';
 
 const message = useMessage()
 const router = useRouter()
-const userCredential = useUserCredentialStore();
+const authenticationStore = useAuthenticationStore(pinia);
+const isLogined = ref<boolean>(false);
+onMounted(async () => {
+  isLogined.value = await authenticationStore.isLogined();
+})
 
-function handleDropdownSelect(key: string) {
+async function handleDropdownSelect(key: string) {
   if (key === "logout") {
-    logout((res) => {
-      if (res === null) {
-        message.error("注销失败")
-      } else {
-        // if (res.status === 204) {
-        //   store.reverseLoginStatus()
-        //   router.push('/')
-        // }
-      }
-    })
+    try {
+      await authenticationStore.logout();
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 }
 

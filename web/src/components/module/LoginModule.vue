@@ -29,8 +29,8 @@
 
 <script setup lang="ts">
 import router from '@/router';
-import { createUser, login } from '@/services/auth';
-import { useUserCredentialStore } from '@/stores/userCredential';
+import { useAuthenticationStore } from '@/stores/authentication';
+import { useUserStore } from '@/stores/user';
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui';
 import { ref } from 'vue';
 
@@ -42,35 +42,23 @@ const pwd = ref("")
 const login_loading = ref(false)
 const signup_loading = ref(false)
 
-const userCredential = useUserCredentialStore()
+const authenticationStore = useAuthenticationStore();
+const userStore = useUserStore()
 
 async function trigger_login() {
-  login(email.value,pwd.value);
-  if (userCredential.isSet()) {
-    message.error('你已登录，将跳转到首页...')
-    router.push('/')
-  } else {
-    login_loading.value = true
-    const loginSuccess = await login(email.value, pwd.value);
-    if(loginSuccess){
-      message.info('登录成功')
-      router.push('/')
-    } else {
-      message.error('登录失败')
-    }
-    login_loading.value = false
+  try {
+    await authenticationStore.login(email.value, pwd.value);
+  } catch (e) {
+    message.error((e as Error).message);
   }
 }
 async function trigger_signup() {
-  signup_loading.value = true
-  const signupSuccess = await createUser(email.value,pwd.value);
-  if(signupSuccess){
-    message.info('注册成功')
-    router.push('/')
-  }else{
-    message.error('注册失败')
+  try {
+    await userStore.create(email.value, pwd.value);
+    await authenticationStore.login(email.value, pwd.value);
+  } catch (e) {
+    message.error((e as Error).message);
   }
-  signup_loading.value = false;
 }
 
 function handle_email_input(e: string) {

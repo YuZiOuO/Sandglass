@@ -108,9 +108,6 @@ importers:
       vue-tsc:
         specifier: ^2.2.0
         version: 2.2.12(typescript@5.7.3)
-      vue3-calendar-heatmap:
-        specifier: ^2.0.5
-        version: 2.0.5(tippy.js@6.3.7)(vue@3.5.21(typescript@5.7.3))
 
 packages:
 
@@ -3043,13 +3040,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
-
-  vue3-calendar-heatmap@2.0.5:
-    resolution: {integrity: sha512-qvveNQlTS5Aw7AvRLs0zOyu3uP5iGJlXJAnkrkG2ElDdyQ8H1TJhQ8rL702CROjAg16ezIveUY10nCO7lqZ25w==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      tippy.js: ^6.3.7
-      vue: ^3.2.29
 
   vue@3.5.21:
     resolution: {integrity: sha512-xxf9rum9KtOdwdRkiApWL+9hZEMWE90FHh8yS1+KJAiWYh+iGWV1FquPjoO9VUHQ+VIhsCXNNyZ5Sf4++RVZBA==}
@@ -6347,11 +6337,6 @@ snapshots:
       '@volar/typescript': 2.4.15
       '@vue/language-core': 2.2.12(typescript@5.7.3)
       typescript: 5.7.3
-
-  vue3-calendar-heatmap@2.0.5(tippy.js@6.3.7)(vue@3.5.21(typescript@5.7.3)):
-    dependencies:
-      tippy.js: 6.3.7
-      vue: 3.5.21(typescript@5.7.3)
 
   vue@3.5.21(typescript@5.7.3):
     dependencies:

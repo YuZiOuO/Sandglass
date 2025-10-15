@@ -1,6 +1,3 @@
-// 引入热力图插件css
-import 'vue3-calendar-heatmap/dist/style.css'
-
 import { createApp } from 'vue'
 
 import App from './App.vue'
