@@ -12,6 +12,7 @@ export class APIException extends HttpException {
     super(detail, status, cause ? { cause: cause } : undefined);
     this._status = status;
     this._detail = detail;
+    console.log(this);
   }
 
   get apiResponseOptions(): ApiResponseOptions {
