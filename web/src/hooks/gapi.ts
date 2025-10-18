@@ -26,9 +26,9 @@ export async function useGApi(url: GApis[]) {
   try {
     await loadGApiLibraries()
     gapi.client.init({})
-    url.forEach(async (apiName) => {
+    for (const apiName of url) {
       await gapi.client.load(discoveryDocumentMap[apiName])
-    })
+    }
   } catch (e) {
     if (e instanceof Error) {
       throw new Error('Fail to load Google API library: ' + e.message)
