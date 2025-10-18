@@ -14,12 +14,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@googleapis/docs": "^7.0.0",
+    "@types/gapi.client.calendar-v3": "^0.0.4",
+    "@types/gapi.client.tasks-v1": "^0.0.5",
     "@vicons/ionicons5": "^0.13.0",
     "axios": "^1.7.9",
     "firebase": "^12.2.1",
     "firebaseui": "6.1.0",
-    "googleapis": "^161.0.0",
     "pinia": "^2.3.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.24.0",
     "@tsconfig/node22": "^22.0.0",
+    "@types/gapi": "^0.0.47",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.13.1",
     "@vitejs/plugin-vue": "^5.2.1",

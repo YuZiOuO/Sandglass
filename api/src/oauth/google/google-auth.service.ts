@@ -31,7 +31,10 @@ export class GoogleAuthService {
       });
   }
 
-  private readonly scopes = ['https://www.googleapis.com/auth/calendar'];
+  private readonly scopes = [
+    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/tasks',
+  ];
 
   /**
    * Generates a authorization url for given user;

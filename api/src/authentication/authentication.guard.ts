@@ -14,10 +14,16 @@ export class AuthenticationGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
-    const accessToken = req.headers.authorization;
-    if (accessToken === undefined) {
+    const authHeader = req.headers.authorization;
+    if (authHeader === undefined) {
       throw new UnauthorizedException();
     }
+
+    if (!authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException();
+    }
+
+    const accessToken = authHeader.substring('Bearer '.length).trim();
 
     try {
       const decodedIdToken = await this.firebaseService.auth.verifyIdToken(

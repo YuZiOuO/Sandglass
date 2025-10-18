@@ -43,7 +43,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
       return
     }
     const fbService = await useFirebase()
-    return await fbService.auth.currentUser?.uid
+    return fbService.auth.currentUser?.uid
   }
 
   return { login, logout, isLogined, getAccessToken, getUid }
