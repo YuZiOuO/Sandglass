@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { createProjectDTO } from './dto/project.dto';
-import { UserId } from 'src/authentication/authentication.decorator';
-import { AuthenticationGuard } from 'src/authentication/authentication.guard';
+import { UserId } from 'src/firebase/authentication/authentication.decorator';
+import { AuthenticationGuard } from 'src/firebase/authentication/authentication.guard';
 
 @Controller('project')
 export class ProjectController {
@@ -12,7 +12,7 @@ export class ProjectController {
   ) {}
 
   @Get()
-  @UseGuards(this.authGuard.canActivate)
+  @UseGuards(AuthenticationGuard)
   listProject(@UserId() uid: string) {
     return this.projectService.list(uid);
   }

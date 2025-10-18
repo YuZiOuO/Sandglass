@@ -8,6 +8,7 @@ import { FirebaseModule } from './firebase/firebase.module';
 import { GithubModule } from './github/github.module';
 import { GithubAuthModule } from './oauth/github/github-auth.module';
 import { GoogleAuthModule } from './oauth/google/google-auth.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GoogleAuthModule } from './oauth/google/google-auth.module';
     GithubAuthModule,
     GoogleAuthModule,
     GithubModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService],

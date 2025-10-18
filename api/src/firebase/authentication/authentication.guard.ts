@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  Global,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -8,6 +9,13 @@ import { Request } from 'express';
 import { FirebaseService } from 'src/firebase/firebase.service';
 import { InvalidTokenException } from './authentication.exception';
 
+/**
+ * Use _UserId_ Decorator to get uid as controller parameters.
+ * @example
+ * //@Get()
+ * //@UseGuard(AuthenticationGuard)
+ * controller(@UserId() uid:string) { return ;}
+ */
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
   constructor(private readonly firebaseService: FirebaseService) {}

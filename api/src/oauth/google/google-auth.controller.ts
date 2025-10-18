@@ -8,8 +8,8 @@ import {
   LinkAlreadyExistException,
   InvalidLink,
 } from '../oauth.exception';
-import { AuthenticationGuard } from 'src/authentication/authentication.guard';
-import { UserId } from 'src/authentication/authentication.decorator';
+import { AuthenticationGuard } from 'src/firebase/authentication/authentication.guard';
+import { UserId } from 'src/firebase/authentication/authentication.decorator';
 
 @Controller('oauth/google')
 export class GoogleAuthController {

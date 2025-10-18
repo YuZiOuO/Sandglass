@@ -3,11 +3,11 @@ import { ProjectService } from './project.service';
 import { ProjectController } from './project.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { AuthenticationModule } from 'src/authentication/authentication.module';
+import { FirebaseModule } from 'src/firebase/firebase.module';
 
 @Module({
   controllers: [ProjectController],
   providers: [ProjectService],
-  imports: [TypeOrmModule.forFeature([Project]), AuthenticationModule],
+  imports: [TypeOrmModule.forFeature([Project]), FirebaseModule],
 })
 export class ProjectModule {}
