@@ -1,10 +1,10 @@
 runConfig:
   minInstances: 2
   maxInstances: 10
-  concurrency: 100
+  concurrency: 80
   cpu: 2
-  memoryMiB: 1024
+  memoryMiB: 4096
 
 env:
--   variable: DB_URI
-    secret: DEV_DB_URI
+  - variable: DB_URI
+    secret: projects/703398515772/secrets/DEV_DB_URI/versions/3

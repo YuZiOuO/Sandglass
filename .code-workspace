@@ -15,6 +15,15 @@
   ],
   "settings": {
     "terminal.integrated.defaultLocation": "view",
-    "terminal.integrated.suggest.enabled": true
+    "terminal.integrated.suggest.enabled": true,
+    "explorer.compactFolders": false,
+    "explorer.autoReveal": "focusNoScroll",
+    // "explorer.excludeGitIgnore": true,
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+      "*.module.ts": "${capture}.*.ts"
+    },
+    "scm.alwaysShowActions": false,
+    "scm.alwaysShowRepositories": true
   }
 }
