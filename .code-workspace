@@ -2,11 +2,11 @@
   "folders": [
     {
       // 根目录，用于共享配置和全局 package.json
-      "path": "." 
+      "path": "."
     },
     {
       // 第一个子包
-      "path": "api" 
+      "path": "api"
     },
     {
       // 第二个应用
@@ -14,6 +14,7 @@
     }
   ],
   "settings": {
-    // 可以在这里放置一些共享的配置
+    "terminal.integrated.defaultLocation": "view",
+    "terminal.integrated.suggest.enabled": true
   }
 }

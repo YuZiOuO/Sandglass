@@ -8,18 +8,18 @@
       "isBackground": true,
       "problemMatcher": [
         {
-          "pattern": {"regexp": ""},
+          "pattern": { "regexp": "" },
           "background": {
             "activeOnStart": true,
             "beginsPattern": "VITE",
-            "endsPattern": ".+ready in.+",
+            "endsPattern": ".+ready in.+"
           }
         }
       ],
       "presentation": {
-        // "reveal": "silent",
-        "panel": "dedicated" // 使用专用的终端面板
-      },
+        "reveal": "always",
+        "panel": "shared" // 使用专用的终端面板
+      }
     }
   ]
 }

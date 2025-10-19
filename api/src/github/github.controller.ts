@@ -7,7 +7,7 @@ export class GithubController {
   constructor(private readonly githubService: GithubService) {}
 
   @Get('activities')
-  async getActivities(
+  async getGithubActivities(
     @Query('uid') uid: string,
   ): Promise<GithubContributionDTO[]> {
     return await this.githubService.getActivities(uid);
