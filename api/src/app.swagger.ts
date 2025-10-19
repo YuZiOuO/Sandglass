@@ -1,6 +1,11 @@
 import { ApiProperty, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 import { APIException } from './app.exception';
-import { applyDecorators } from '@nestjs/common';
+import { applyDecorators, INestApplication } from '@nestjs/common';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
 
 export class APIErrorDetailDTO {
   constructor(message: string, code: string) {
@@ -51,3 +56,17 @@ export function generatedApiResponse(e: Array<Constructor<APIException>>) {
     ApiResponse(apiResponseOptions, { overrideExisting: true }),
   );
 }
+
+// for swagger plugin
+const config = new DocumentBuilder()
+  .setTitle('Sandglass example')
+  .setDescription('The Sandglass API description')
+  .setVersion('0.0')
+  .addServer('http://localhost:5173/api', 'Vue dev proxy')
+  .build();
+const options: SwaggerDocumentOptions = {
+  autoTagControllers: true,
+  operationIdFactory: (controllerKey, methodKey, version) => methodKey,
+};
+export const documentFactory = (app: INestApplication) =>
+  SwaggerModule.createDocument(app, config, options);
