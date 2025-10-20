@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "generate-api-cli":"pnpm run generate-openapi && openapi-generator-cli generate -i openapi.json -g typescript-axios -o web/src/api",
-        "generate-openapi":"TS_NODE_PROJECT=./api/tsconfig.json ts-node -r tsconfig-paths/register api/generate-openapi.ts"
+        "generate-api-cli":"pnpm generate-openapi-json && openapi-generator-cli generate -i openapi.json -g typescript-axios -o web/src/api",
+        "generate-openapi-json":"TERMINATE_AFTER_API_DOC_IS_GENERATED= pnpm --filter api start"
     }
 }

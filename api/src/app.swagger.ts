@@ -1,4 +1,9 @@
-import { ApiProperty, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiResponse,
+  ApiResponseOptions,
+  OpenAPIObject,
+} from '@nestjs/swagger';
 import { APIException } from './app.exception';
 import { applyDecorators, INestApplication } from '@nestjs/common';
 import {
@@ -6,6 +11,7 @@ import {
   DocumentBuilder,
   SwaggerDocumentOptions,
 } from '@nestjs/swagger';
+import * as fs from 'fs';
 
 export class APIErrorDetailDTO {
   constructor(message: string, code: string) {
@@ -70,3 +76,8 @@ const options: SwaggerDocumentOptions = {
 };
 export const documentFactory = (app: INestApplication) =>
   SwaggerModule.createDocument(app, config, options);
+
+export function dumpApi(api: OpenAPIObject) {
+  const outputPath = './openapi.json';
+  fs.writeFileSync(outputPath, JSON.stringify(api, null, 2));
+}
