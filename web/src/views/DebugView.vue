@@ -4,7 +4,7 @@
       <NCard class="flex-item" title="User"><DebugUser /></NCard>
     </suspense>
     <suspense>
-      <NCard class="flex-item" title="GoogleAuth"><DebugGoogleAuth /></NCard>
+      <NCard class="flex-item" title="OAuth"><DebugOAuth /></NCard>
     </suspense>
     <suspense>
       <NCard class="flex-item" title="Project"><DebugProject /></NCard>
@@ -13,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import DebugGoogleAuth from '@/components/module/debug/DebugGoogleAuth.vue'
 import DebugUser from '@/components/module/debug/DebugFirebase.vue'
 import { NCard, NFlex } from 'naive-ui'
 import DebugProject from '@/components/module/debug/DebugProject.vue'
+import DebugOAuth from '@/components/module/debug/DebugOAuth.vue'
 </script>
 
 <style>

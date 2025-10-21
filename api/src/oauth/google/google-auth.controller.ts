@@ -15,7 +15,7 @@ import { UserId } from 'src/firebase/authentication/authentication.decorator';
 export class GoogleAuthController {
   constructor(private readonly googleAuthService: GoogleAuthService) {}
 
-  @Get()
+  @Get('/authUrl')
   @UseGuards(AuthenticationGuard)
   @ApiBearerAuth()
   getGoogleAuthUrl(@UserId() uid: string): string {
@@ -41,5 +41,11 @@ export class GoogleAuthController {
   @generatedApiResponse([InvalidLink])
   async getGoogleAccessToken(@UserId() uid: string): Promise<string> {
     return (await this.googleAuthService.getAccessToken(uid)) as string;
+  }
+
+  @Get()
+  @UseGuards(AuthenticationGuard)
+  async getGoogleAuthStatus(@UserId() uid: string) {
+    return this.googleAuthService.isLinked(uid);
   }
 }

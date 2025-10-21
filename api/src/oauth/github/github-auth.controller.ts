@@ -1,12 +1,15 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { GithubAuthService } from './github-auth.service';
+import { AuthenticationGuard } from 'src/firebase/authentication/authentication.guard';
+import { UserId } from 'src/firebase/authentication/authentication.decorator';
 
 @Controller('oauth/github')
 export class GithubAuthController {
   constructor(private readonly githubAuthService: GithubAuthService) {}
 
-  @Get()
-  getGithubAuthUrl(@Query('uid') uid: string) {
+  @Get('/authUrl')
+  @UseGuards(AuthenticationGuard)
+  getGithubAuthUrl(@UserId() uid: string) {
     return this.githubAuthService.generateAuthUrl(uid);
   }
 
@@ -17,5 +20,11 @@ export class GithubAuthController {
   ) {
     const token = await this.githubAuthService.exchangeToken(code);
     await this.githubAuthService.create(state, token.access_token);
+  }
+
+  @Get()
+  @UseGuards(AuthenticationGuard)
+  async getGithubAuthStatus(@UserId() uid: string) {
+    return this.githubAuthService.isLinked(uid);
   }
 }

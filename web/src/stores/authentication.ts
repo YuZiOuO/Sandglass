@@ -38,6 +38,14 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     return (fbService.auth.currentUser as authSdk.User).getIdToken()
   }
 
+  async function constructDefaultAxiosAuthHeader() {
+    return {
+      headers: {
+        Authorization: 'Bearer ' + (await getAccessToken()),
+      },
+    }
+  }
+
   async function getUid() {
     if (!(await isLogined())) {
       return null
@@ -46,5 +54,5 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     return (fbService.auth.currentUser as authSdk.User).uid
   }
 
-  return { login, logout, isLogined, getAccessToken, getUid }
+  return { login, logout, isLogined, getAccessToken, getUid, constructDefaultAxiosAuthHeader }
 })

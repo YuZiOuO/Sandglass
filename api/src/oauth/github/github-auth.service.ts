@@ -70,7 +70,7 @@ export class GithubAuthService {
   }
 
   async isLinked(uid: string) {
-    return await this.githubAuthRepo.findOne({ where: { uid } });
+    return (await this.githubAuthRepo.findOne({ where: { uid } })) !== null;
   }
 
   async create(uid: string, token: string) {
