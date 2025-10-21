@@ -5,13 +5,13 @@
 </template>
 
 <script setup lang="ts">
-import LoginModule from '@/components/module/LoginModule.vue';
-import { NFlex } from 'naive-ui';
-import { useRouter } from 'vue-router';
+import LoginModule from '@/components/module/LoginModule.vue'
+import { NFlex } from 'naive-ui'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
-function loginSuccessCallback(){
+function loginSuccessCallback() {
   router.push('/')
 }
 </script>
