@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { ObjectId, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   FailedToSaveProject,
   InvalidCalendarIdOrTasklistId,
   ProjectNotFoundException,
 } from './project.exception';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class ProjectService {
@@ -51,8 +52,8 @@ export class ProjectService {
     tasklistId: string,
   ): Promise<string> {
     if (
-      (await this.projectRepo.existsBy({ calendarId: calendarId })) ||
-      (await this.projectRepo.existsBy({ tasklistId: tasklistId }))
+      (await this.projectRepo.findOneBy({ calendarId: calendarId })) ||
+      (await this.projectRepo.findOneBy({ tasklistId: tasklistId }))
     ) {
       throw new InvalidCalendarIdOrTasklistId();
     }

@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { initializeApp, type FirebaseApp } from 'firebase/app'
+import { getAuth, type Auth } from 'firebase/auth'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,7 +18,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
-export async function useFirebase() {
+export type FirebaseService = { app: FirebaseApp; auth: Auth }
+
+export async function useFirebase(): Promise<FirebaseService> {
   const auth = getAuth(app)
   await auth.authStateReady()
   return { app: app, auth: auth }

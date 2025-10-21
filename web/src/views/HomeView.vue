@@ -47,7 +47,7 @@ function convert(data: GithubContributionDTO[]): HeatmapData {
 }
 
 onMounted(async () => {
-  const apiData = (await api.githubControllerGetActivities('6ziRUSavItalErW0uDQyk5qS5Ts1')).data
-  data.value = convert(apiData)
+  const apiData = (await api.getGithubActivities('6ziRUSavItalErW0uDQyk5qS5Ts1')).data
+  // data.value = convert(apiData)
 })
 </script>

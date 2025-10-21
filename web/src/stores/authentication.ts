@@ -32,18 +32,18 @@ export const useAuthenticationStore = defineStore('authentication', () => {
 
   async function getAccessToken() {
     if (!(await isLogined())) {
-      return
+      return null
     }
     const fbService = await useFirebase()
-    return await fbService.auth.currentUser?.getIdToken()
+    return (fbService.auth.currentUser as authSdk.User).getIdToken()
   }
 
   async function getUid() {
     if (!(await isLogined())) {
-      return
+      return null
     }
     const fbService = await useFirebase()
-    return fbService.auth.currentUser?.uid
+    return (fbService.auth.currentUser as authSdk.User).uid
   }
 
   return { login, logout, isLogined, getAccessToken, getUid }

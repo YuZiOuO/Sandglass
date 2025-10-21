@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
+import DebugView from '@/views/DebugView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,39 +16,12 @@ const router = createRouter({
       name: 'Login',
       component: LoginView,
     },
-    // {
-    //   path: '/proj',
-    //   name: 'Project',
-    //   children: [
-    //     {
-    //       path: ':proj_id',
-    //       name: 'Project#',
-    //       component: ProjectView,
-    //       props: true,
-    //     },
-    //     {
-    //       path: '',
-    //       name: 'ProjectList',
-    //       component: ProjectListView,
-    //     },
-    //   ],
-    // },
-    // {
-    //   path: '/proj/new',
-    //   name: 'createProject',
-    //   component: MCreateProject,
-    // },
+    {
+      path: '/debug',
+      name: 'debug',
+      component: DebugView,
+    },
   ],
 })
-
-// router.beforeEach(() => {
-//   loadingBar.start()
-//   return true
-// })
-
-// router.afterEach(() => {
-//   loadingBar.finish()
-//   return true
-// })
 
 export default router
