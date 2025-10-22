@@ -1,30 +1,42 @@
 <template>
-  <Suspense>
-    <CreateProjectModule
-      :calendars="calendars"
-      :tasklists="tasklists"
-      @submit="
-        (data) => {
-          console.log(data)
-        }
-      "
-    ></CreateProjectModule>
-  </Suspense>
+  <TasksTimelineModule :tasks="tasks" />
 </template>
-
 <script setup lang="ts">
-import CreateProjectModule from '@/components/module/project/CreateProjectModule.vue'
-import { useGoogleCalendarStore } from '@/stores/google-calendar'
+import TasksTimelineModule from '@/components/module/tasks/TasksTimelineModule.vue'
 import { useGoogleTasksStore } from '@/stores/google-tasks'
 import { onMounted, ref } from 'vue'
 
-const gCalStore = useGoogleCalendarStore()
+const tasks = ref<gapi.client.tasks.Task[]>([])
+
 const gTasksStore = useGoogleTasksStore()
 
-const calendars = ref<gapi.client.calendar.CalendarListEntry[]>([])
-const tasklists = ref<gapi.client.tasks.TaskList[]>([])
 onMounted(async () => {
-  calendars.value = (await gCalStore.listCalendar()).items!
-  tasklists.value = (await gTasksStore.listTaskLists()).items!
+  const apiData = (await gTasksStore.listTasks('MDA0MTg1NjY4NTc0NTAwMzAxMTc6MDow')).items
+  tasks.value = apiData ? apiData : []
 })
 </script>
+
+<!-- const dataNotScheduled: gapi.client.tasks.Task = {
+  title: '任务',
+  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
+  completed: undefined,
+  due: undefined,
+}
+const dataCompleted: gapi.client.tasks.Task = {
+  title: '任务',
+  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
+  completed: '2025-10-22T04:00:00Z',
+  due: undefined,
+}
+const dataDued: gapi.client.tasks.Task = {
+  title: '任务',
+  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
+  completed: undefined,
+  due: '2024-10-22T03:00:00Z',
+}
+const dataApproching: gapi.client.tasks.Task = {
+  title: '任务',
+  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
+  completed: undefined,
+  due: '2025-10-25T03:00:00Z',
+} -->

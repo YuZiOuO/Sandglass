@@ -5,11 +5,13 @@
     <NSelect
       :options="convertCalenderArrayToOptions(props.calendars)"
       :placeholder="'要绑定的日历'"
+      :loading="loading"
       v-model:value="inputCalendarId"
     ></NSelect>
     <NSelect
       :options="convertTasklistsToOptions(props.tasklists)"
       :placeholder="'要绑定的任务列表'"
+      :loading="loading"
       v-model:value="inputTasklistId"
     ></NSelect>
     <!-- <NSelect :options="" :placeholder="'要绑定的仓库'" v-model:value=""></NSelect> -->
@@ -38,6 +40,7 @@ import { ref } from 'vue'
 const props = defineProps<{
   calendars: gapi.client.calendar.CalendarListEntry[]
   tasklists: gapi.client.tasks.TaskList[]
+  loading: boolean
 }>()
 
 const emits = defineEmits<{
