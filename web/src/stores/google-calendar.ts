@@ -4,9 +4,9 @@ import { useGApi } from '@/hooks/gapi'
 
 export const useGoogleCalendarStore = defineStore('google-calendar', () => {
   const oauthStore = useOAuthStore()
-  useGApi(['calendar'])
 
   async function listCalendar() {
+    await useGApi(['calendar'])
     const req = gapi.client.calendar.calendarList.list({
       oauth_token: await oauthStore.getGoogleAccessToken(),
     })
