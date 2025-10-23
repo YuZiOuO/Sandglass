@@ -1,8 +1,13 @@
 <template>
-  <TasksTimelineModule :tasks="tasks" />
+  <div class="root">
+    <ProjectDetailModule
+      :project-data="{ uid: 'id here', calendarId: 'id here', tasklistId: 'id here' }"
+      :tasks-data="tasks"
+    />
+  </div>
 </template>
 <script setup lang="ts">
-import TasksTimelineModule from '@/components/module/tasks/TasksTimelineModule.vue'
+import ProjectDetailModule from '@/components/module/project/ProjectDetailModule.vue'
 import { useGoogleTasksStore } from '@/stores/google-tasks'
 import { onMounted, ref } from 'vue'
 
@@ -16,27 +21,8 @@ onMounted(async () => {
 })
 </script>
 
-<!-- const dataNotScheduled: gapi.client.tasks.Task = {
-  title: '任务',
-  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
-  completed: undefined,
-  due: undefined,
+<style lang="css" scoped>
+.root {
+  display: flex;
 }
-const dataCompleted: gapi.client.tasks.Task = {
-  title: '任务',
-  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
-  completed: '2025-10-22T04:00:00Z',
-  due: undefined,
-}
-const dataDued: gapi.client.tasks.Task = {
-  title: '任务',
-  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
-  completed: undefined,
-  due: '2024-10-22T03:00:00Z',
-}
-const dataApproching: gapi.client.tasks.Task = {
-  title: '任务',
-  notes: '这是任务描述。很长很长很长很长很长很长很长很长很长很长很长很长',
-  completed: undefined,
-  due: '2025-10-25T03:00:00Z',
-} -->
+</style>

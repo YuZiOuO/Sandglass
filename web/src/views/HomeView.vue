@@ -11,7 +11,7 @@
     <n-layout-content>
       <n-flex vertical>
         <n-flex :wrap="false">
-          <HeatmapModule :values="data" />
+          <HeatmapModule :data="data" :loading="loading" />
         </n-flex>
         <n-flex justify="flex-start">
           <!-- <ProjectCardModule :proj="proj" /> -->
@@ -22,32 +22,18 @@
 </template>
 
 <script setup lang="ts">
-import {
-  NFlex,
-  NLayout,
-  NLayoutContent,
-  NLayoutSider,
-  type HeatmapData,
-  type HeatmapDataItem,
-} from 'naive-ui'
+import { NFlex, NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
 
 import GreetingModule from '@/components/module/workbench/GreetingModule.vue'
 import HeatmapModule from '@/components/common/HeatmapModule.vue'
 import { GithubApi, type GithubContributionDTO } from '@/api'
 import { onMounted, ref } from 'vue'
 
-const api = new GithubApi()
-const data = ref<HeatmapData>([])
-
-function convert(data: GithubContributionDTO[]): HeatmapData {
-  const convertItem = (d: GithubContributionDTO): HeatmapDataItem => {
-    return { timestamp: d.date, value: d.count }
-  }
-  return data.map(convertItem)
-}
+const data = ref<GithubContributionDTO[]>([])
+const loading = ref<boolean>(true)
 
 onMounted(async () => {
-  const apiData = (await api.getGithubActivities('6ziRUSavItalErW0uDQyk5qS5Ts1')).data
-  // data.value = convert(apiData)
+  data.value = (await new GithubApi().getGithubActivities('6ziRUSavItalErW0uDQyk5qS5Ts1')).data
+  loading.value = false
 })
 </script>

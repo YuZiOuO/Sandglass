@@ -1,5 +1,5 @@
 <template>
-  <NTimeline>
+  <NTimeline v-if="!props.loading">
     <NTimelineItem v-for="t in props.tasks" :key="t.id" :type="computeTimelineItemType(t)">
       <NThing>
         <template #header>
@@ -30,13 +30,19 @@
       </NThing>
     </NTimelineItem>
   </NTimeline>
+  <n-empty description="你什么也找不到" v-else>
+    <template #extra>
+      <n-button size="small"> 看看别的 </n-button>
+    </template>
+  </n-empty>
 </template>
 <script setup lang="ts">
-import { NButton, NDropdown, NText, NThing, NTimeline, NTimelineItem } from 'naive-ui'
+import { NButton, NDropdown, NText, NThing, NTimeline, NTimelineItem, NEmpty } from 'naive-ui'
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 
 const props = defineProps<{
   tasks: gapi.client.tasks.Task[]
+  loading: boolean
 }>()
 
 const taskOptions: DropdownMixedOption[] = [
