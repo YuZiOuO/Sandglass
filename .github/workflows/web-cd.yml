@@ -1,0 +1,33 @@
+name: Continue Deployment for web
+on:
+  workflow_run:
+    workflows: ["Continue Integration for web"]
+    types: [completed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'master'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: Continue Integration for web
+          run_id: ${{ github.event.workflow_run.id }}
+          name: web-build-artifact
+          path: web/dist
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_CCCE4 }}
+          channelId: live
+          projectId: sandglass-ccce4
