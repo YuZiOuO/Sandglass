@@ -19,10 +19,10 @@
       @click="
         () => {
           emits('submit', {
-            calendar: inputCalendarId,
-            projectDescription: inputProjectDescription,
-            projectName: inputProjectName,
-            tasklist: inputTasklistId,
+            calendar: inputCalendarId as string,
+            projectDescription: inputProjectDescription as string,
+            projectName: inputProjectName as string,
+            tasklist: inputTasklistId as string,
           })
         }
       "
