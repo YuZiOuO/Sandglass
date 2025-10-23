@@ -1,6 +1,9 @@
 {
     "scripts": {
-        "generate-api-cli":"pnpm generate-openapi-json && openapi-generator-cli generate -i api/openapi.json -g typescript-axios -o web/src/api",
-        "generate-openapi-json":"TERMINATE_AFTER_API_DOC_IS_GENERATED= pnpm --filter api start"
+        "generate-api-cli": "pnpm generate-openapi-json && openapi-generator-cli generate -i api/openapi.json -g typescript-axios -o web/src/api",
+        "generate-openapi-json": "TERMINATE_AFTER_API_DOC_IS_GENERATED= pnpm --filter api start:tsc"
+    },
+    "dependencies": {
+        "@openapitools/openapi-generator-cli": "^2.25.0"
     }
 }
