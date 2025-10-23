@@ -4,8 +4,8 @@ import { useAuthenticationStore } from './authentication'
 
 export const useOAuthStore = defineStore('OAuth', () => {
   const authenticationStore = useAuthenticationStore()
-  const googleOAuthApi = new GoogleAuthApi()
-  const githubOAuthApi = new GithubAuthApi()
+  const googleOAuthApi = new GoogleAuthApi(undefined, import.meta.env.VITE_API_BASEURL)
+  const githubOAuthApi = new GithubAuthApi(undefined, import.meta.env.VITE_API_BASEURL)
 
   async function getGoogleAuthUrl() {
     return (
