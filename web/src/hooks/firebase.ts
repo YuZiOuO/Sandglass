@@ -2,10 +2,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app'
 import { getAuth, type Auth } from 'firebase/auth'
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: 'AIzaSyD9IV71jOxRLjGUnV0jEFirU9cf2V099c4',
   authDomain: 'sandglass-ccce4.firebaseapp.com',
@@ -15,7 +11,6 @@ const firebaseConfig = {
   appId: '1:703398515772:web:29adadfaac7717e2811f39',
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
 export type FirebaseService = { app: FirebaseApp; auth: Auth }
