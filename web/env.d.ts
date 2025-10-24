@@ -1,4 +1,7 @@
 /// <reference types="vite/client" />
+/**
+ * You should append what you added to env/env.ts when modify this interface
+ */
 interface ImportMetaEnv {
   readonly SG_WEB_API_BASEURL: string
   readonly SG_WEB_FB_APIKEY: string

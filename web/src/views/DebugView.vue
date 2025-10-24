@@ -32,7 +32,7 @@ import DebugOAuth from '@/components/module/debug/DebugOAuth.vue'
 import DebugGoogleCalendar from '@/components/module/debug/DebugGoogleCalendar.vue'
 import DebugGoogleTasks from '@/components/module/debug/DebugGoogleTasks.vue'
 
-const url = import.meta.env.VITE_API_BASEURL
+const url = import.meta.env.SG_WEB_API_BASEURL
 </script>
 
 <style>
