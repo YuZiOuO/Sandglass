@@ -15,6 +15,12 @@
     <Suspense>
       <NCard class="flex-item" title="GoogleTasks"><DebugGoogleTasks /></NCard>
     </Suspense>
+
+    <NCard title="meta">
+      <NCard title="API_BASEURL">
+        {{ url }}
+      </NCard>
+    </NCard>
   </NFlex>
 </template>
 
@@ -25,6 +31,8 @@ import DebugProject from '@/components/module/debug/DebugProject.vue'
 import DebugOAuth from '@/components/module/debug/DebugOAuth.vue'
 import DebugGoogleCalendar from '@/components/module/debug/DebugGoogleCalendar.vue'
 import DebugGoogleTasks from '@/components/module/debug/DebugGoogleTasks.vue'
+
+const url = import.meta.env.VITE_API_BASEURL
 </script>
 
 <style>
