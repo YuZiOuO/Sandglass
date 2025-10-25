@@ -1,0 +1,29 @@
+name: Web CI/CD
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "web/**"
+      - ".github/workflows/**"
+
+  pull_request:
+    branches:
+      - "**"
+    paths:
+      - "web/**"
+      - ".github/workflows/**"
+
+jobs:
+  CI:
+    name: Integration
+    uses: ./.github/workflows/web-ci.yml
+
+  CD:
+    name: Deployment
+    uses: ./.github/workflows/web-cd.yml
+    needs: CI
+    with:
+      environment: ${{ github.event_name == 'push' && github.ref_name == 'master' && 'prod' || 'staging' }}
+      channelId: ${{ github.event_name == 'pull_request' && '' || 'live'}}
+    secrets: inherit
