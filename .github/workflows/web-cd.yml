@@ -1,70 +1,49 @@
 name: Continue Deployment for web
 on:
-  workflow_run:
-    workflows: ["Continue Integration for web"]
-    types: [completed]
-    branches: [master, dev]
+  workflow_call:
+    inputs:
+      environment:
+        description: "Which environment to deploy.Should be set ahead in repo config."
+        type: string
+        required: true
+      channelId:
+        description: "Whether to deploy to live channel."
+        type: string
+        required: true
 
 jobs:
-  deploy_production:
+  deploy_prod:
     runs-on: ubuntu-latest
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'master' &&
-      github.event.workflow_run.event != 'pull_request'
 
+    if: ${{ inputs.environment == 'prod' }}
     environment: prod
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Code (for retriving Action Scripts)
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - uses: "./.github/workflows/deploy.yml"
+      - uses: "./.github/workflows/web-deploy.yml"
         with:
           ci-workflow-id: ${{ github.event.workflow_run.id }}
-          channelId: "live"
+          channelId: ${{ inputs.channelId }}
           projectId: ${{ secrets.SG_WEB_FB_PROJECT_ID }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_CCCE4 }}
           repoToken: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy_dev:
+  deploy_staging:
     runs-on: ubuntu-latest
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'dev' &&
-      github.event.workflow_run.event != 'pull_request'
 
+    if: ${{ inputs.environment == 'staging' }}
     environment: staging
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - uses: "./.github/workflows/deploy.yml"
+      - uses: "./.github/workflows/web-deploy.yml"
         with:
           ci-workflow-id: ${{ github.event.workflow_run.id }}
-          channelId: "live"
-          projectId: ${{ secrets.SG_WEB_FB_PROJECT_ID }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_DEV_2BC90 }}
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy_pr_preview:
-    runs-on: ubuntu-latest
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request'
-
-    environment: staging
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - uses: "./.github/workflows/deploy.yml"
-        with:
-          ci-workflow-id: ${{ github.event.workflow_run.id }}
+          channelId: ${{ inputs.channelId }}
           projectId: ${{ secrets.SG_WEB_FB_PROJECT_ID }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_DEV_2BC90 }}
           repoToken: ${{ secrets.GITHUB_TOKEN }}
