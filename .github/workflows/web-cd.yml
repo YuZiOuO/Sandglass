@@ -16,6 +16,9 @@ jobs:
     environment: prod
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - uses: "./.github/workflows/deploy.yml"
         with:
           ci-workflow-id: ${{ github.event.workflow_run.id }}
@@ -34,6 +37,9 @@ jobs:
     environment: staging
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - uses: "./.github/workflows/deploy.yml"
         with:
           ci-workflow-id: ${{ github.event.workflow_run.id }}
@@ -51,6 +57,9 @@ jobs:
     environment: staging
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - uses: "./.github/workflows/deploy.yml"
         with:
           ci-workflow-id: ${{ github.event.workflow_run.id }}
