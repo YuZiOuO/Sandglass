@@ -4,7 +4,7 @@ import { useAuthenticationStore } from './authentication'
 import { defineStore } from 'pinia'
 
 export const useProjectStore = defineStore('project', () => {
-  const api = new ProjectApi(undefined, import.meta.env.VITE_API_BASEURL)
+  const api = new ProjectApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
   const authenticationStore = useAuthenticationStore()
 
   const cachedProjectList = ref<ProjectDTO[]>()

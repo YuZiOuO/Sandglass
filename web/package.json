@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:local": "SG_WEB_API_BASEURL=http://localhost:3000/api vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
+    "preview:prod":"firebase hosting:channel:deploy npm_vite_preview",
     "test:unit": "vitest",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",

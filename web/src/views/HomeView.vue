@@ -33,7 +33,11 @@ const data = ref<GithubContributionDTO[]>([])
 const loading = ref<boolean>(true)
 
 onMounted(async () => {
-  data.value = (await new GithubApi().getGithubActivities('6ziRUSavItalErW0uDQyk5qS5Ts1')).data
+  data.value = (
+    await new GithubApi(undefined, import.meta.env.VITE_API_BASEURL).getGithubActivities(
+      '6ziRUSavItalErW0uDQyk5qS5Ts1',
+    )
+  ).data
   loading.value = false
 })
 </script>

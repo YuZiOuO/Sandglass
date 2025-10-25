@@ -1,0 +1,63 @@
+name: Deploy to Firebase Hosting
+on:
+  workflow_call:
+    inputs:
+      ci-workflow-id:
+        description: "Used to download artifacts."
+        required: true
+        type: string
+      channelId:
+        description: "Channel to deploy."
+        type: string
+      projectId:
+        description: "Project to deploy"
+        type: string
+        required: true
+    secrets:
+      firebaseServiceAccount:
+        description: "The Firebase Service Account Secret."
+        required: true
+      repoToken:
+        description: "The GitHub Token for repository access."
+        required: true
+    outputs:
+      urls:
+        description: "URLs that was deployed to."
+        value: ${{jobs.deploy.outputs.urls}}
+      details_url:
+        description: "URL containing deploy details."
+        value: ${{jobs.deploy.outputs.details_url}}
+      expire_date_formatted:
+        description: "Expire date in human readable format."
+        value: ${{jobs.deploy.outputs.expire_time_formatted}}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    outputs:
+      urls: ${{ steps.firebase_deploy.outputs.urls }}
+      details_url: ${{steps.firebase_deploy.outputs.details_url}}
+      expire_time_formatted: ${{steps.firebase_deploy.outputs.expire_time_formatted}}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: Continue Integration for web
+          run_id: ${{ inputs.ci-workflow-id }}
+          name: web-build-artifact
+          path: web/dist
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        id: firebase_deploy
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.firebaseServiceAccount }}
+          channelId: ${{ inputs.channelId }}
+          projectId: ${{ inputs.projectId }}

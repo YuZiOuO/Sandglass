@@ -21,7 +21,8 @@
     // "explorer.excludeGitIgnore": true,
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
-      "*.module.ts": "${capture}.*.ts"
+      "*.module.ts": "${capture}.*.ts",
+      ".env": ".env.*"
     },
     "scm.alwaysShowActions": false,
     "scm.alwaysShowRepositories": true
