@@ -27,5 +27,5 @@ jobs:
       checks: write
     with:
       environment: ${{ github.event_name == 'push' && github.ref_name == 'master' && 'prod' || 'staging' }}
-      channelId: ${{ github.event_name == 'pull_request' && '' || 'live'}}
+      channelId: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'live'}}
     secrets: inherit
