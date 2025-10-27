@@ -1,59 +1,37 @@
 name: Continue Deployment for web
 on:
-  workflow_run:
-    workflows: ["Continue Integration for web"]
-    types: [completed]
-    branches: [master, dev]
+  workflow_call:
+    inputs:
+      environment:
+        description: "Which environment to deploy.Should be set ahead in repo config."
+        type: string
+        required: true
+      channelId:
+        description: "Whether to deploy to live channel."
+        type: string
+        required: true
 
 jobs:
-  deploy_production:
+  deploy:
     runs-on: ubuntu-latest
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'master' &&
-      github.event.workflow_run.event != 'pull_request'
 
-    environment: prod
+    environment: ${{inputs.environment}}
 
     steps:
-      - uses: "./.github/workflows/deploy.yml"
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
         with:
-          ci-workflow-id: ${{ github.event.workflow_run.id }}
-          channelId: "live"
-          projectId: ${{ secrets.SG_WEB_FB_PROJECT_ID }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_CCCE4 }}
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          name: web-build-artifact
+          path: web/dist
 
-  deploy_dev:
-    runs-on: ubuntu-latest
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_branch == 'dev' &&
-      github.event.workflow_run.event != 'pull_request'
-
-    environment: staging
-
-    steps:
-      - uses: "./.github/workflows/deploy.yml"
+      - name: Deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        id: firebase_deploy
         with:
-          ci-workflow-id: ${{ github.event.workflow_run.id }}
-          channelId: "live"
-          projectId: ${{ secrets.SG_WEB_FB_PROJECT_ID }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_DEV_2BC90 }}
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy_pr_preview:
-    runs-on: ubuntu-latest
-    if: |
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request'
-
-    environment: staging
-
-    steps:
-      - uses: "./.github/workflows/deploy.yml"
-        with:
-          ci-workflow-id: ${{ github.event.workflow_run.id }}
-          projectId: ${{ secrets.SG_WEB_FB_PROJECT_ID }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_DEV_2BC90 }}
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{inputs.environment == 'prod' && secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_CCCE4  || secrets.FIREBASE_SERVICE_ACCOUNT_SANDGLASS_DEV_2BC90}}
+          channelId: ${{ inputs.channelId }}
+          projectId: ${{inputs.environment == 'prod' && 'sandglass-ccce4'  || 'sandglass-dev-2bc90'}}
