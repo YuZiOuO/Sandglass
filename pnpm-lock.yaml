@@ -150,6 +150,9 @@ importers:
 
   web:
     dependencies:
+      '@tanstack/vue-query':
+        specifier: ^5.90.5
+        version: 5.90.5(vue@3.5.22(typescript@5.7.3))
       '@vicons/ionicons5':
         specifier: ^0.13.0
         version: 0.13.0
@@ -1307,14 +1310,14 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251001':
-    resolution: {integrity: sha512-adPvxsusN9u0hOU+M+QTmYSVE3hiA7uHXBS6vAlJEk0l+RAXcnysLYBJzVbtw5eXx6kIO9L8rUfdTMC07wFSbA==}
+  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251022':
+    resolution: {integrity: sha512-hS/N1sopsIHFm7BJpHGG3EWgRjjNig/kbyyMHALHqXCOE/3shJEqvOn3fWHJ3NPKFdrO7lFVzGbfvip70tdIQA==}
 
   '@maxim_mazurok/gapi.client.discovery-v1@0.4.20200806':
     resolution: {integrity: sha512-Jeo/KZqK39DI6ExXHcJ4lqnn1O/wEqboQ6eQ8WnNpu5eJ7wUnX/C5KazOgs1aRhnIB/dVzDe8wm62nmtkMIoaw==}
 
-  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251007':
-    resolution: {integrity: sha512-x2km8UNS11vywA1m61fOti93aWKCq0lj8SYRl5LGbELd+JzFZD32rjP0lo1a6m/c9QMDSWD8BdMvHyd+K8EAmw==}
+  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251026':
+    resolution: {integrity: sha512-vnobOP+n+ZqQTLftwRfgssGJI4yekodTWyur5bwVORuSMDG636rrdW1PhEkbSkLgd1m5gjknQBt7mqOc9AhmEQ==}
 
   '@microsoft/tsdoc@0.15.1':
     resolution: {integrity: sha512-4aErSrCR/On/e5G2hDP0wjooqDdauzEbIq8hIkIe5pXV0rtWJZvdCEKL0ykZxex+IxIwBp0eGeV48hQN07dXtw==}
@@ -1980,6 +1983,22 @@ packages:
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
+
+  '@tanstack/match-sorter-utils@8.19.4':
+    resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
+    engines: {node: '>=12'}
+
+  '@tanstack/query-core@5.90.5':
+    resolution: {integrity: sha512-wLamYp7FaDq6ZnNehypKI5fNvxHPfTYylE0m/ZpuuzJfJqhR5Pxg9gvGBHZx4n7J+V5Rg5mZxHHTlv25Zt5u+w==}
+
+  '@tanstack/vue-query@5.90.5':
+    resolution: {integrity: sha512-bTEmgIb6o5BqkoJPNV7ZKKsDHjiVnNydORw1n6S/x0dppb3lTT5KFOotQ5PqZG3OQY+9AwA6RJJN3pEx+9j1Pg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.6.0 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
 
   '@tokenizer/inflate@0.2.7':
     resolution: {integrity: sha512-MADQgmZT1eKjp06jpI2yozxaU9uVs4GzzgSL+uEq7bVcJ9V1ZXQkeGNql1fsSI0gMy1vhvNTNbUqrx+pZfJVmg==}
@@ -5051,6 +5070,9 @@ packages:
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
+  remove-accents@0.5.0:
+    resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
+
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -7433,7 +7455,7 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251001':
+  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251022':
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
@@ -7443,7 +7465,7 @@ snapshots:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
 
-  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251007':
+  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251026':
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
@@ -8094,6 +8116,20 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
+  '@tanstack/match-sorter-utils@8.19.4':
+    dependencies:
+      remove-accents: 0.5.0
+
+  '@tanstack/query-core@5.90.5': {}
+
+  '@tanstack/vue-query@5.90.5(vue@3.5.22(typescript@5.7.3))':
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.19.4
+      '@tanstack/query-core': 5.90.5
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.22(typescript@5.7.3)
+      vue-demi: 0.14.10(vue@3.5.22(typescript@5.7.3))
+
   '@tokenizer/inflate@0.2.7':
     dependencies:
       debug: 4.4.3
@@ -8209,7 +8245,7 @@ snapshots:
 
   '@types/gapi.client.calendar-v3@0.0.4':
     dependencies:
-      '@maxim_mazurok/gapi.client.calendar-v3': 0.1.20251001
+      '@maxim_mazurok/gapi.client.calendar-v3': 0.1.20251022
 
   '@types/gapi.client.discovery-v1@0.0.4':
     dependencies:
@@ -8217,7 +8253,7 @@ snapshots:
 
   '@types/gapi.client.tasks-v1@0.0.5':
     dependencies:
-      '@maxim_mazurok/gapi.client.tasks-v1': 0.1.20251007
+      '@maxim_mazurok/gapi.client.tasks-v1': 0.1.20251026
 
   '@types/gapi.client@1.0.8': {}
 
@@ -11749,6 +11785,8 @@ snapshots:
   readdirp@4.1.2: {}
 
   reflect-metadata@0.2.2: {}
+
+  remove-accents@0.5.0: {}
 
   require-directory@2.1.1: {}
 

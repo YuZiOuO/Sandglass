@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:local": "SG_WEB_API_BASEURL=http://localhost:3000/api vite",
+    "dev:local": "SG_WEB_API_BASEURL=http://localhost:5173/api vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "preview:prod":"firebase hosting:channel:deploy npm_vite_preview",
+    "preview:prod": "firebase hosting:channel:deploy npm_vite_preview",
     "test:unit": "vitest",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@tanstack/vue-query": "^5.90.5",
     "@vicons/ionicons5": "^0.13.0",
     "axios": "^1.12.2",
     "bson": "^6.10.4",
@@ -25,11 +26,11 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@types/gapi.client.calendar-v3": "^0.0.4",
-    "@types/gapi.client.tasks-v1": "^0.0.5",
     "@openapitools/openapi-generator-cli": "^2.25.0",
     "@tsconfig/node22": "^22.0.2",
     "@types/gapi": "^0.0.47",
+    "@types/gapi.client.calendar-v3": "^0.0.4",
+    "@types/gapi.client.tasks-v1": "^0.0.5",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.18.11",
     "@vitejs/plugin-vue": "^5.2.4",

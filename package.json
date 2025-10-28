@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start:dev": "firebase emulators:start --project dev",
+        "build:emulators": "firebase emulators:start --project dev",
         "generate-api-cli": "pnpm generate-openapi-json && openapi-generator-cli generate -i api/openapi.json -g typescript-axios -o web/src/api",
         "generate-openapi-json": "TERMINATE_AFTER_API_DOC_IS_GENERATED= pnpm --filter api start:tsc"
     },
