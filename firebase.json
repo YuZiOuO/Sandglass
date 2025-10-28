@@ -23,5 +23,19 @@
         "destination": "/index.html"
       }
     ]
+  },
+  "emulators": {
+    "apphosting": {
+      "port": 5002,
+      "rootDirectory": "api",
+      "startCommand": "pnpm run start:dev"
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }

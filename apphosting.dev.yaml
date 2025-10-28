@@ -1,6 +1,3 @@
-runConfig:
-  memoryMiB: 2048
-
 env:
   - variable: DB_URI
     secret: DB_URI
@@ -28,11 +25,11 @@ env:
       - RUNTIME
 
   - variable: GApis_redirctURI
-    value: THIS_SHOULD_BE_OVERRIDDEN
+    value: http://dev.api.sandglass.kanata.ink/oauth/google/callback
     availability:
       - RUNTIME
 
   - variable: GH_redirctURI
-    value: THIS_SHOULD_BE_OVERRIDDEN
+    value: http://dev.api.sandglass.kanata.ink/oauth/github/verify
     availability:
       - RUNTIME
