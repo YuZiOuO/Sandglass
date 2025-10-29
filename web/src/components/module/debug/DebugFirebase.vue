@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useFirebase } from '@/hooks/firebase'
+import { useFirebase } from '@/services-composable/firebase'
 import type { User } from 'firebase/auth'
 import { NCollapse, NCollapseItem } from 'naive-ui'
 

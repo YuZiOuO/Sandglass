@@ -38,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import { useSignup } from '@/services-composable/user'
 import { useAuthenticationStore } from '@/stores/authentication'
-import { useUserStore } from '@/stores/user'
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui'
 import { ref } from 'vue'
 
@@ -53,7 +53,7 @@ const loginLoading = ref(false)
 const signupLoading = ref(false)
 
 const authenticationStore = useAuthenticationStore()
-const userStore = useUserStore()
+const signup = useSignup()
 
 async function trigger_login() {
   try {
@@ -65,7 +65,7 @@ async function trigger_login() {
 }
 async function trigger_signup() {
   try {
-    await userStore.create(email.value, password.value)
+    await signup.mutateAsync({ email: email.value, password: password.value })
     await authenticationStore.login(email.value, password.value)
     emit('login-success')
   } catch (e) {
