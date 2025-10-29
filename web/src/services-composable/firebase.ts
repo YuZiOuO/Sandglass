@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, type FirebaseApp } from 'firebase/app'
-import { getAuth, type Auth } from 'firebase/auth'
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.SG_WEB_FB_APIKEY,
@@ -13,10 +13,16 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 
-export type FirebaseService = { app: FirebaseApp; auth: Auth }
+export async function initializeFirebase() {
+  await getAuth(app).authStateReady()
+}
 
-export async function useFirebase(): Promise<FirebaseService> {
-  const auth = getAuth(app)
-  await auth.authStateReady()
-  return { app: app, auth: auth }
+export function useFirebase() {
+  return { app: app, auth: getAuth(app) }
+}
+
+export async function useAccessToken() {
+  const fbService = useFirebase()
+  const user = fbService.auth.currentUser
+  return user ? await user.getIdToken() : null
 }

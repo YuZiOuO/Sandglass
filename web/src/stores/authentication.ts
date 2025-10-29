@@ -12,7 +12,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
       return
     }
 
-    const fbService = await useFirebase()
+    const fbService = useFirebase()
     try {
       await authSdk.signInWithEmailAndPassword(fbService.auth, email, password)
       currentUid.value = fbService.auth.currentUser!.uid
@@ -26,7 +26,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
       return
     }
 
-    const fbService = await useFirebase()
+    const fbService = useFirebase()
     await fbService.auth.signOut()
 
     currentUid.value = null

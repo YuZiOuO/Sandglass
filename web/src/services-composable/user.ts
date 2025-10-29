@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/vue-query'
 export function useSignup() {
   return useMutation({
     mutationFn: async (params: { email: string; password: string }) => {
-      const fbService = await useFirebase()
+      const fbService = useFirebase()
       try {
         authSdk.createUserWithEmailAndPassword(fbService.auth, params.email, params.password)
       } catch (e) {

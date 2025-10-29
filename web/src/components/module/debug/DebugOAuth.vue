@@ -2,61 +2,76 @@
   <NButton
     @click="
       async () => {
-        googleAuthUrl = await oauthStore.getGoogleAuthUrl()
+        await googleAuthUrl.refetch()
       }
     "
-    >getGoogleAuthUrl</NButton
+    :loading="googleAuthUrl.isFetching.value"
   >
-  <NText>{{ googleAuthUrl }}</NText>
-  <div></div>
-  <NButton
-    @click="
-      async () => {
-        googleAccessToken = await oauthStore.getGoogleAccessToken()
-      }
-    "
-    >getGoogleAccessToken</NButton
-  >
-  <NText>{{ googleAccessToken }}</NText>
-  <NButton
-    @click="
-      async () => {
-        googleAuthStatus = await oauthStore.getGoogleAuthStatus()
-      }
-    "
-    >getGoogleAuthStatus</NButton
-  >
-  <NText>{{ googleAuthStatus }}</NText>
+    GoogleAuthUrl
+  </NButton>
+  <NText>{{ googleAuthUrl.data }}</NText>
 
   <NButton
     @click="
       async () => {
-        githubAuthUrl = await oauthStore.getGithubAuthUrl()
+        await googleAccessToken.refetch()
       }
     "
-    >getGithubAuthUrl</NButton
+    :loading="googleAccessToken.isFetching.value"
   >
-  <NText>{{ githubAuthUrl }}</NText>
+    getGoogleAccessToken
+  </NButton>
+  <NText>{{ googleAccessToken.data }}</NText>
+
   <NButton
     @click="
       async () => {
-        githubAuthStatus = await oauthStore.getGithubAuthStatus()
+        await googleAuthStatus.refetch()
       }
     "
-    >getGithubAuthStatus</NButton
+    :loading="googleAuthStatus.isFetching.value"
   >
-  <NText>{{ githubAuthStatus }}</NText>
+    getGoogleAuthStatus
+  </NButton>
+  <NText>{{ googleAuthStatus.data }}</NText>
+
+  <NButton
+    @click="
+      async () => {
+        await githubAuthUrl.refetch()
+      }
+    "
+    :loading="githubAuthUrl.isFetching.value"
+  >
+    getGithubAuthUrl
+  </NButton>
+  <NText>{{ githubAuthUrl.data }}</NText>
+
+  <NButton
+    @click="
+      async () => {
+        await githubAuthStatus.refetch()
+      }
+    "
+    :loading="githubAuthStatus.isFetching.value"
+  >
+    getGithubAuthStatus
+  </NButton>
+  <NText>{{ githubAuthStatus.data }}</NText>
 </template>
 
 <script setup lang="ts">
-import { useOAuthStore } from '@/stores/oauth'
+import { useGithubAuthStatusQuery, useGithubAuthUrlQuery } from '@/services-composable/github-oauth'
+import {
+  useGoogleAccessTokenQuery,
+  useGoogleAuthStatusQuery,
+  useGoogleAuthUrlQuery,
+} from '@/services-composable/google-oauth'
 import { NButton, NText } from 'naive-ui'
-import { ref } from 'vue'
 
-const oauthStore = useOAuthStore()
-const googleAuthUrl = ref<string>()
-const googleAccessToken = ref<string>()
-const googleAuthStatus = ref<boolean>()
-const githubAuthUrl = ref<string>()
-const githubAuthStatus = ref<boolean>()
+const googleAuthUrl = useGoogleAuthUrlQuery()
+const googleAccessToken = useGoogleAccessTokenQuery()
+const googleAuthStatus = useGoogleAuthStatusQuery()
+const githubAuthUrl = useGithubAuthUrlQuery()
+const githubAuthStatus = useGithubAuthStatusQuery()
 </script>
