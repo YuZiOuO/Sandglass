@@ -1,22 +1,62 @@
 <template>
-  <NButton @click="googleOAuthAPI.useUrl('').refetch">GoogleAuthUrl</NButton>
-  <NText>{{ googleOAuthAPI.useUrl('').data }}</NText>
-  <NButton @click="googleOAuthAPI.useToken('').refetch">GoogleAccessToken</NButton>
-  <NText>{{ googleOAuthAPI.useToken('').data }}</NText>
-  <NButton @click="googleOAuthAPI.useStatus('').refetch">GoogleAuthStatus</NButton>
-  <NText>{{ googleOAuthAPI.useStatus('').data }}</NText>
+  <NButton
+    @click="
+      async () => {
+        googleAuthUrl = await oauthStore.getGoogleAuthUrl()
+      }
+    "
+    >getGoogleAuthUrl</NButton
+  >
+  <NText>{{ googleAuthUrl }}</NText>
+  <div></div>
+  <NButton
+    @click="
+      async () => {
+        googleAccessToken = await oauthStore.getGoogleAccessToken()
+      }
+    "
+    >getGoogleAccessToken</NButton
+  >
+  <NText>{{ googleAccessToken }}</NText>
+  <NButton
+    @click="
+      async () => {
+        googleAuthStatus = await oauthStore.getGoogleAuthStatus()
+      }
+    "
+    >getGoogleAuthStatus</NButton
+  >
+  <NText>{{ googleAuthStatus }}</NText>
 
-  <NButton @click="githubOAuthAPI.useUrl('').refetch">getGithubAuthUrl</NButton>
-  <NText>{{ githubOAuthAPI.useUrl('').data }}</NText>
-  <NButton @click="githubOAuthAPI.useStatus('').refetch">getGithubAuthStatus</NButton>
-  <NText>{{ githubOAuthAPI.useStatus('').data }}</NText>
+  <NButton
+    @click="
+      async () => {
+        githubAuthUrl = await oauthStore.getGithubAuthUrl()
+      }
+    "
+    >getGithubAuthUrl</NButton
+  >
+  <NText>{{ githubAuthUrl }}</NText>
+  <NButton
+    @click="
+      async () => {
+        githubAuthStatus = await oauthStore.getGithubAuthStatus()
+      }
+    "
+    >getGithubAuthStatus</NButton
+  >
+  <NText>{{ githubAuthStatus }}</NText>
 </template>
 
 <script setup lang="ts">
-import { useGithubOAuthAPI } from '@/query/github-oauth'
-import { useGoogleOAuthAPI } from '@/query/google-oauth'
+import { useOAuthStore } from '@/stores/oauth'
 import { NButton, NText } from 'naive-ui'
+import { ref } from 'vue'
 
-const googleOAuthAPI = useGoogleOAuthAPI()
-const githubOAuthAPI = useGithubOAuthAPI()
+const oauthStore = useOAuthStore()
+const googleAuthUrl = ref<string>()
+const googleAccessToken = ref<string>()
+const googleAuthStatus = ref<boolean>()
+const githubAuthUrl = ref<string>()
+const githubAuthStatus = ref<boolean>()
 </script>
