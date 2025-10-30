@@ -8,14 +8,17 @@ import { VueQueryPlugin } from '@tanstack/vue-query'
 import { initializeFirebase } from './services-composable/firebase'
 import { globalQueryClient } from './services-composable'
 
-checkEnvsDefinedAndNotEmpty()
+async function bootstrap() {
+  checkEnvsDefinedAndNotEmpty()
 
-await initializeFirebase()
-console.log('Firebase Initialized.')
+  const app = createApp(App)
+  app.use(pinia)
+  app.use(router)
+  app.use(VueQueryPlugin, { queryClient: globalQueryClient })
 
-const app = createApp(App)
-app.use(pinia)
-app.use(router)
-app.use(VueQueryPlugin, { queryClient: globalQueryClient })
+  await initializeFirebase()
 
-app.mount('#app')
+  app.mount('#app')
+}
+
+bootstrap()

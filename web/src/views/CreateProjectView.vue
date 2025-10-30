@@ -15,19 +15,17 @@
 
 <script setup lang="ts">
 import CreateProjectModule from '@/components/module/project/CreateProjectModule.vue'
-import { useGoogleCalendarStore } from '@/stores/google-calendar'
-import { useGoogleTasksStore } from '@/stores/google-tasks'
 import { onMounted, ref } from 'vue'
 
-const gCalStore = useGoogleCalendarStore()
-const gTasksStore = useGoogleTasksStore()
+// const gCalStore = useGoogleCalendarStore()
+// const gTasksStore = useGoogleTasksStore()
 
 const loading = ref<boolean>(true)
 const calendars = ref<gapi.client.calendar.CalendarListEntry[]>([])
 const tasklists = ref<gapi.client.tasks.TaskList[]>([])
 onMounted(async () => {
-  calendars.value = (await gCalStore.listCalendar()).items!
-  tasklists.value = (await gTasksStore.listTaskLists()).items!
+  // calendars.value = (await gCalStore.listCalendar()).items!
+  // tasklists.value = (await gTasksStore.listTaskLists()).items!
   loading.value = false
 })
 </script>
