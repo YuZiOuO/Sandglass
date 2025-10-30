@@ -1,29 +1,4 @@
 env:
-  - variable: DB_URI
-    secret: DB_URI
-    availability:
-      - RUNTIME
-
-  - variable: GApis_OAuth2CliId
-    secret: GApis_OAuth2CliId
-    availability:
-      - RUNTIME
-
-  - variable: GApis_OAuth2CliSecret
-    secret: GApis_OAuth2CliSecret
-    availability:
-      - RUNTIME
-
-  - variable: GH_clientId
-    secret: GH_clientId
-    availability:
-      - RUNTIME
-
-  - variable: GH_clientSecret
-    secret: GH_clientSecret
-    availability:
-      - RUNTIME
-
   - variable: GApis_redirctURI
     value: http://dev.api.sandglass.kanata.ink/oauth/google/callback
     availability:
