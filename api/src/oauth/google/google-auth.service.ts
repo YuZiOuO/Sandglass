@@ -27,7 +27,7 @@ export class GoogleAuthService {
       new googleapis.Auth.OAuth2Client({
         clientId: configService.getOrThrow('GApis_OAuth2CliId'),
         clientSecret: configService.getOrThrow('GApis_OAuth2CliSecret'),
-        redirectUri: configService.getOrThrow('GApis_RedirctURI'),
+        redirectUri: configService.getOrThrow('GApis_RedirectURL'),
       });
   }
 

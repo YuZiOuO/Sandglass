@@ -1,58 +1,36 @@
-import { useFirebase } from '@/hooks/firebase'
 import { defineStore } from 'pinia'
-
 import * as authSdk from 'firebase/auth'
+import { computed, ref } from 'vue'
+import { useFirebase } from '@/services-composable/firebase'
 
 export const useAuthenticationStore = defineStore('authentication', () => {
+  const currentUid = ref<string | null>(null)
+  const uid = computed(() => currentUid.value)
+
   async function login(email: string, password: string) {
-    if (await isLogined()) {
+    if (currentUid.value) {
       return
     }
 
-    const fbService = await useFirebase()
+    const fbService = useFirebase()
     try {
       await authSdk.signInWithEmailAndPassword(fbService.auth, email, password)
+      currentUid.value = fbService.auth.currentUser!.uid
     } catch (e) {
       throw e
     }
   }
 
-  async function isLogined() {
-    const fbService = await useFirebase()
-    return fbService.auth.currentUser !== null
-  }
-
   async function logout() {
-    if (!(await isLogined())) {
+    if (!currentUid.value) {
       return
     }
-    const fbService = await useFirebase()
+
+    const fbService = useFirebase()
     await fbService.auth.signOut()
+
+    currentUid.value = null
   }
 
-  async function getAccessToken() {
-    if (!(await isLogined())) {
-      return null
-    }
-    const fbService = await useFirebase()
-    return (fbService.auth.currentUser as authSdk.User).getIdToken()
-  }
-
-  async function constructDefaultAxiosAuthHeader() {
-    return {
-      headers: {
-        Authorization: 'Bearer ' + (await getAccessToken()),
-      },
-    }
-  }
-
-  async function getUid() {
-    if (!(await isLogined())) {
-      return null
-    }
-    const fbService = await useFirebase()
-    return (fbService.auth.currentUser as authSdk.User).uid
-  }
-
-  return { login, logout, isLogined, getAccessToken, getUid, constructDefaultAxiosAuthHeader }
+  return { login, logout, uid }
 })

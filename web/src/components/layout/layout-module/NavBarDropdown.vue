@@ -23,9 +23,8 @@ import pinia from '@/stores'
 const authenticationStore = useAuthenticationStore(pinia)
 const isLogined = ref<boolean>(false)
 onMounted(async () => {
-  isLogined.value = await authenticationStore.isLogined()
+  isLogined.value = authenticationStore.uid !== null
 })
-
 async function handleDropdownSelect(key: string) {
   if (key === 'logout') {
     try {

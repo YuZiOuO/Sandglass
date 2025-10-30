@@ -26,7 +26,7 @@ export class GithubAuthService {
   private generateParams(uid: string): GithubAuthParamsDTO {
     return {
       client_id: this.configService.getOrThrow<string>('GH_clientId'),
-      redirect_uri: this.configService.getOrThrow<string>('GH_redirctURI'),
+      redirect_uri: this.configService.getOrThrow<string>('GH_RedirectURL'),
       scope: 'user repo:status',
       state: uid,
     };

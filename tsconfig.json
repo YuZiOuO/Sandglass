@@ -1,0 +1,20 @@
+// Monorepo 根目录: tsconfig.json
+
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    // "module": "ESNext",
+    // "target": "ESNext",
+    "moduleResolution": "node",
+
+    "paths": {
+      "@sandglass/api": ["./api/src"],
+      "@sandglass/web": ["./web/src"]
+    }
+  },
+  "references": [
+    { "path": "./api/tsconfig.json" },
+    { "path": "./web/tsconfig.json" }
+  ],
+  "exclude": ["node_modules"]
+}

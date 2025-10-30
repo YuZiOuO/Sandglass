@@ -2,55 +2,24 @@
   <NButton
     @click="
       async () => {
-        refreshProjectListLoadingStatus = true
-        await projectStore.refreshProjectList()
-        refreshProjectListLoadingStatus = false
+        await projects.refetch()
       }
     "
-    :loading="refreshProjectListLoadingStatus"
+    :loading="projects.isFetching.value"
   >
     refreshProjectList
   </NButton>
-  <NButton
-    @click="
-      async () => {
-        cachedProjectList = await projectStore.getProjectList()
-      }
-    "
-  >
-    getProjectList
-  </NButton>
-  <NText>{{ cachedProjectList }}</NText>
+  <NText>{{ projects.data }}</NText>
 
   <NInput v-model:value="inputCalendarId" :type="'text'" placeholder="CalendarId"></NInput>
   <NInput v-model:value="inputTasklistId" :type="'text'" placeholder="TasklistId"></NInput>
-  <NButton
-    @click="
-      async () => {
-        if (inputCalendarId === '' || inputTasklistId === '') {
-          throw new Error()
-        }
-        await projectStore.createProject(inputCalendarId, inputTasklistId)
-      }
-    "
-    >createProject</NButton
-  >
+  <NButton @click="() => {}">createProject</NButton>
 
   <NInput v-model:value="inputProjectId" :type="'text'" placeholder="ProjectId"></NInput>
-  <NButton
-    @click="
-      async () => {
-        if (inputProjectId === '') {
-          throw new Error()
-        }
-        cachedProject = await projectStore.getProject(inputProjectId)
-      }
-    "
-    >getProject</NButton
-  >
+  <NButton @click="() => {}">getProject</NButton>
   <NCollapse>
     <NCollapseItem
-      v-for="field in Object.entries(cachedProject === undefined ? new Object() : cachedProject)"
+      v-for="field in Object.entries(project.data === undefined ? new Object() : project.data)"
       :key="field[0]?.toString()"
       :title="field[0]"
     >
@@ -59,18 +28,14 @@
   </NCollapse>
 </template>
 <script setup lang="ts">
-import type { ProjectDTO } from '@/api'
-import { useProjectStore } from '@/stores/project'
+import { useProjectQuery, useProjectsQuery } from '@/services-composable/project'
 import { NButton, NInput, NText, NCollapse, NCollapseItem } from 'naive-ui'
 import { ref } from 'vue'
-
-const projectStore = useProjectStore()
 
 const inputCalendarId = ref<string>('')
 const inputTasklistId = ref<string>('')
 const inputProjectId = ref<string>('')
-const cachedProject = ref<ProjectDTO>()
-const cachedProjectList = ref<ProjectDTO[]>()
 
-const refreshProjectListLoadingStatus = ref<boolean>(false)
+const projects = useProjectsQuery()
+const project = useProjectQuery(inputProjectId)
 </script>

@@ -2,14 +2,14 @@
   <NButton
     @click="
       async () => {
-        cachedCalendarList = await googleCalendarStore.listCalendar()
+        await calendarList.refetch()
       }
     "
     >listCalendar</NButton
   >
-  <NCollapse v-if="cachedCalendarList?.items">
+  <NCollapse v-if="calendarList.data.value?.items">
     <NCollapseItem
-      v-for="field in Object.entries(cachedCalendarList.items)"
+      v-for="field in Object.entries(calendarList.data.value?.items)"
       :key="field[0]?.toString()"
       :title="field[0]"
     >
@@ -19,11 +19,10 @@
 </template>
 
 <script setup lang="ts">
+import { useCalendarListQuery } from '@/services-composable/google-calendar'
 import { NButton, NCollapse, NCollapseItem } from 'naive-ui'
-import { useGoogleCalendarStore } from '@/stores/google-calendar'
 
 import { ref } from 'vue'
 
-const googleCalendarStore = useGoogleCalendarStore()
-const cachedCalendarList = ref<gapi.client.calendar.CalendarList>()
+const calendarList = useCalendarListQuery()
 </script>
