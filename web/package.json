@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:online": "SG_WEB_VITE_PROXY_TO=https://dev.api.sandglass.kanata.ink vite",
+    "dev:local": "SG_WEB_API_BASEURL=http://localhost:5173/api vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "preview:prod": "firebase hosting:channel:deploy npm_vite_preview",

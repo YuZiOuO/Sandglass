@@ -3,7 +3,7 @@ import { useAccessToken } from './firebase'
 import { ProjectApi } from '@/api'
 import type { Ref } from 'vue'
 
-const projectApi = new ProjectApi()
+const projectApi = new ProjectApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
 
 export function useProjectsQuery() {
   return useQuery({
