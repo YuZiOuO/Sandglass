@@ -15,7 +15,7 @@ import { ProjectModule } from './project/project.module';
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         type: 'mongodb',
-        url: configService.get('DB_URI'),
+        url: configService.getOrThrow('DB_URI'),
         autoLoadEntities: true,
       }),
       inject: [ConfigService],

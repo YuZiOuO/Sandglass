@@ -1,10 +1,10 @@
 env:
-  - variable: GApis_redirctURI
-    value: http://dev.api.sandglass.kanata.ink/oauth/google/callback
+  - variable: GApis_RedirectURL
+    value: https://dev.api.sandglass.kanata.ink/oauth/google/callback
     availability:
       - RUNTIME
 
-  - variable: GH_redirctURI
-    value: http://dev.api.sandglass.kanata.ink/oauth/github/verify
+  - variable: GH_RedirectURL
+    value: https://dev.api.sandglass.kanata.ink/oauth/github/verify
     availability:
       - RUNTIME

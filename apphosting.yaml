@@ -27,12 +27,12 @@ env:
     availability:
       - RUNTIME
 
-  - variable: GApis_redirctURI
+  - variable: GApis_RedirectURL
     value: THIS_SHOULD_BE_OVERRIDDEN
     availability:
       - RUNTIME
 
-  - variable: GH_redirctURI
+  - variable: GH_RedirectURL
     value: THIS_SHOULD_BE_OVERRIDDEN
     availability:
       - RUNTIME
