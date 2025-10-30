@@ -2,20 +2,19 @@
   <NButton
     @click="
       async () => {
-        cachedTasklists = await googleTasksStore.listTaskLists()
+        await tasklists.refetch()
       }
     "
-    >listTaskLists</NButton
+    :loading="tasklists.isFetching.value"
   >
-  <NText>{{ cachedTasklists?.items }}</NText>
+    listTaskLists
+  </NButton>
+  <NText>{{ tasklists.data }}</NText>
 </template>
 
 <script setup lang="ts">
-import { useGoogleTasksStore } from '@/stores/google-tasks'
+import { useTaskListsQuery } from '@/services-composable/google-tasks'
 import { NButton, NText } from 'naive-ui'
-import { ref } from 'vue'
 
-const googleTasksStore = useGoogleTasksStore()
-
-const cachedTasklists = ref<gapi.client.tasks.TaskLists>()
+const tasklists = useTaskListsQuery()
 </script>
