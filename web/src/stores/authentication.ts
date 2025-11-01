@@ -4,32 +4,29 @@ import { computed, ref } from 'vue'
 import { useFirebase } from '@/services-composable/firebase'
 
 export const useAuthenticationStore = defineStore('authentication', () => {
-  const currentUid = ref<string | null>(null)
-  const uid = computed(() => currentUid.value)
+  const fbService = useFirebase()
+
+  const currentUser = ref<authSdk.User | null>(null)
+  const uid = computed(() => (currentUser.value ? currentUser.value.uid : null))
+
+  fbService.auth.onAuthStateChanged((user) => {
+    currentUser.value = user
+  })
 
   async function login(email: string, password: string) {
-    if (currentUid.value) {
+    if (currentUser.value) {
       return
     }
 
-    const fbService = useFirebase()
     try {
       await authSdk.signInWithEmailAndPassword(fbService.auth, email, password)
-      currentUid.value = fbService.auth.currentUser!.uid
     } catch (e) {
       throw e
     }
   }
 
   async function logout() {
-    if (!currentUid.value) {
-      return
-    }
-
-    const fbService = useFirebase()
     await fbService.auth.signOut()
-
-    currentUid.value = null
   }
 
   return { login, logout, uid }

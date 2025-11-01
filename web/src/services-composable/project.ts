@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/vue-query'
+import { useMutation, useQuery } from '@tanstack/vue-query'
 import { useAccessToken } from './firebase'
-import { ProjectApi } from '@/api'
-import type { Ref } from 'vue'
+import { ProjectApi, type ProjectDTO } from '@/api'
+import { computed, type Ref } from 'vue'
 
 const projectApi = new ProjectApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
 
@@ -20,7 +20,7 @@ export function useProjectsQuery() {
 
 export function useProjectQuery(projectId: Ref<string>) {
   return useQuery({
-    queryKey: ['calendar', projectId.value],
+    queryKey: computed(() => ['project', projectId.value]),
     queryFn: async (context) => {
       const id = context.queryKey[1]
       const res = await projectApi.getProject(id, {
@@ -28,6 +28,15 @@ export function useProjectQuery(projectId: Ref<string>) {
       })
 
       return res.data
+    },
+  })
+}
+
+export function useProjectMutation() {
+  return useMutation({
+    mutationKey: ['project'],
+    mutationFn: async (project: ProjectDTO) => {
+      projectApi.createProject(project)
     },
   })
 }
