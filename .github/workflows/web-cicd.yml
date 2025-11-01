@@ -3,16 +3,10 @@ on:
   push:
     branches:
       - "**"
-    paths:
-      - "web/**"
-      - ".github/workflows/**"
 
   pull_request:
     branches:
       - "**"
-    paths:
-      - "web/**"
-      - ".github/workflows/**"
 
 jobs:
   CI:
