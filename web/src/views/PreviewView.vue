@@ -1,7 +1,7 @@
 <template>
   <div class="root">
     <ProjectDetailModule
-      :project-data="{ uid: 'id here', calendarId: 'id here', tasklistId: 'id here' }"
+      :project-data="{ _id: 'dwa', uid: 'id here', calendarId: 'id here', tasklistId: 'id here' }"
       :tasks-data="[]"
     />
   </div>
