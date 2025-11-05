@@ -1,5 +1,5 @@
 <template>
-  <NTimeline v-if="!props.loading">
+  <NTimeline v-if="!props.loading" :icon-size="20">
     <NTimelineItem v-for="t in props.tasks" :key="t.id" :type="computeTimelineItemType(t)">
       <NThing>
         <template #header>

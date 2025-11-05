@@ -4,12 +4,24 @@
       <ProjectSummaryModule> </ProjectSummaryModule>
       <TasksTimelineModule
         :tasks="props.tasksData"
-        :loading="props.tasksData.length === 0"
+        :loading="!props.tasksData"
       ></TasksTimelineModule>
     </NCard>
     <NCard class="content">
       <NCard>
-        <NCalendar class="calendar"></NCalendar>
+        <NCalendar class="calendar" #="{ year, month, date }" v-if="events && events.items">
+          <NFlex class="calendar-container">
+            <NTag
+              v-for="eventOfTheDay in events.items.filter((elem) =>
+                checkEventInDate(elem, { year, month, date }),
+              )"
+              :key="eventOfTheDay.start?.dateTime"
+              class="calendar-tag"
+            >
+              <NText class="calendar-tag-text">{{ eventOfTheDay.summary }}</NText>
+            </NTag>
+          </NFlex>
+        </NCalendar>
       </NCard>
       <HeatmapModule :data="[]" :loading="true"></HeatmapModule>
       <NDivider dashed :title-placement="'left'">在这里放一些文本</NDivider>
@@ -18,15 +30,31 @@
 </template>
 <script setup lang="ts">
 import type { ProjectDTO } from '@/api'
-import { NCalendar, NCard, NDivider, NFlex } from 'naive-ui'
+import { NCalendar, NCard, NDivider, NFlex, NTag, NText } from 'naive-ui'
 import TasksTimelineModule from '../tasks/TasksTimelineModule.vue'
 import HeatmapModule from '@/components/common/HeatmapModule.vue'
 import ProjectSummaryModule from './ProjectSummaryModule.vue'
 
 const props = defineProps<{
-  projectData: ProjectDTO
-  tasksData: gapi.client.tasks.Task[]
+  projectData: ProjectDTO | undefined
+  tasksData: gapi.client.tasks.Task[] | undefined
+  events: gapi.client.calendar.Events | undefined
 }>()
+
+function checkEventInDate(
+  event: gapi.client.calendar.Event,
+  date: { year: number; month: number; date: number },
+) {
+  if (!event.start || !event.start.dateTime) {
+    return false
+  }
+  const start = new Date(event.start.dateTime)
+  return (
+    start.getFullYear() === date.year &&
+    start.getMonth() === date.month &&
+    start.getDay() === date.date
+  )
+}
 </script>
 
 <style lang="css" scoped>
@@ -37,7 +65,18 @@ const props = defineProps<{
 .content {
   flex-basis: 70%;
 }
-.calendar {
+/* .calendar {
+  display: flex;
   height: 450px;
+} */
+
+.calendar-container {
+  display: flex;
+}
+.calendar-tag-text {
+  white-space: normal;
+}
+.calendar-tag {
+  height: auto;
 }
 </style>
