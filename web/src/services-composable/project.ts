@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { useAccessToken } from './firebase'
-import { ProjectApi, type ProjectDTO } from '@/api'
+import { ProjectApi, type ProjectCreateDTO } from '@/api'
 import { computed, type Ref } from 'vue'
 
 const projectApi = new ProjectApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
@@ -35,7 +35,7 @@ export function useProjectQuery(projectId: Ref<string>) {
 export function useProjectMutation() {
   return useMutation({
     mutationKey: ['project'],
-    mutationFn: async (project: ProjectDTO) => {
+    mutationFn: async (project: ProjectCreateDTO) => {
       projectApi.createProject(project)
     },
   })
