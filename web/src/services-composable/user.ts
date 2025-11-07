@@ -7,7 +7,7 @@ export function useSignup() {
     mutationFn: async (params: { email: string; password: string }) => {
       const fbService = useFirebase()
       try {
-        authSdk.createUserWithEmailAndPassword(fbService.auth, params.email, params.password)
+        await authSdk.createUserWithEmailAndPassword(fbService.auth, params.email, params.password)
       } catch (e) {
         throw e
       }
