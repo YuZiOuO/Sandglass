@@ -1,6 +1,6 @@
 <template>
-  <n-flex justify="center">
-    <LoginModule @login-success="loginSuccessCallback" />
+  <n-flex class="login-view" justify="center">
+    <LoginModule class="login-module" @login-success="loginSuccessCallback" />
   </n-flex>
 </template>
 
@@ -15,3 +15,13 @@ function loginSuccessCallback() {
   router.push('/')
 }
 </script>
+
+<style scoped>
+.login-view {
+  display: flex;
+  padding-top: 8%;
+}
+.login-module {
+  max-width: 50%;
+}
+</style>
