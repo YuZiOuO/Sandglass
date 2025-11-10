@@ -19,7 +19,7 @@ const menuOptions: MenuOption[] = [
     key: '主页', // fixme:要有key才能被点击,原因未知
   },
   {
-    label: () => h(RouterLink, { to: { path: '/proj' } }, { default: () => '项目' }),
+    label: () => h(RouterLink, { to: { path: '/project' } }, { default: () => '项目' }),
     key: '项目',
   },
 ]

@@ -1,8 +1,8 @@
 <template>
   <n-layout>
-    <!-- <n-layout-header bordered class="header">
+    <n-layout-header bordered class="header">
       <NavBarLayout />
-    </n-layout-header> -->
+    </n-layout-header>
     <n-layout-content class="content">
       <RouterView />
     </n-layout-content>
@@ -29,6 +29,8 @@ import FooterLayout from './FooterLayout.vue'
 }
 
 .content {
+  display: flex;
+  justify-content: center;
   max-width: 95%;
   margin: 12px auto;
 }

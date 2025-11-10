@@ -24,8 +24,12 @@
             placeholder="密码"
             clearable
           />
-          <n-button @click="trigger_login" :loading="loginLoading">登录</n-button>
-          <n-button @click="trigger_signup" :loading="signupLoading">注册</n-button>
+          <n-button @click="trigger_login" :loading="loginLoading" :disabled="signupLoading"
+            >登录</n-button
+          >
+          <n-button @click="trigger_signup" :loading="signupLoading" :disabled="loginLoading"
+            >注册</n-button
+          >
         </n-flex>
         <n-divider dashed> 第三方OAuth </n-divider>
         <n-flex justify="center">
@@ -56,26 +60,28 @@ const authenticationStore = useAuthenticationStore()
 const signup = useSignup()
 
 async function trigger_login() {
+  loginLoading.value = true
   try {
     await authenticationStore.login(email.value, password.value)
     emit('login-success')
   } catch (e) {
     message.error((e as Error).message)
   }
+  loginLoading.value = false
 }
 async function trigger_signup() {
+  signupLoading.value = true
   try {
     await signup.mutateAsync({ email: email.value, password: password.value })
-    await authenticationStore.login(email.value, password.value)
-    emit('login-success')
   } catch (e) {
     message.error((e as Error).message)
   }
+  signupLoading.value = false
 }
 </script>
 
 <style scoped>
 .login-container {
-  max-width: 320px;
+  max-width: 85%;
 }
 </style>

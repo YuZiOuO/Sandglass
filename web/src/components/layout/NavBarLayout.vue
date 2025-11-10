@@ -8,8 +8,8 @@
     </n-gi>
     <n-gi :offset="1">
       <n-flex justify="center" align="center" style="width: 100%; height: 100%">
-        <NavBarDropdown
-      /></n-flex>
+        <NavBarDropdown />
+      </n-flex>
     </n-gi>
   </n-grid>
 </template>
