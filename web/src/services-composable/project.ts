@@ -32,11 +32,22 @@ export function useProjectQuery(projectId: Ref<string>) {
   })
 }
 
-export function useProjectMutation() {
+export function useCreateProject() {
   return useMutation({
     mutationKey: ['project'],
     mutationFn: async (project: ProjectCreateDTO) => {
       projectApi.createProject(project)
+    },
+  })
+}
+
+export function useDeleteProject(id: string) {
+  return useMutation({
+    mutationKey: ['project', id],
+    mutationFn: async () => {
+      await projectApi.deleteProject(id, {
+        headers: { Authorization: 'Bearer ' + (await useAccessToken()) },
+      })
     },
   })
 }

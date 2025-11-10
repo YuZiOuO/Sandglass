@@ -51,11 +51,7 @@
   </NCollapse>
 </template>
 <script setup lang="ts">
-import {
-  useProjectMutation,
-  useProjectQuery,
-  useProjectsQuery,
-} from '@/services-composable/project'
+import { useCreateProject, useProjectQuery, useProjectsQuery } from '@/services-composable/project'
 import { useAuthenticationStore } from '@/stores/authentication'
 import { NButton, NInput, NText, NCollapse, NCollapseItem } from 'naive-ui'
 import { ref } from 'vue'
@@ -67,5 +63,5 @@ const inputProjectId = ref<string>('')
 const authStore = useAuthenticationStore()
 const projects = useProjectsQuery()
 const project = useProjectQuery(inputProjectId)
-const createProject = useProjectMutation()
+const createProject = useCreateProject()
 </script>
