@@ -30,7 +30,7 @@
     >createProject</NButton
   >
 
-  <NInput v-model:value="inputProjectId" :type="'text'" placeholder="ProjectId"></NInput>
+  <NInput v-model:value="inputGetProjectId" :type="'text'" placeholder="ProjectId"></NInput>
   <NButton
     @click="
       async () => {
@@ -49,10 +49,23 @@
       {{ field[1] }}
     </NCollapseItem>
   </NCollapse>
+
+  <NInput v-model:value="inputDeleteProjectId" :type="'text'" placeholder="ProjectId"></NInput>
+  <NButton
+    @click="
+      async () => {
+        await deleteProject.mutateAsync(inputDeleteProjectId)
+      }
+    "
+    :loading="project.isFetching.value"
+    >deleteProject
+  </NButton>
+  <NText>{{ deleteProject.status }}</NText>
 </template>
 <script setup lang="ts">
 import {
-  useProjectMutation,
+  useCreateProject,
+  useDeleteProject,
   useProjectQuery,
   useProjectsQuery,
 } from '@/services-composable/project'
@@ -62,10 +75,12 @@ import { ref } from 'vue'
 
 const inputCalendarId = ref<string>('')
 const inputTasklistId = ref<string>('')
-const inputProjectId = ref<string>('')
+const inputGetProjectId = ref<string>('')
+const inputDeleteProjectId = ref<string>('')
 
 const authStore = useAuthenticationStore()
 const projects = useProjectsQuery()
-const project = useProjectQuery(inputProjectId)
-const createProject = useProjectMutation()
+const project = useProjectQuery(inputGetProjectId)
+const createProject = useCreateProject()
+const deleteProject = useDeleteProject()
 </script>

@@ -41,7 +41,7 @@ import { NButton, NDropdown, NText, NThing, NTimeline, NTimelineItem, NEmpty } f
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
 
 const props = defineProps<{
-  tasks: gapi.client.tasks.Task[]
+  tasks: gapi.client.tasks.Task[] | undefined
   loading: boolean
 }>()
 

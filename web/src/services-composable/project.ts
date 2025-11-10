@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { useAccessToken } from './firebase'
 import { ProjectApi, type ProjectCreateDTO } from '@/api'
-import { computed, type Ref } from 'vue'
+import { type Ref } from 'vue'
 
 const projectApi = new ProjectApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
 
@@ -20,23 +20,34 @@ export function useProjectsQuery() {
 
 export function useProjectQuery(projectId: Ref<string>) {
   return useQuery({
-    queryKey: computed(() => ['project', projectId.value]),
-    queryFn: async (context) => {
-      const id = context.queryKey[1]
-      const res = await projectApi.getProject(id, {
+    queryKey: ['project', projectId],
+    queryFn: async () => {
+      const res = await projectApi.getProject(projectId.value, {
         headers: { Authorization: 'Bearer ' + (await useAccessToken()) },
       })
 
       return res.data
     },
+    enabled: projectId.value.length > 0,
   })
 }
 
-export function useProjectMutation() {
+export function useCreateProject() {
   return useMutation({
     mutationKey: ['project'],
     mutationFn: async (project: ProjectCreateDTO) => {
       projectApi.createProject(project)
+    },
+  })
+}
+
+export function useDeleteProject() {
+  return useMutation({
+    mutationKey: ['project'],
+    mutationFn: async (id: string) => {
+      await projectApi.deleteProject(id, {
+        headers: { Authorization: 'Bearer ' + (await useAccessToken()) },
+      })
     },
   })
 }

@@ -31,7 +31,17 @@ export class ProjectService {
    * @throws ProjectNotFoundException if specfied project does not exist.
    */
   async get(id: string) {
-    const doc = await this.projectRepo.findOneBy({ _id: new ObjectId(id) });
+    let oid: ObjectId;
+    try {
+      oid = new ObjectId(id);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new ProjectNotFoundException(e);
+      }
+      throw e;
+    }
+
+    const doc = await this.projectRepo.findOneBy({ _id: oid });
     if (doc === null) {
       throw new ProjectNotFoundException();
     }
@@ -70,6 +80,37 @@ export class ProjectService {
         throw new FailedToSaveProject(e);
       }
       throw e;
+    }
+  }
+
+  /**
+   * Overriding existing project.
+   * @param _id assumed to be valid
+   * @param uid assumed to be valid
+   * @param calendarId assume not collide with any existing entry.
+   * @param tasklistId assume not collide with any existing entry.
+   * @return the project body after overriding
+   * @throws ProjectNotFoundException if the document correspoding to _id is not found
+   */
+  async update(
+    _id: string,
+    uid: string,
+    calendarId: string,
+    tasklistId: string,
+  ) {
+    try {
+      const doc = await this.projectRepo.findOneBy({ _id: new ObjectId(_id) });
+      if (doc == null) {
+        throw new ProjectNotFoundException();
+      }
+      doc.uid = uid;
+      doc.calendarId = calendarId;
+      doc.tasklistId = tasklistId;
+      await this.projectRepo.save(doc);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new FailedToSaveProject(e);
+      }
     }
   }
 
