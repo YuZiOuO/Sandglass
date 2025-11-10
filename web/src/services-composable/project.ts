@@ -41,10 +41,10 @@ export function useCreateProject() {
   })
 }
 
-export function useDeleteProject(id: string) {
+export function useDeleteProject() {
   return useMutation({
-    mutationKey: ['project', id],
-    mutationFn: async () => {
+    mutationKey: ['project'],
+    mutationFn: async (id: string) => {
       await projectApi.deleteProject(id, {
         headers: { Authorization: 'Bearer ' + (await useAccessToken()) },
       })
