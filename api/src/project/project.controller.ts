@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { UserId } from 'src/firebase/authentication/authentication.decorator';
 import { AuthenticationGuard } from 'src/firebase/authentication/authentication.guard';
@@ -26,5 +35,25 @@ export class ProjectController {
   async getProject(@Param('id') id: string) {
     const data = await this.projectService.get(id);
     return projectDTOMapper(data);
+  }
+
+  @Patch(':id')
+  async patchProject(
+    @Param('id') id: string,
+    @Body() dto: Partial<ProjectCreateDTO>,
+  ) {
+    const original = await this.projectService.get(id);
+    await this.projectService.update(
+      id,
+      dto.uid ?? original.uid,
+      dto.calendarId ?? original.calendarId,
+      dto.tasklistId ?? original.tasklistId,
+    );
+  }
+
+  @Delete(':id')
+  async deleteProject(@Param('id') id: string) {
+    await this.projectService.get(id);
+    await this.projectService.remove(id);
   }
 }
