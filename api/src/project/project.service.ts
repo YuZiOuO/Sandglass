@@ -31,7 +31,17 @@ export class ProjectService {
    * @throws ProjectNotFoundException if specfied project does not exist.
    */
   async get(id: string) {
-    const doc = await this.projectRepo.findOneBy({ _id: new ObjectId(id) });
+    let oid: ObjectId;
+    try {
+      oid = new ObjectId(id);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new ProjectNotFoundException(e);
+      }
+      throw e;
+    }
+
+    const doc = await this.projectRepo.findOneBy({ _id: oid });
     if (doc === null) {
       throw new ProjectNotFoundException();
     }
