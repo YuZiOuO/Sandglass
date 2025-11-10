@@ -1,7 +1,7 @@
 <template>
   <NFlex :wrap="false">
     <NCard class="timeline">
-      <ProjectSummaryModule> </ProjectSummaryModule>
+      <ProjectSummaryModule :proj="props.projectData"> </ProjectSummaryModule>
       <TasksTimelineModule
         :tasks="props.tasksData"
         :loading="!props.tasksData"

@@ -28,7 +28,7 @@ defineEmits(['create'])
 
 const projectMenuOptions = computed<MenuOption[] | undefined>(() => {
   return props.projectList?.map((proj) => {
-    return { key: proj.calendarId, label: proj.calendarId }
+    return { key: proj._id, label: proj.calendarId }
   })
 })
 

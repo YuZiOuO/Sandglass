@@ -9,7 +9,7 @@
       bordered
     >
       <ProjectSummaryListModule
-        :selected="selectedProjectId"
+        v-model:selected="selectedProjectId"
         :project-list="projectList.data.value"
         @create="
           () => {
@@ -20,7 +20,7 @@
     </NLayoutSider>
     <NLayoutContent>
       <ProjectDetailModule
-        :project-data="undefined"
+        :project-data="project.data.value"
         :events="calendar.data.value"
         :tasks-data="tasks.data.value?.items"
     /></NLayoutContent>
@@ -32,13 +32,15 @@ import ProjectDetailModule from '@/components/module/project/ProjectDetailModule
 import ProjectSummaryListModule from '@/components/module/projectlist/projectSummaryListModule.vue'
 import { useCalendarQuery } from '@/services-composable/google-calendar'
 import { useTasksQuery } from '@/services-composable/google-tasks'
-import { useProjectsQuery } from '@/services-composable/project'
+import { useProjectQuery, useProjectsQuery } from '@/services-composable/project'
 import { NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
-import { ref, toRef, type Ref } from 'vue'
+import { computed, ref } from 'vue'
 
-const selectedProjectId = ref<string | undefined>()
 const projectList = useProjectsQuery()
+const selectedProjectId = ref<string | undefined>()
 
-const calendar = useCalendarQuery(selectedProjectId as Ref<string>)
-const tasks = useTasksQuery(toRef('cyz050312@gmail.com'))
+const project = useProjectQuery(computed(() => selectedProjectId.value ?? ''))
+
+const calendar = useCalendarQuery(computed(() => project.data.value?.calendarId ?? ''))
+const tasks = useTasksQuery(computed(() => project.data.value?.tasklistId ?? ''))
 </script>
