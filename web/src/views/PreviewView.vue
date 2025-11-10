@@ -1,9 +1,6 @@
 <template>
   <div class="root">
-    <ProjectDetailModule
-      :project-data="{ _id: 'dwa', uid: 'id here', calendarId: 'id here', tasklistId: 'id here' }"
-      :tasks-data="[]"
-    />
+    <ProjectDetailModule :project-data="undefined" :events="undefined" :tasks-data="[]" />
   </div>
 </template>
 <script setup lang="ts">

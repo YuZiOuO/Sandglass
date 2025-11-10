@@ -19,7 +19,10 @@
       />
     </NLayoutSider>
     <NLayoutContent>
-      <ProjectDetailModule :events="calendar.data.value" :tasks-data="tasks.data.value?.items"
+      <ProjectDetailModule
+        :project-data="undefined"
+        :events="calendar.data.value"
+        :tasks-data="tasks.data.value?.items"
     /></NLayoutContent>
   </NLayout>
 </template>
@@ -31,11 +34,11 @@ import { useCalendarQuery } from '@/services-composable/google-calendar'
 import { useTasksQuery } from '@/services-composable/google-tasks'
 import { useProjectsQuery } from '@/services-composable/project'
 import { NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
-import { ref, toRef } from 'vue'
+import { ref, toRef, type Ref } from 'vue'
 
 const selectedProjectId = ref<string | undefined>()
 const projectList = useProjectsQuery()
 
-const calendar = useCalendarQuery(selectedProjectId.value)
+const calendar = useCalendarQuery(selectedProjectId as Ref<string>)
 const tasks = useTasksQuery(toRef('cyz050312@gmail.com'))
 </script>
