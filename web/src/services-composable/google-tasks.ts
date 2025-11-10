@@ -1,7 +1,7 @@
 import { useGApi } from '@/hooks/gapi'
 import { useQuery } from '@tanstack/vue-query'
 import { useGoogleAccessToken } from './google-oauth'
-import type { Ref } from 'vue'
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
 
 export function useTaskListsQuery() {
   return useQuery({
@@ -17,21 +17,19 @@ export function useTaskListsQuery() {
   })
 }
 
-export function useTasksQuery(TaskListId: Ref<string>) {
+export function useTasksQuery(TaskListId: MaybeRefOrGetter<string>) {
   return useQuery({
-    queryKey: ['tasklists', TaskListId.value],
-    queryFn: async (context) => {
+    queryKey: ['tasklists', TaskListId],
+    queryFn: async () => {
       await useGApi(['tasks'])
-
-      const id = context.queryKey[1]
-
       const req = gapi.client.tasks.tasks.list({
-        tasklist: id,
+        tasklist: toValue(TaskListId),
         showHidden: true,
         oauth_token: await useGoogleAccessToken(),
       })
 
       return (await req).result
     },
+    enabled: computed(() => toValue(TaskListId).length > 0),
   })
 }

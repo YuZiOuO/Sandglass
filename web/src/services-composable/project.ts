@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { useAccessToken } from './firebase'
 import { ProjectApi, type ProjectCreateDTO } from '@/api'
-import { type Ref } from 'vue'
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
 
 const projectApi = new ProjectApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
 
@@ -18,17 +18,17 @@ export function useProjectsQuery() {
   })
 }
 
-export function useProjectQuery(projectId: Ref<string>) {
+export function useProjectQuery(projectId: MaybeRefOrGetter<string>) {
   return useQuery({
     queryKey: ['project', projectId],
     queryFn: async () => {
-      const res = await projectApi.getProject(projectId.value, {
+      const res = await projectApi.getProject(toValue(projectId), {
         headers: { Authorization: 'Bearer ' + (await useAccessToken()) },
       })
 
       return res.data
     },
-    enabled: projectId.value.length > 0,
+    enabled: computed(() => toValue(projectId).length > 0),
   })
 }
 
