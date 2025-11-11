@@ -1,5 +1,17 @@
 <template>
-  <NTimeline v-if="!props.loading" :icon-size="20">
+  <NTimeline v-if="props.tasks" :icon-size="20">
+    <NTimelineItem>
+      <n-button
+        size="small"
+        @click="
+          () => {
+            showAddTasksModal = true
+          }
+        "
+      >
+        +
+      </n-button>
+    </NTimelineItem>
     <NTimelineItem v-for="t in props.tasks" :key="t.id" :type="computeTimelineItemType(t)">
       <NThing>
         <template #header>
@@ -31,16 +43,47 @@
     </NTimelineItem>
   </NTimeline>
   <n-empty description="你什么也找不到" v-else>
+    <template #icon v-if="props.loading">
+      <n-spin size="large" />
+    </template>
     <template #extra>
-      <n-button size="small"> 看看别的 </n-button>
+      <n-button
+        size="small"
+        @click="
+          () => {
+            showAddTasksModal = true
+          }
+        "
+      >
+        添加一个
+      </n-button>
     </template>
   </n-empty>
+
+  <NModal v-model:show="showAddTasksModal" preset="card"
+    ><AddTaskModal :tasklist-id="tasklistId"
+  /></NModal>
 </template>
 <script setup lang="ts">
-import { NButton, NDropdown, NText, NThing, NTimeline, NTimelineItem, NEmpty } from 'naive-ui'
+import {
+  NButton,
+  NDropdown,
+  NText,
+  NThing,
+  NTimeline,
+  NTimelineItem,
+  NEmpty,
+  NModal,
+  NSpin,
+} from 'naive-ui'
 import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
+import { ref } from 'vue'
+import AddTaskModal from './AddTaskModal.vue'
+
+const showAddTasksModal = ref(false)
 
 const props = defineProps<{
+  tasklistId: string | undefined
   tasks: gapi.client.tasks.Task[] | undefined
   loading: boolean
 }>()

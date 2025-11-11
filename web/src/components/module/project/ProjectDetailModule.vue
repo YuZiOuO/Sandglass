@@ -3,6 +3,7 @@
     <NCard class="timeline">
       <ProjectSummaryModule :proj="props.projectData"> </ProjectSummaryModule>
       <TasksTimelineModule
+        :tasklist-id="props.projectData?.tasklistId"
         :tasks="props.tasksData"
         :loading="!props.tasksData"
       ></TasksTimelineModule>
