@@ -34,16 +34,19 @@ export function useTasksQuery(taskListId: MaybeRefOrGetter<string>) {
   })
 }
 
-export function useTaskAddMutation(meta: { tasklistId: string }, task: gapi.client.tasks.Task) {
+export function useTaskAddMutation() {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (variable: {
+      meta: { tasklistId: string }
+      task: gapi.client.tasks.Task
+    }) => {
       await useGApi(['tasks'])
       const req = gapi.client.tasks.tasks.insert(
         {
-          tasklist: meta.tasklistId,
+          tasklist: variable.meta.tasklistId,
           oauth_token: await useGoogleAccessToken(),
         },
-        task,
+        variable.task,
       )
 
       return (await req).result
@@ -51,20 +54,20 @@ export function useTaskAddMutation(meta: { tasklistId: string }, task: gapi.clie
   })
 }
 
-export function useTaskPatchMutation(
-  meta: { tasklistId: string; taskId: string },
-  task: gapi.client.tasks.Task,
-) {
+export function useTaskPatchMutation() {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (variable: {
+      meta: { tasklistId: string; taskId: string }
+      task: gapi.client.tasks.Task
+    }) => {
       await useGApi(['tasks'])
       const req = gapi.client.tasks.tasks.patch(
         {
-          tasklist: meta.tasklistId,
-          task: meta.taskId,
+          tasklist: variable.meta.tasklistId,
+          task: variable.meta.taskId,
           oauth_token: await useGoogleAccessToken(),
         },
-        task,
+        variable.task,
       )
 
       return (await req).result
@@ -72,13 +75,13 @@ export function useTaskPatchMutation(
   })
 }
 
-export function useTaskDeleteMutation(meta: { tasklistId: string; taskId: string }) {
+export function useTaskDeleteMutation() {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (variable: { meta: { tasklistId: string; taskId: string } }) => {
       await useGApi(['tasks'])
       const req = gapi.client.tasks.tasks.delete({
-        tasklist: meta.tasklistId,
-        task: meta.taskId,
+        tasklist: variable.meta.tasklistId,
+        task: variable.meta.taskId,
         oauth_token: await useGoogleAccessToken(),
       })
 
