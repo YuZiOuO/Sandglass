@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.25.0",
+    "@tanstack/vue-query-devtools": "^5.91.0",
     "@tsconfig/node22": "^22.0.2",
     "@types/gapi": "^0.0.47",
     "@types/gapi.client.calendar-v3": "^0.0.4",
