@@ -1,16 +1,7 @@
 <template>
   <NTimeline v-if="props.tasks" :icon-size="20">
     <NTimelineItem>
-      <n-button
-        size="small"
-        @click="
-          () => {
-            showAddTasksModal = true
-          }
-        "
-      >
-        +
-      </n-button>
+      <n-button size="small" @click="showTaskEdit"> + </n-button>
     </NTimelineItem>
     <NTimelineItem v-for="t in props.tasks" :key="t.id" :type="computeTimelineItemType(t)">
       <NThing>
@@ -18,9 +9,16 @@
           {{ t.title }}
         </template>
         <template #header-extra>
-          <NDropdown trigger="hover" :options="taskOptions"
-            ><NButton size="tiny">...</NButton></NDropdown
-          >
+          <TaskTimelineItemDropdown
+            :tasklist-id="props.tasklistId!"
+            :task="t"
+            @edit="
+              (taskId: string) => {
+                taskEditModalInitialData = tasks!.filter((t) => t.id === taskId)[0]
+                showTaskEdit()
+              }
+            "
+          />
         </template>
 
         <template #description>
@@ -42,63 +40,48 @@
       </NThing>
     </NTimelineItem>
   </NTimeline>
+
   <n-empty description="你什么也找不到" v-else>
     <template #icon v-if="props.loading">
       <n-spin size="large" />
     </template>
     <template #extra>
-      <n-button
-        size="small"
-        @click="
-          () => {
-            showAddTasksModal = true
-          }
-        "
-      >
-        添加一个
-      </n-button>
+      <n-button size="small" @click="showTaskEdit"> 添加一个 </n-button>
     </template>
   </n-empty>
 
-  <NModal v-model:show="showAddTasksModal" preset="card"
-    ><AddTaskModal :tasklist-id="tasklistId"
-  /></NModal>
+  <NModal v-model:show="taskEditModalDisplayStatus" preset="card">
+    <TaskEditModule
+      :tasklist-id="tasklistId"
+      :initial-data="taskEditModalInitialData"
+      @submit="
+        () => {
+          taskEditModalInitialData = undefined
+          taskEditModalDisplayStatus = false
+        }
+      "
+    />
+  </NModal>
 </template>
 <script setup lang="ts">
-import {
-  NButton,
-  NDropdown,
-  NText,
-  NThing,
-  NTimeline,
-  NTimelineItem,
-  NEmpty,
-  NModal,
-  NSpin,
-} from 'naive-ui'
-import type { DropdownMixedOption } from 'naive-ui/es/dropdown/src/interface'
+import { NButton, NText, NThing, NTimeline, NTimelineItem, NEmpty, NModal, NSpin } from 'naive-ui'
 import { ref } from 'vue'
-import AddTaskModal from './AddTaskModal.vue'
+import TaskTimelineItemDropdown from './TaskTimelineItemDropdown.vue'
+import TaskEditModule from './TaskEditModule.vue'
 
-const showAddTasksModal = ref(false)
+const taskEditModalDisplayStatus = ref(false)
+const showTaskEdit = () => {
+  taskEditModalDisplayStatus.value = !taskEditModalDisplayStatus.value
+}
+
+// Should be reset every time you closes the modal
+const taskEditModalInitialData = ref<gapi.client.tasks.Task | undefined>(undefined)
 
 const props = defineProps<{
   tasklistId: string | undefined
   tasks: gapi.client.tasks.Task[] | undefined
   loading: boolean
 }>()
-
-const taskOptions: DropdownMixedOption[] = [
-  {
-    label: '标记为未完成',
-    key: '标记为未完成',
-  },
-  { type: 'divider', key: '分割线' },
-  {
-    label: '其他操作',
-    key: '其他操作',
-  },
-]
 
 const currentTime = new Date()
 function computeTimelineItemType(task: gapi.client.tasks.Task) {

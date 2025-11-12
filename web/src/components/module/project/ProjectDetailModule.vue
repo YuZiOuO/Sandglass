@@ -6,7 +6,7 @@
         :tasklist-id="props.projectData?.tasklistId"
         :tasks="props.tasksData"
         :loading="!props.tasksData"
-      ></TasksTimelineModule>
+      />
     </NCard>
     <NCard class="content">
       <NCard>
