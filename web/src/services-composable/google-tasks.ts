@@ -2,6 +2,7 @@ import { useGApi } from '@/hooks/gapi'
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { useGoogleAccessToken } from './google-oauth'
 import { computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { globalQueryClient } from '.'
 
 export function useTaskListsQuery() {
   return useQuery({
@@ -19,7 +20,7 @@ export function useTaskListsQuery() {
 
 export function useTasksQuery(taskListId: MaybeRefOrGetter<string>) {
   return useQuery({
-    queryKey: ['taskslists', taskListId, 'tasks'],
+    queryKey: ['tasklists', taskListId, 'tasks'],
     queryFn: async () => {
       await useGApi(['tasks'])
       const req = gapi.client.tasks.tasks.list({
@@ -51,6 +52,7 @@ export function useTaskAddMutation() {
 
       return (await req).result
     },
+    onSuccess: invalidateTasksCache,
   })
 }
 
@@ -72,6 +74,7 @@ export function useTaskPatchMutation() {
 
       return (await req).result
     },
+    onSuccess: invalidateTasksCache,
   })
 }
 
@@ -87,5 +90,12 @@ export function useTaskDeleteMutation() {
 
       return (await req).result
     },
+    onSuccess: invalidateTasksCache,
+  })
+}
+
+async function invalidateTasksCache(_data: unknown, variable: { meta: { tasklistId: string } }) {
+  await globalQueryClient.invalidateQueries({
+    queryKey: ['tasklists', variable.meta.tasklistId],
   })
 }
