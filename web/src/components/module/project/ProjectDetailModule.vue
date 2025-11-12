@@ -1,19 +1,19 @@
 <template>
   <NFlex :wrap="false">
     <NCard class="timeline">
-      <ProjectSummaryModule :proj="props.projectData"> </ProjectSummaryModule>
-      <TasksTimelineModule
-        :tasklist-id="props.projectData?.tasklistId"
-        :tasks="props.tasksData"
-        :loading="!props.tasksData"
-      />
+      <ProjectSummaryModule :proj="projectData.data.value"> </ProjectSummaryModule>
+      <TasksTimelineModule :tasklist-id="projectData.data.value?.tasklistId" />
     </NCard>
     <NCard class="content">
       <NCard>
-        <NCalendar class="calendar" #="{ year, month, date }" v-if="events && events.items">
+        <NCalendar
+          class="calendar"
+          #="{ year, month, date }"
+          v-if="events && events.data.value?.items"
+        >
           <NFlex class="calendar-container">
             <NTag
-              v-for="eventOfTheDay in events.items.filter((elem) =>
+              v-for="eventOfTheDay in events.data.value.items.filter((elem) =>
                 checkEventInDate(elem, { year, month, date }),
               )"
               :key="eventOfTheDay.start?.dateTime"
@@ -30,17 +30,19 @@
   </NFlex>
 </template>
 <script setup lang="ts">
-import type { ProjectDTO } from '@/api'
 import { NCalendar, NCard, NDivider, NFlex, NTag, NText } from 'naive-ui'
 import TasksTimelineModule from '../tasks/TasksTimelineModule.vue'
 import HeatmapModule from '@/components/common/HeatmapModule.vue'
 import ProjectSummaryModule from './ProjectSummaryModule.vue'
+import { useProjectQuery } from '@/services-composable/project'
+import { useEventListQuery } from '@/services-composable/google-calendar'
 
 const props = defineProps<{
-  projectData: ProjectDTO | undefined
-  tasksData: gapi.client.tasks.Task[] | undefined
-  events: gapi.client.calendar.Events | undefined
+  projectId: string | undefined
 }>()
+
+const projectData = useProjectQuery(() => props.projectId ?? '')
+const events = useEventListQuery(() => projectData.data.value?.calendarId ?? '')
 
 function checkEventInDate(
   event: gapi.client.calendar.Event,

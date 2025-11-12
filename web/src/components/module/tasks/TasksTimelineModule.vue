@@ -1,9 +1,13 @@
 <template>
-  <NTimeline v-if="props.tasks" :icon-size="20">
+  <NTimeline v-if="tasks.data.value" :icon-size="20">
     <NTimelineItem>
       <n-button size="small" @click="showTaskEdit"> + </n-button>
     </NTimelineItem>
-    <NTimelineItem v-for="t in props.tasks" :key="t.id" :type="computeTimelineItemType(t)">
+    <NTimelineItem
+      v-for="t in tasks.data.value.items"
+      :key="t.id"
+      :type="computeTimelineItemType(t)"
+    >
       <NThing>
         <template #header>
           {{ t.title }}
@@ -14,7 +18,9 @@
             :task="t"
             @edit="
               (taskId: string) => {
-                taskEditModalInitialData = tasks!.filter((t) => t.id === taskId)[0]
+                taskEditModalInitialData = tasks.data.value!.items!.filter(
+                  (t) => t.id === taskId,
+                )[0]
                 showTaskEdit()
               }
             "
@@ -42,7 +48,7 @@
   </NTimeline>
 
   <n-empty description="你什么也找不到" v-else>
-    <template #icon v-if="props.loading">
+    <template #icon v-if="tasks.isFetching">
       <n-spin size="large" />
     </template>
     <template #extra>
@@ -68,6 +74,7 @@ import { NButton, NText, NThing, NTimeline, NTimelineItem, NEmpty, NModal, NSpin
 import { ref } from 'vue'
 import TaskTimelineItemDropdown from './TaskTimelineItemDropdown.vue'
 import TaskEditModule from './TaskEditModule.vue'
+import { useTasksQuery } from '@/services-composable/google-tasks'
 
 const taskEditModalDisplayStatus = ref(false)
 const showTaskEdit = () => {
@@ -79,9 +86,9 @@ const taskEditModalInitialData = ref<gapi.client.tasks.Task | undefined>(undefin
 
 const props = defineProps<{
   tasklistId: string | undefined
-  tasks: gapi.client.tasks.Task[] | undefined
-  loading: boolean
 }>()
+
+const tasks = useTasksQuery(() => props.tasklistId ?? '')
 
 const currentTime = new Date()
 function computeTimelineItemType(task: gapi.client.tasks.Task) {
