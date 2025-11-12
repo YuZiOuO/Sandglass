@@ -14,7 +14,7 @@ async function bootstrap() {
   const app = createApp(App)
   app.use(pinia)
   app.use(router)
-  app.use(VueQueryPlugin, { queryClient: globalQueryClient })
+  app.use(VueQueryPlugin, { queryClient: globalQueryClient, enableDevtoolsV6Plugin: true })
 
   await initializeFirebase()
 

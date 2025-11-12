@@ -178,6 +178,9 @@ importers:
       '@openapitools/openapi-generator-cli':
         specifier: ^2.25.0
         version: 2.25.0(@nestjs/platform-express@11.1.8)(@types/node@22.19.0)(class-transformer@0.5.1)(class-validator@0.14.2)
+      '@tanstack/vue-query-devtools':
+        specifier: ^5.91.0
+        version: 5.91.0(@tanstack/vue-query@5.90.6(vue@3.5.22(typescript@5.7.3)))(vue@3.5.22(typescript@5.7.3))
       '@tsconfig/node22':
         specifier: ^22.0.2
         version: 22.0.2
@@ -1310,14 +1313,14 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251028':
-    resolution: {integrity: sha512-vb9RHKfrn+nWWvwdowkGrOOo3/DL1jH305dnvHzwlHLoqzyfigkztmKh+hrbzMdzjPKO/zt4lkFnB+Z4f2NVqw==}
+  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251106':
+    resolution: {integrity: sha512-3kweqCUsGUlFb4ctHOJlT8v9WW+f63FfvuLVupC3d4YTQjRJGAgCCG25+70NfHXGHGaNqwPbcCBQe0Mz6vwZ+Q==}
 
   '@maxim_mazurok/gapi.client.discovery-v1@0.4.20200806':
     resolution: {integrity: sha512-Jeo/KZqK39DI6ExXHcJ4lqnn1O/wEqboQ6eQ8WnNpu5eJ7wUnX/C5KazOgs1aRhnIB/dVzDe8wm62nmtkMIoaw==}
 
-  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251102':
-    resolution: {integrity: sha512-2JHUg/M/+ylEZuWZ5aEKG1M7FOdWegPYJdHFE4rK1bmlfwUUCVaUq0OoDyC6vFG5LtIZT9B16L4G4iRSeE320A==}
+  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251109':
+    resolution: {integrity: sha512-7aI2dx790DqrhmGr9cM8M3SR9jspedTFc61ehGLwMcpxWDwlWzF/I8PKzpAiPQk9cdjazw8t0JkmdtRnUsGMgQ==}
 
   '@microsoft/tsdoc@0.15.1':
     resolution: {integrity: sha512-4aErSrCR/On/e5G2hDP0wjooqDdauzEbIq8hIkIe5pXV0rtWJZvdCEKL0ykZxex+IxIwBp0eGeV48hQN07dXtw==}
@@ -2021,6 +2024,15 @@ packages:
 
   '@tanstack/query-core@5.90.6':
     resolution: {integrity: sha512-AnZSLF26R8uX+tqb/ivdrwbVdGemdEDm1Q19qM6pry6eOZ6bEYiY7mWhzXT1YDIPTNEVcZ5kYP9nWjoxDLiIVw==}
+
+  '@tanstack/query-devtools@5.90.1':
+    resolution: {integrity: sha512-GtINOPjPUH0OegJExZ70UahT9ykmAhmtNVcmtdnOZbxLwT7R5OmRztR5Ahe3/Cu7LArEmR6/588tAycuaWb1xQ==}
+
+  '@tanstack/vue-query-devtools@5.91.0':
+    resolution: {integrity: sha512-Kn6p5ffEKUj+YGEP+BapoPI8kUiPtNnFDyzjTvUx6GHbyfzfefQPhYoRtFiWeyrGHjUB/Mvtnr7Rosbzs/ngVg==}
+    peerDependencies:
+      '@tanstack/vue-query': ^5.90.5
+      vue: ^3.3.0
 
   '@tanstack/vue-query@5.90.6':
     resolution: {integrity: sha512-7lKXKuTkX8XPjNd3g71B39JDE5B83Gtrr+yDPs5DiHm5wsM80OcwolLYkXumOM8+7VSm6ZYCrI9HSWszTIx5Gw==}
@@ -7497,7 +7509,7 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251028':
+  '@maxim_mazurok/gapi.client.calendar-v3@0.1.20251106':
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
@@ -7507,7 +7519,7 @@ snapshots:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
 
-  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251102':
+  '@maxim_mazurok/gapi.client.tasks-v1@0.1.20251109':
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
@@ -8227,6 +8239,14 @@ snapshots:
 
   '@tanstack/query-core@5.90.6': {}
 
+  '@tanstack/query-devtools@5.90.1': {}
+
+  '@tanstack/vue-query-devtools@5.91.0(@tanstack/vue-query@5.90.6(vue@3.5.22(typescript@5.7.3)))(vue@3.5.22(typescript@5.7.3))':
+    dependencies:
+      '@tanstack/query-devtools': 5.90.1
+      '@tanstack/vue-query': 5.90.6(vue@3.5.22(typescript@5.7.3))
+      vue: 3.5.22(typescript@5.7.3)
+
   '@tanstack/vue-query@5.90.6(vue@3.5.22(typescript@5.7.3))':
     dependencies:
       '@tanstack/match-sorter-utils': 8.19.4
@@ -8350,7 +8370,7 @@ snapshots:
 
   '@types/gapi.client.calendar-v3@0.0.4':
     dependencies:
-      '@maxim_mazurok/gapi.client.calendar-v3': 0.1.20251028
+      '@maxim_mazurok/gapi.client.calendar-v3': 0.1.20251106
 
   '@types/gapi.client.discovery-v1@0.0.4':
     dependencies:
@@ -8358,7 +8378,7 @@ snapshots:
 
   '@types/gapi.client.tasks-v1@0.0.5':
     dependencies:
-      '@maxim_mazurok/gapi.client.tasks-v1': 0.1.20251102
+      '@maxim_mazurok/gapi.client.tasks-v1': 0.1.20251109
 
   '@types/gapi.client@1.0.8': {}
 
