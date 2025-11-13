@@ -1,12 +1,14 @@
 <template>
-  <NLayout has-sider>
+  <NLayout has-sider class="full-screen" :native-scrollbar="false">
     <NLayoutSider
-      collapse-mode="width"
+      :collapse-mode="'width'"
       :collapsed-width="0"
-      :width="240"
-      show-trigger="arrow-circle"
-      content-style="padding: 12px;"
+      :native-scrollbar="false"
+      width="15%"
+      style="height: 100%"
       bordered
+      show-trigger
+      trigger-style="top: 150px"
     >
       <NScrollbar>
         <ProjectSummaryListModule
@@ -34,3 +36,10 @@ import { ref } from 'vue'
 const projectList = useProjectsQuery()
 const selectedProjectId = ref<string | undefined>()
 </script>
+
+<style scoped>
+.full-screen {
+  height: 100%;
+  width: 100%;
+}
+</style>
