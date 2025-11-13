@@ -1,63 +1,29 @@
 <template>
   <NFlex :wrap="false">
     <NCard class="timeline">
-      <ProjectSummaryModule :proj="projectData.data.value"> </ProjectSummaryModule>
-      <TasksTimelineModule :tasklist-id="projectData.data.value?.tasklistId" />
+      <ProjectSummaryModule :proj="project.data.value"> </ProjectSummaryModule>
+      <TasksTimelineModule :tasklist-id="project.data.value?.tasklistId" />
     </NCard>
     <NCard class="content">
-      <NCard>
-        <NCalendar
-          class="calendar"
-          #="{ year, month, date }"
-          v-if="events && events.data.value?.items"
-        >
-          <NFlex class="calendar-container">
-            <NTag
-              v-for="eventOfTheDay in events.data.value.items.filter((elem) =>
-                checkEventInDate(elem, { year, month, date }),
-              )"
-              :key="eventOfTheDay.start?.dateTime"
-              class="calendar-tag"
-            >
-              <NText class="calendar-tag-text">{{ eventOfTheDay.summary }}</NText>
-            </NTag>
-          </NFlex>
-        </NCalendar>
-      </NCard>
+      <NCard> <CalendarModule :calendar-id="project.data.value?.calendarId" /> </NCard>
       <HeatmapModule :data="[]" :loading="true"></HeatmapModule>
       <NDivider dashed :title-placement="'left'">在这里放一些文本</NDivider>
     </NCard>
   </NFlex>
 </template>
 <script setup lang="ts">
-import { NCalendar, NCard, NDivider, NFlex, NTag, NText } from 'naive-ui'
+import { NCard, NDivider, NFlex } from 'naive-ui'
 import TasksTimelineModule from '../tasks/TasksTimelineModule.vue'
 import HeatmapModule from '@/components/common/HeatmapModule.vue'
 import ProjectSummaryModule from './ProjectSummaryModule.vue'
 import { useProjectQuery } from '@/services-composable/project'
-import { useEventListQuery } from '@/services-composable/google-calendar'
+import CalendarModule from '../calendar/CalendarModule.vue'
 
 const props = defineProps<{
   projectId: string | undefined
 }>()
 
-const projectData = useProjectQuery(() => props.projectId ?? '')
-const events = useEventListQuery(() => projectData.data.value?.calendarId ?? '')
-
-function checkEventInDate(
-  event: gapi.client.calendar.Event,
-  date: { year: number; month: number; date: number },
-) {
-  if (!event.start || !event.start.dateTime) {
-    return false
-  }
-  const start = new Date(event.start.dateTime)
-  return (
-    start.getFullYear() === date.year &&
-    start.getMonth() === date.month &&
-    start.getDay() === date.date
-  )
-}
+const project = useProjectQuery(() => props.projectId ?? '')
 </script>
 
 <style lang="css" scoped>
