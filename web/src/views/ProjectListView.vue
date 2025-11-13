@@ -1,12 +1,14 @@
 <template>
-  <NLayout has-sider>
+  <NLayout has-sider class="full-screen" :native-scrollbar="false">
     <NLayoutSider
-      collapse-mode="width"
-      :collapsed-width="120"
-      :width="240"
-      show-trigger="arrow-circle"
-      content-style="padding: 24px;"
+      :collapse-mode="'width'"
+      :collapsed-width="0"
+      :native-scrollbar="false"
+      width="15%"
+      style="height: 100%"
       bordered
+      show-trigger
+      trigger-style="top: 150px"
     >
       <ProjectSummaryListModule
         v-model:selected="selectedProjectId"
@@ -36,3 +38,10 @@ const selectedProjectId = ref<string | undefined>()
 
 const showProjectEditModal = ref(false)
 </script>
+
+<style scoped>
+.full-screen {
+  height: 100%;
+  width: 100%;
+}
+</style>
