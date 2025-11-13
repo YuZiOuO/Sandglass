@@ -2,21 +2,23 @@
   <NLayout has-sider>
     <NLayoutSider
       collapse-mode="width"
-      :collapsed-width="120"
+      :collapsed-width="0"
       :width="240"
       show-trigger="arrow-circle"
-      content-style="padding: 24px;"
+      content-style="padding: 12px;"
       bordered
     >
-      <ProjectSummaryListModule
-        v-model:selected="selectedProjectId"
-        :project-list="projectList.data.value"
-        @create="
-          () => {
-            console.log('aaa')
-          }
-        "
-      />
+      <NScrollbar>
+        <ProjectSummaryListModule
+          v-model:selected="selectedProjectId"
+          :project-list="projectList.data.value"
+          @create="
+            () => {
+              console.log('aaa')
+            }
+          "
+        />
+      </NScrollbar>
     </NLayoutSider>
     <NLayoutContent> <ProjectDetailModule :project-id="selectedProjectId" /></NLayoutContent>
   </NLayout>
@@ -26,7 +28,7 @@
 import ProjectDetailModule from '@/components/module/project/ProjectDetailModule.vue'
 import ProjectSummaryListModule from '@/components/module/projectlist/projectSummaryListModule.vue'
 import { useProjectsQuery } from '@/services-composable/project'
-import { NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
+import { NLayout, NLayoutContent, NLayoutSider, NScrollbar } from 'naive-ui'
 import { ref } from 'vue'
 
 const projectList = useProjectsQuery()

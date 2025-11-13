@@ -29,9 +29,7 @@ import FooterLayout from './FooterLayout.vue'
 }
 
 .content {
-  display: flex;
-  justify-content: center;
-  max-width: 95%;
-  margin: 12px auto;
+  margin: 0;
+  padding: 0;
 }
 </style>
