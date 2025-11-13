@@ -1,29 +1,25 @@
 <template>
+  <!-- TODO: refactor to form, add validation -->
   <NSpace vertical>
     <NInput :type="'text'" :placeholder="'项目名称'" v-model:value="inputProjectName" />
     <NInput :type="'textarea'" :placeholder="'项目描述'" v-model:value="inputProjectDescription" />
     <NSelect
-      :options="convertCalenderArrayToOptions(props.calendars)"
+      :options="convertCalenderArrayToOptions(calendar.data.value?.items ?? [])"
       :placeholder="'要绑定的日历'"
-      :loading="loading"
-      v-model:value="inputCalendarId"
+      :loading="calendar.isFetching.value"
+      v-model:value="formModel.calendarId"
     ></NSelect>
     <NSelect
-      :options="convertTasklistsToOptions(props.tasklists)"
+      :options="convertTasklistsToOptions(tasklists.data.value?.items ?? [])"
       :placeholder="'要绑定的任务列表'"
-      :loading="loading"
-      v-model:value="inputTasklistId"
+      :loading="calendar.isFetching.value"
+      v-model:value="formModel.tasklistId"
     ></NSelect>
     <!-- <NSelect :options="" :placeholder="'要绑定的仓库'" v-model:value=""></NSelect> -->
     <NButton
       @click="
-        () => {
-          emits('submit', {
-            calendar: inputCalendarId as string,
-            projectDescription: inputProjectDescription as string,
-            projectName: inputProjectName as string,
-            tasklist: inputTasklistId as string,
-          })
+        async () => {
+          projectAddMutation.mutateAsync(formModel)
         }
       "
     >
@@ -33,32 +29,31 @@
 </template>
 
 <script setup lang="ts">
+import type { ProjectCreateDTO } from '@/api'
+import { useCalendarListQuery } from '@/services-composable/google-calendar'
+import { useTaskListsQuery } from '@/services-composable/google-tasks'
+import { useCreateProject } from '@/services-composable/project'
+import { useAuthenticationStore } from '@/stores/authentication'
 import { NButton, NInput, NSelect, NSpace } from 'naive-ui'
 import type { SelectOption } from 'naive-ui/es/select/src/interface'
 import { ref } from 'vue'
 
-const props = defineProps<{
-  calendars: gapi.client.calendar.CalendarListEntry[]
-  tasklists: gapi.client.tasks.TaskList[]
-  loading: boolean
-}>()
+const calendar = useCalendarListQuery()
+const tasklists = useTaskListsQuery()
 
-const emits = defineEmits<{
-  submit: [
-    {
-      projectName: string
-      projectDescription: string
-      calendar: string
-      tasklist: string
-      repo?: string
-    },
-  ]
-}>()
+if (useAuthenticationStore().uid === null) {
+  console.log('assertion error')
+}
+const formModel = ref<ProjectCreateDTO>({
+  uid: useAuthenticationStore().uid!,
+  calendarId: '',
+  tasklistId: '',
+})
+
+const projectAddMutation = useCreateProject()
 
 const inputProjectName = ref<string>()
 const inputProjectDescription = ref<string>()
-const inputCalendarId = ref<string>()
-const inputTasklistId = ref<string>()
 
 function convertCalenderArrayToOptions(
   calendars: gapi.client.calendar.CalendarListEntry[],

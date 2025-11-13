@@ -15,19 +15,17 @@
 </template>
 
 <script setup lang="ts">
-import type { ProjectDTO } from '@/api'
 import { NMenu, type MenuOption } from 'naive-ui'
 import { computed } from 'vue'
+import { useProjectsQuery } from '@/services-composable/project'
 
-const props = defineProps<{
-  projectList: ProjectDTO[] | undefined
-}>()
+const projectList = useProjectsQuery()
 
 const selected = defineModel<string | undefined>('selected', { default: undefined })
 defineEmits(['create'])
 
 const projectMenuOptions = computed<MenuOption[] | undefined>(() => {
-  return props.projectList?.map((proj) => {
+  return projectList.data.value?.map((proj) => {
     return { key: proj._id, label: proj.calendarId }
   })
 })

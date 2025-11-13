@@ -10,25 +10,29 @@
     >
       <ProjectSummaryListModule
         v-model:selected="selectedProjectId"
-        :project-list="projectList.data.value"
         @create="
           () => {
-            console.log('aaa')
+            showProjectEditModal = true
           }
         "
       />
     </NLayoutSider>
     <NLayoutContent> <ProjectDetailModule :project-id="selectedProjectId" /></NLayoutContent>
   </NLayout>
+
+  <NModal v-model:show="showProjectEditModal" preset="card" title="添加项目">
+    <ProjectEditModule />
+  </NModal>
 </template>
 
 <script setup lang="ts">
 import ProjectDetailModule from '@/components/module/project/ProjectDetailModule.vue'
+import ProjectEditModule from '@/components/module/project/ProjectEditModule.vue'
 import ProjectSummaryListModule from '@/components/module/projectlist/projectSummaryListModule.vue'
-import { useProjectsQuery } from '@/services-composable/project'
-import { NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
+import { NLayout, NLayoutContent, NLayoutSider, NModal } from 'naive-ui'
 import { ref } from 'vue'
 
-const projectList = useProjectsQuery()
 const selectedProjectId = ref<string | undefined>()
+
+const showProjectEditModal = ref(false)
 </script>
