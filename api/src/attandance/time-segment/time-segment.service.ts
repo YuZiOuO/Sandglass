@@ -1,22 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTimeSegmentDto } from './dto/create-time-segment.dto';
 import { UpdateTimeSegmentDto } from './dto/update-time-segment.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TimeSegment } from './entities/time-segment.entity';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class TimeSegmentService {
-  create(createTimeSegmentDto: CreateTimeSegmentDto) {
-    return 'This action adds a new timeSegment';
+  constructor(
+    @InjectRepository(TimeSegment)
+    private timeSegmentRepo: Repository<TimeSegment>,
+  ) {}
+
+  async create(createTimeSegmentDto: CreateTimeSegmentDto) {
+    await this.timeSegmentRepo.insert(createTimeSegmentDto);
+    return;
   }
 
-  find(id: number | number[]) {
-    return `This action returns a #${id} timeSegment`;
+  async find(id: number | number[]) {
+    return await this.timeSegmentRepo.find({
+      where: { _id: In(([] as number[]).concat(id)) },
+    });
   }
 
-  update(id: number, updateTimeSegmentDto: UpdateTimeSegmentDto) {
-    return `This action updates a #${id} timeSegment`;
+  async update(id: number, updateTimeSegmentDto: UpdateTimeSegmentDto) {
+    return await this.timeSegmentRepo.update(id, updateTimeSegmentDto);
   }
 
-  remove(id: number | number[]) {
-    return `This action removes a #${id} timeSegment`;
+  async remove(id: number | number[]) {
+    return await this.timeSegmentRepo.delete(id);
   }
 }

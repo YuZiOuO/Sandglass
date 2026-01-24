@@ -1,22 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Schedule } from './entities/schedule.entity';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class ScheduleService {
-  create(createScheduleDto: CreateScheduleDto) {
-    return 'This action adds a new schedule';
+  constructor(
+    @InjectRepository(Schedule) private scheduleRepo: Repository<Schedule>,
+  ) {}
+
+  async create(createScheduleDto: CreateScheduleDto) {
+    return await this.scheduleRepo.insert(createScheduleDto);
   }
 
-  find(id: number | number[]) {
-    return `This action returns a #${id} schedule`;
+  async find(id: number | number[]) {
+    return await this.scheduleRepo.find({
+      where: { _id: In(([] as number[]).concat(id)) },
+    });
   }
 
   update(id: number, updateScheduleDto: UpdateScheduleDto) {
-    return `This action updates a #${id} schedule`;
+    return this.scheduleRepo.update(id, updateScheduleDto);
   }
 
   remove(id: number | number[]) {
-    return `This action removes a #${id} schedule`;
+    return this.scheduleRepo.delete(id);
   }
 }
