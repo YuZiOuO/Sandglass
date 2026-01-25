@@ -16,6 +16,6 @@
 
 <script setup lang="ts">
 import { NGrid, NGi, NIcon, NFlex } from 'naive-ui'
-import NavBarDropdown from './layout-module/NavBarDropdown.vue'
-import NavBarMenu from './layout-module/NavBarMenu.vue'
+import NavBarDropdown from './NavBarDropdown.vue'
+import NavBarMenu from './NavBarMenu.vue'
 </script>

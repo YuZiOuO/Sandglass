@@ -20,10 +20,10 @@ import {
   NLoadingBarProvider,
   NMessageProvider,
 } from 'naive-ui'
-import LoadingBarController from './components/common/LoadingBarController.vue'
+import LoadingBarController from './common/LoadingBarController.vue';
 
 // import { ref } from 'vue'
-import RootLayout from './components/layout/RootLayout.vue'
+import RootLayout from './views/layout/RootLayout.vue';
 
 // const darkTheme = ref(createTheme([inputDark, datePickerDark]))
 </script>

@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import LoginModule from '@/components/module/LoginModule.vue'
+import LoginModule from '@/views/LoginModule.vue'
 import { NFlex } from 'naive-ui'
 import { useRouter } from 'vue-router'
 

@@ -24,8 +24,8 @@
 <script setup lang="ts">
 import { NFlex, NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
 
-import GreetingModule from '@/components/module/workbench/GreetingModule.vue'
-import HeatmapModule from '@/components/common/HeatmapModule.vue'
+import GreetingModule from './workbench/GreetingModule.vue'
+import HeatmapModule from '@/common/HeatmapModule.vue'
 import { GithubApi, type GithubContributionDTO } from '@/api'
 import { onMounted, ref } from 'vue'
 

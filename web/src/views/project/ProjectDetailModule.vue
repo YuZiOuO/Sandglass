@@ -20,7 +20,7 @@
 import type { ProjectDTO } from '@/api'
 import { NCalendar, NCard, NDivider, NFlex } from 'naive-ui'
 import TasksTimelineModule from '../tasks/TasksTimelineModule.vue'
-import HeatmapModule from '@/components/common/HeatmapModule.vue'
+import HeatmapModule from '@/common/HeatmapModule.vue'
 import ProjectSummaryModule from './ProjectSummaryModule.vue'
 
 const props = defineProps<{

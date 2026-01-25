@@ -7,7 +7,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import ProjectDetailModule from '@/components/module/project/ProjectDetailModule.vue'
+import ProjectDetailModule from './project/ProjectDetailModule.vue'
 </script>
 
 <style lang="css" scoped>

@@ -1,7 +1,7 @@
 <template>
   <NFlex class="flex" :justify="'start'" :align="'start'">
     <suspense>
-      <NCard class="flex-item" title="User"><DebugUser /></NCard>
+      <NCard class="flex-item" title="Firebase"><DebugFirebase /></NCard>
     </suspense>
     <suspense>
       <NCard class="flex-item" title="OAuth"><DebugOAuth /></NCard>
@@ -25,12 +25,12 @@
 </template>
 
 <script setup lang="ts">
-import DebugUser from '@/components/module/debug/DebugFirebase.vue'
+import DebugFirebase from './DebugFirebase.vue'
 import { NCard, NFlex } from 'naive-ui'
-import DebugProject from '@/components/module/debug/DebugProject.vue'
-import DebugOAuth from '@/components/module/debug/DebugOAuth.vue'
-import DebugGoogleCalendar from '@/components/module/debug/DebugGoogleCalendar.vue'
-import DebugGoogleTasks from '@/components/module/debug/DebugGoogleTasks.vue'
+import DebugProject from './DebugProject.vue'
+import DebugOAuth from './DebugOAuth.vue'
+import DebugGoogleCalendar from './DebugGoogleCalendar.vue'
+import DebugGoogleTasks from './DebugGoogleTasks.vue'
 
 const url = import.meta.env.SG_WEB_API_BASEURL
 </script>
