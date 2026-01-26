@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TimeSegmentModule } from './time-segment/time-segment.module';
-import { ScheduleModule } from './schedule/schedule.module';
+import { RecordModule } from './record/record.module';
 
 @Module({
-  imports: [ScheduleModule, TimeSegmentModule],
+  imports: [RecordModule],
 })
 export class AttandanceModule {}

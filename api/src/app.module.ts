@@ -8,8 +8,6 @@ import { GithubModule } from './github/github.module';
 import { GithubAuthModule } from './oauth/github/github-auth.module';
 import { GoogleAuthModule } from './oauth/google/google-auth.module';
 import { ProjectModule } from './project/project.module';
-import { AttendanceModule } from './attendance/attendance.module';
-import { ConfigModule } from './attandance/config/config.module';
 import { AttandanceModule } from './attandance/attandance.module';
 
 @Module({
@@ -28,7 +26,7 @@ import { AttandanceModule } from './attandance/attandance.module';
     GoogleAuthModule,
     GithubModule,
     ProjectModule,
-    AttendanceModule,
+    AttandanceModule,
     ConfigModule,
     AttandanceModule,
   ],
