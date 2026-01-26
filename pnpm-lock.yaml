@@ -12,7 +12,7 @@ importers:
         specifier: ^2.25.0
         version: 2.25.0(@nestjs/platform-express@11.1.7)(@types/node@22.18.12)(class-transformer@0.5.1)(class-validator@0.14.2)
 
-  api:
+  apps/api:
     dependencies:
       '@nestjs/axios':
         specifier: ^4.0.1
@@ -148,7 +148,7 @@ importers:
         specifier: ^8.46.1
         version: 8.46.2(eslint@9.38.0(jiti@2.6.1))(typescript@5.9.3)
 
-  web:
+  apps/web:
     dependencies:
       '@tanstack/vue-query':
         specifier: ^5.90.5
@@ -6056,6 +6056,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -9667,7 +9668,7 @@ snapshots:
 
   dotenv-expand@12.0.1:
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.6.1
 
   dotenv@16.4.7: {}
 
@@ -10011,7 +10012,7 @@ snapshots:
 
   ext-list@2.2.2:
     dependencies:
-      mime-db: 1.52.0
+      mime-db: 1.54.0
 
   ext-name@5.0.0:
     dependencies:
