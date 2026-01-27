@@ -36,3 +36,18 @@ model Project {
 
   @@map("projects") // 习惯上数据库表名用复数
 }
+
+enum AttandancType {
+  IN
+  OUT
+}
+
+model AttandanceRecord {
+  id String @id @default(uuid())
+
+  uid String
+
+  time DateTime
+
+  type AttandancType
+}

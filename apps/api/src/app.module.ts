@@ -9,6 +9,8 @@ import { GithubAuthModule } from './oauth/github/github-auth.module';
 import { GoogleAuthModule } from './oauth/google/google-auth.module';
 import { ProjectModule } from './project/project.module';
 import { AttandanceModule } from './attandance/attandance.module';
+import { PrismaService } from './prisma/prisma.service';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -29,8 +31,9 @@ import { AttandanceModule } from './attandance/attandance.module';
     AttandanceModule,
     ConfigModule,
     AttandanceModule,
+    PrismaModule,
   ],
   controllers: [AppController],
-  providers: [UserService],
+  providers: [UserService, PrismaService],
 })
 export class AppModule {}

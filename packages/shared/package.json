@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "zod-prisma-types": "^3.3.11"
+  },
+  "scripts": {
+    "prisma:gen": "pnpx prisma generate"
   }
 }
