@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@sandglass/shared": "workspace:*",
     "@tanstack/vue-query": "^5.90.5",
     "@vicons/ionicons5": "^0.13.0",
     "@vueuse/core": "^14.1.0",
