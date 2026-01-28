@@ -1,18 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRecordDto } from './dto/create-record.dto';
-import { UpdateRecordDto } from './dto/update-record.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Record } from './entities/record.entity';
-import { Repository } from 'typeorm';
+import { AttendanceRecord } from 'src/generated/prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class RecordService {
-  constructor(
-    @InjectRepository(Record) private recordRepo: Repository<Record>,
-  ) {}
+export class AttendanceRecordService {
+  constructor(private prisma: PrismaService) {}
 
-  create(createRecordDto: CreateRecordDto) {
-    return this.recordRepo.insert(createRecordDto);
+  async create(createRecordDto: AttendanceRecord) {
+    return await this.prisma.attendanceRecord.create({ data: createRecordDto });
   }
 
   // findAll() {

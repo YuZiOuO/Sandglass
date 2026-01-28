@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { RecordService } from './record.service';
+import { AttendanceRecordService } from './record.service';
 import { RecordController } from './record.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Record } from './entities/record.entity';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Record])],
+  imports: [PrismaModule],
   controllers: [RecordController],
-  providers: [RecordService],
+  providers: [AttendanceRecordService],
 })
 export class RecordModule {}

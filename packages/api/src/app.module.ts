@@ -8,7 +8,7 @@ import { GithubModule } from './github/github.module';
 import { GithubAuthModule } from './oauth/github/github-auth.module';
 import { GoogleAuthModule } from './oauth/google/google-auth.module';
 import { ProjectModule } from './project/project.module';
-import { AttandanceModule } from './attandance/attandance.module';
+import { AttendanceModule } from './attandance/attendance.module';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 
@@ -28,9 +28,9 @@ import { PrismaModule } from './prisma/prisma.module';
     GoogleAuthModule,
     GithubModule,
     ProjectModule,
-    AttandanceModule,
+    AttendanceModule,
     ConfigModule,
-    AttandanceModule,
+    AttendanceModule,
     PrismaModule,
   ],
   controllers: [AppController],

@@ -4,4 +4,4 @@ import { RecordModule } from './record/record.module';
 @Module({
   imports: [RecordModule],
 })
-export class AttandanceModule {}
+export class AttendanceModule {}

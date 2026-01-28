@@ -6,7 +6,8 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
+  runtime  = "nodejs"
 }
 
 datasource db {
@@ -15,7 +16,7 @@ datasource db {
 
 generator zod {
   provider = "zod-prisma-types"
-  output   = "../generated/zod"
+  output   = "../src/generated/zod"
 }
 
 model Project {
@@ -37,17 +38,17 @@ model Project {
   @@map("projects") // 习惯上数据库表名用复数
 }
 
-enum AttandancType {
+enum AttendanceType {
   IN
   OUT
 }
 
-model AttandanceRecord {
+model AttendanceRecord {
   id String @id @default(uuid())
 
   uid String
 
   time DateTime
 
-  type AttandancType
+  type AttendanceType
 }

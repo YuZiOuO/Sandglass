@@ -1,22 +1,13 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { RecordService } from './record.service';
-import { CreateRecordDto } from './dto/create-record.dto';
-import { UpdateRecordDto } from './dto/update-record.dto';
+import { Controller, Post, Body } from '@nestjs/common';
+import { AttendanceRecordService } from './record.service';
+import type { AttendanceRecord } from 'src/generated/prisma/client';
 
 @Controller('record')
 export class RecordController {
-  constructor(private readonly recordService: RecordService) {}
+  constructor(private readonly recordService: AttendanceRecordService) {}
 
   @Post()
-  create(@Body() createRecordDto: CreateRecordDto) {
+  create(@Body() createRecordDto: AttendanceRecord) {
     return this.recordService.create(createRecordDto);
   }
 
