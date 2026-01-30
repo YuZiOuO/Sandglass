@@ -1,2 +1,4 @@
 pnpm-lock.yaml linguist-generated=true
 pnpm-lock.yaml binary
+bun.lock linguist-generated=true
+bun.lock binary
