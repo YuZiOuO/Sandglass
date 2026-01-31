@@ -4,8 +4,10 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.6",
+    "@sandglass/schema": "workspace:*",
     "hono": "^4.11.7",
-    "@sandglass/schema": "workspace:*"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/bun": "latest"
