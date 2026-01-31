@@ -15,8 +15,9 @@ datasource db {
 }
 
 generator zod {
-  provider = "zod-prisma-types"
+  provider = "prisma-zod-generator"
   output   = "../generated/zod"
+  config   = "./zod-generator.config.json"
 }
 
 model Project {
@@ -46,6 +47,7 @@ enum AttendanceType {
 model AttendanceRecord {
   id String @id @default(uuid())
 
+  /// @zod.omit()
   uid String
 
   time DateTime

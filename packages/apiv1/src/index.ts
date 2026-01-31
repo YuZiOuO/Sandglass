@@ -1,9 +1,11 @@
 import { zValidator } from "@hono/zod-validator";
 import { PrismaClient } from "@sandglass/schema/generated/prisma/client";
-import { AttendanceRecordCreateInputSchema } from "@sandglass/schema/generated/zod";
-import { initializeApp } from "firebase-admin";
+import { env } from "bun";
+import { initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { Hono } from "hono";
+import schema from "./schema";
 
 type Env = {
   Variables: {
@@ -14,11 +16,11 @@ type Env = {
 
 const app = new Hono<Env>();
 const db = new PrismaClient({
-  accelerateUrl: "localhost",
+  accelerateUrl: env.DATABASE_URL as string,
 });
 
 const firebase = initializeApp();
-const firebaseAuth = firebase.auth();
+const firebaseAuth = getAuth(firebase);
 
 app.use(async (c, next) => {
   const header = c.req.header("Authorization");
@@ -43,11 +45,23 @@ app.get("/", (c) => {
 
 const routes = app.post(
   "/attendanceRecord",
-  zValidator("form", AttendanceRecordCreateInputSchema),
-  (c) => {
+  zValidator(
+    "json",
+    schema.AttendanceRecordCreateInputObjectZodSchema.omit({
+      id: true,
+      uid: true,
+    }),
+  ),
+  async (c) => {
     const uid = c.var.uid;
-    const data = c.req.valid("form");
-    db.attendanceRecord.create({ data: { ...data, uid: uid } });
+    const data = c.req.valid("json");
+    try {
+      const dbres = await db.attendanceRecord.create({
+        data: { ...data, uid: uid },
+      });
+    } catch (e) {
+      console.log(e);
+    }
     return c.json({ success: true, error: null }, 201);
   },
 );
