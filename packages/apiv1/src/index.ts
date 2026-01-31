@@ -45,8 +45,10 @@ const routes = app.post(
   "/attendanceRecord",
   zValidator("form", AttendanceRecordCreateInputSchema),
   (c) => {
+    const uid = c.var.uid;
     const data = c.req.valid("form");
-    return c.json({}, 201);
+    db.attendanceRecord.create({ data: { ...data, uid: uid } });
+    return c.json({ success: true, error: null }, 201);
   },
 );
 
