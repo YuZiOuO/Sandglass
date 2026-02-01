@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prisma:gen": "pnpm exec prisma generate"
+    "prisma:gen": "prisma generate",
+    "prisma:db:push": "prisma db push",
+    "prisma:studio": "prisma studio"
   },
   "keywords": [],
   "author": "",

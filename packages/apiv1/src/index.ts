@@ -5,6 +5,7 @@ import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { Hono } from "hono";
+import { logger } from "hono/logger";
 import schema from "./schema";
 
 type Env = {
@@ -21,6 +22,8 @@ const db = new PrismaClient({
 
 const firebase = initializeApp();
 const firebaseAuth = getAuth(firebase);
+
+app.use("*", logger());
 
 app.use(async (c, next) => {
   const header = c.req.header("Authorization");
