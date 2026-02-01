@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2023",
+    "strict": true,
+    "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
+
+    // for export
+    "noEmit": true,
+    "allowImportingTsExtensions": true, // 允许直接引入 .ts 文件
+    "declaration": true, // 生成类型定义文件
+    "declarationMap": true // 允许点击跳转到源码
+  }
+}
