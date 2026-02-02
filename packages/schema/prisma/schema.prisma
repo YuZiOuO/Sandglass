@@ -54,3 +54,8 @@ model AttendanceRecord {
 
   type AttendanceType
 }
+
+model AttendanceTarget {
+  uid    String @id @unique
+  timeMs Int
+}

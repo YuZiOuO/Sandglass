@@ -12,11 +12,49 @@
   </div>
 
   <div>今日已记录毫秒数: {{ useWorkTimeOfToday(recordsOfToday, current_time) }}</div>
+
+  <NInput
+    :placeholder="'输入要修改的目标值'"
+    @input="
+      async (c) => {
+        inputTarget = c
+      }
+    "
+  >
+  </NInput>
+  <NButton
+    @click="
+      async () => {
+        client.attendanceTarget.$put(
+          { json: { timeMs: Number(inputTarget) } },
+          { headers: await useAuthHeader() },
+        )
+      }
+    "
+    >修改目标</NButton
+  >
+
+  <NButton
+    @click="
+      async () => {
+        const data = await (
+          await client.attendanceTarget.$get({}, { headers: await useAuthHeader() })
+        ).json()
+        target = data?.timeMs ?? null
+      }
+    "
+    >获取目标</NButton
+  >
+  <div>当前设定的每日目标: {{ target }}</div>
+  <NProgress
+    v-if="target"
+    :percentage="(useWorkTimeOfToday(recordsOfToday, current_time) / target) * 100"
+  />
 </template>
 
 <script setup lang="ts">
 import { useNow } from '@vueuse/core'
-import { NButton, NTime, NSplit } from 'naive-ui'
+import { NButton, NTime, NSplit, NInput, NProgress } from 'naive-ui'
 import { useAccessToken } from '@/services-composable/firebase'
 import type { AppType } from '@sandglass/apiv1'
 import { hc, type InferResponseType } from 'hono/client'
@@ -80,4 +118,8 @@ function computeWorkTimeOfToday(records: AttendanceRecord[]) {
 const useWorkTimeOfToday = (records: AttendanceRecord[], _ticks: Date) => {
   return computeWorkTimeOfToday(records)
 }
+
+const target = ref<number | null>(null)
+
+const inputTarget = ref<string>()
 </script>
