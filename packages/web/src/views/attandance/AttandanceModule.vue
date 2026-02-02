@@ -10,6 +10,8 @@
     <NSplit />
     您于{{ new Date(r.time).toLocaleString() }} {{ r.type == 'IN' ? '签到' : '签退' }}
   </div>
+
+  <div>今日已记录毫秒数: {{ useWorkTimeOfToday(recordsOfToday, current_time) }}</div>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +21,7 @@ import { useAccessToken } from '@/services-composable/firebase'
 import type { AppType } from '@sandglass/apiv1'
 import { hc, type InferResponseType } from 'hono/client'
 import { ref } from 'vue'
+import type { AttendanceType } from '../../../../schema/generated/schemas'
 
 async function useAuthHeader() {
   return { Authorization: 'Bearer ' + (await useAccessToken()) }
@@ -33,7 +36,9 @@ const checkInOrOut = async (type: 'IN' | 'OUT') => {
   console.log(res)
 }
 
-const recordsOfToday = ref<InferResponseType<typeof client.attendanceRecord.today.$get>>([])
+type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.today.$get>[number]
+
+const recordsOfToday = ref<AttendanceRecord[]>([])
 const todayButtonLoading = ref(false)
 const getData = async () => {
   todayButtonLoading.value = true
@@ -43,4 +48,36 @@ const getData = async () => {
 }
 
 const current_time = useNow()
+
+function computeWorkTimeOfToday(records: AttendanceRecord[]) {
+  let statusMachine: AttendanceType = 'OUT'
+  let statusMachineCachedTime: Date = new Date()
+  let statusMachineCountTimeMs = 0
+  for (const r of records) {
+    switch (r.type) {
+      case 'IN':
+        if (statusMachine == 'OUT') {
+          statusMachineCachedTime = new Date(r.time)
+          statusMachine = 'IN'
+        }
+        break
+      case 'OUT':
+        if (statusMachine == 'IN') {
+          statusMachineCountTimeMs += new Date(r.time).getTime() - statusMachineCachedTime.getTime()
+          statusMachine = 'OUT'
+        }
+    }
+  }
+
+  if (statusMachine == 'IN') {
+    statusMachineCountTimeMs += new Date().getTime() - statusMachineCachedTime.getTime()
+  }
+
+  return statusMachineCountTimeMs
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const useWorkTimeOfToday = (records: AttendanceRecord[], _ticks: Date) => {
+  return computeWorkTimeOfToday(records)
+}
 </script>

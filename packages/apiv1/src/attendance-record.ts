@@ -1,6 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { db, schema } from "./db";
 import { factory } from "./shared";
+import { z } from "zod";
 
 /**
  * Get day boundaries (00:00:00) for the given date
@@ -50,5 +51,15 @@ export const attendanceRecordRoutes = factory
         ],
       },
     });
+    return c.json(result);
+  })
+  .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
+    const uid = c.var.uid;
+    const idObject = c.req.valid("json");
+
+    const result = await db.attendanceRecord.delete({
+      where: { id: idObject.id, uid: uid },
+    });
+
     return c.json(result);
   });
