@@ -50,6 +50,12 @@
     v-if="target"
     :percentage="(useWorkTimeOfToday(recordsOfToday, current_time) / target) * 100"
   />
+
+  <NButton @click="useLeaveOfToday">查询今日请假</NButton>
+  <div>
+    今日请假记录
+    {{ leaveOfToday }}
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -59,7 +65,8 @@ import { useAccessToken } from '@/services-composable/firebase'
 import type { AppType } from '@sandglass/apiv1'
 import { hc, type InferResponseType } from 'hono/client'
 import { ref } from 'vue'
-import type { AttendanceType } from '../../../../schema/generated/schemas'
+import { computeWorkTimeOfToday } from './hooks'
+import type { AttendanceLeaveRecord } from '../../../../schema/generated/prisma/client'
 
 async function useAuthHeader() {
   return { Authorization: 'Bearer ' + (await useAccessToken()) }
@@ -74,7 +81,7 @@ const checkInOrOut = async (type: 'IN' | 'OUT') => {
   console.log(res)
 }
 
-type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.today.$get>[number]
+export type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.today.$get>[number]
 
 const recordsOfToday = ref<AttendanceRecord[]>([])
 const todayButtonLoading = ref(false)
@@ -87,39 +94,19 @@ const getData = async () => {
 
 const current_time = useNow()
 
-function computeWorkTimeOfToday(records: AttendanceRecord[]) {
-  let statusMachine: AttendanceType = 'OUT'
-  let statusMachineCachedTime: Date = new Date()
-  let statusMachineCountTimeMs = 0
-  for (const r of records) {
-    switch (r.type) {
-      case 'IN':
-        if (statusMachine == 'OUT') {
-          statusMachineCachedTime = new Date(r.time)
-          statusMachine = 'IN'
-        }
-        break
-      case 'OUT':
-        if (statusMachine == 'IN') {
-          statusMachineCountTimeMs += new Date(r.time).getTime() - statusMachineCachedTime.getTime()
-          statusMachine = 'OUT'
-        }
-    }
-  }
-
-  if (statusMachine == 'IN') {
-    statusMachineCountTimeMs += new Date().getTime() - statusMachineCachedTime.getTime()
-  }
-
-  return statusMachineCountTimeMs
-}
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useWorkTimeOfToday = (records: AttendanceRecord[], _ticks: Date) => {
   return computeWorkTimeOfToday(records)
 }
 
 const target = ref<number | null>(null)
-
 const inputTarget = ref<string>()
+
+type AttendanceLeaveRecord = InferResponseType<typeof client.attendanceTarget.leave.today.$get>
+const leaveOfToday = ref<AttendanceLeaveRecord | null>(null)
+const useLeaveOfToday = async () => {
+  const res = await client.attendanceTarget.leave.today.$get({}, { headers: await useAuthHeader() })
+  const data = await res.json()
+  leaveOfToday.value = data
+}
 </script>

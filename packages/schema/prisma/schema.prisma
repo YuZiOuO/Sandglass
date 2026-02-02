@@ -47,7 +47,6 @@ enum AttendanceType {
 model AttendanceRecord {
   id String @id @default(uuid())
 
-  /// @zod.omit()
   uid String
 
   time DateTime
@@ -58,4 +57,16 @@ model AttendanceRecord {
 model AttendanceTarget {
   uid    String @id @unique
   timeMs Int
+}
+
+model AttendanceLeaveRecord {
+  id String @id @default(uuid())
+
+  uid  String
+  date DateTime @db.Date
+
+  timeMs      Int
+  description String?
+
+  @@unique([uid, date])
 }
