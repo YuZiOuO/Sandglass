@@ -1,4 +1,4 @@
-import { DecodedIdToken } from "firebase-admin/auth";
+import { type DecodedIdToken } from "firebase-admin/auth";
 import { createFactory } from "hono/factory";
 
 /**

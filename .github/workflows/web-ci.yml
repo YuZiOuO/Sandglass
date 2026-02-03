@@ -11,34 +11,23 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
 
-    # fake mongo env used for api cli generation
-    services:
-      mongo:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-
-      - name: Install Pnpm
-        run: npm install -g pnpm
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Install Dependencies
-        run: pnpm install
-
-      - name: Generates API Client
-        run: pnpm run generate-api-cli
+        run: bun install
 
       - name: Build
-        run: cd web && pnpm run build
+        run: cd packages/web && bun run build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: web-build-artifact
-          path: web/dist/
+          path: packages/web/dist/

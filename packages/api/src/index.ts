@@ -3,6 +3,8 @@ import { factory } from "./shared";
 
 import * as middleware from "./middleware";
 import { attendaceTargetRoutes } from "./attendace-target";
+import { projectRoutes } from "./project";
+import { OAuthPublicRoutes, OAuthRoutes } from "./oauth";
 
 const app = factory
   .createApp()
@@ -18,7 +20,10 @@ const app = factory
 
   // load routes
   .route("/attendanceRecord", attendanceRecordRoutes)
-  .route("/attendanceTarget", attendaceTargetRoutes);
+  .route("/attendanceTarget", attendaceTargetRoutes)
+  .route("/project", projectRoutes)
+  .route("/oauth", OAuthRoutes)
+  .route("/oauth", OAuthPublicRoutes);
 
 export default app;
 export type AppType = typeof app;

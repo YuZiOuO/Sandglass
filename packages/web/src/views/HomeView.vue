@@ -26,18 +26,13 @@ import { NFlex, NLayout, NLayoutContent, NLayoutSider } from 'naive-ui'
 
 import GreetingModule from './workbench/GreetingModule.vue'
 import HeatmapModule from '@/common/HeatmapModule.vue'
-import { GithubApi, type GithubContributionDTO } from '@/api'
 import { onMounted, ref } from 'vue'
 
-const data = ref<GithubContributionDTO[]>([])
+const data = ref<[]>([])
 const loading = ref<boolean>(true)
 
 onMounted(async () => {
-  data.value = (
-    await new GithubApi(undefined, import.meta.env.VITE_API_BASEURL).getGithubActivities(
-      '6ziRUSavItalErW0uDQyk5qS5Ts1',
-    )
-  ).data
+  data.value = [] //TODO
   loading.value = false
 })
 </script>

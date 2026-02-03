@@ -25,12 +25,12 @@
 </template>
 
 <script setup lang="ts">
-import DebugFirebase from './DebugFirebase.vue'
 import { NCard, NFlex } from 'naive-ui'
-import DebugProject from './DebugProject.vue'
-import DebugOAuth from './DebugOAuth.vue'
-import DebugGoogleCalendar from './DebugGoogleCalendar.vue'
-import DebugGoogleTasks from './DebugGoogleTasks.vue'
+import DebugFirebase from './debug/DebugFirebase.vue'
+import DebugOAuth from './debug/DebugOAuth.vue'
+import DebugProject from './debug/DebugProject.vue'
+import DebugGoogleTasks from './debug/DebugGoogleTasks.vue'
+import DebugGoogleCalendar from './debug/DebugGoogleCalendar.vue'
 
 const url = import.meta.env.SG_WEB_API_BASEURL
 </script>
