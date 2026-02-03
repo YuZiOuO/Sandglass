@@ -55,7 +55,7 @@ export async function useGoogleAccessToken() {
       const cli = await authClient()
       const res = await cli.oauth.google.token.$get()
       const data = await res.json()
-      return data !== null
+      return data! // TODO
     },
   })
 }

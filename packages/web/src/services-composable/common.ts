@@ -9,3 +9,5 @@ const useDefaultAuthHeader = async () => {
 export const authClient = async () => {
   return hc<AppType>(import.meta.env.SG_WEB_API_BASEURL, await useDefaultAuthHeader())
 }
+
+export const client = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL)
