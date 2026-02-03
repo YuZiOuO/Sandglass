@@ -49,7 +49,7 @@
     {{ leaveOfToday }}
   </div>
 
-  <NDatePicker v-model:value="datepickerInput" type="date" />
+  <NDatePicker v-model:formatted-value="datepickerInput" value-format="yyyy-MM-dd" type="date" />
   <NInputNumber :placeholder="'小时数'" v-model:value="leaveHoursInput" />
   <NButton @click="triggerLeave">请假</NButton>
 </template>
@@ -105,14 +105,14 @@ const useLeaveOfToday = async () => {
   leaveOfToday.value = data
 }
 
-const datepickerInput = ref<number | null>(null)
+const datepickerInput = ref<string | null>(null)
 const leaveHoursInput = ref<number | null>(null)
 const triggerLeave = async () => {
   const res = await client.attendanceTarget.leave.$put(
     {
       json: {
-        date: new Date(datepickerInput.value!).toDateString(),
-        timeMs: leaveHoursInput.value! * 3600,
+        date: datepickerInput.value!,
+        timeMs: leaveHoursInput.value! * 3600 * 1000,
         description: 'test',
       },
     },
