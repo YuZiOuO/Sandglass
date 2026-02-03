@@ -13,15 +13,7 @@
 
   <div>今日已记录毫秒数: {{ useWorkTimeOfToday(recordsOfToday, current_time) }}</div>
 
-  <NInput
-    :placeholder="'输入要修改的目标值'"
-    @input="
-      async (c) => {
-        inputTarget = c
-      }
-    "
-  >
-  </NInput>
+  <NInput :placeholder="'输入要修改的目标值'" v-model:value="inputTarget"> </NInput>
   <NButton
     @click="
       async () => {
@@ -56,17 +48,20 @@
     今日请假记录
     {{ leaveOfToday }}
   </div>
+
+  <NDatePicker v-model:value="datepickerInput" type="date" />
+  <NInputNumber :placeholder="'小时数'" v-model:value="leaveHoursInput" />
+  <NButton @click="triggerLeave">请假</NButton>
 </template>
 
 <script setup lang="ts">
 import { useNow } from '@vueuse/core'
-import { NButton, NTime, NSplit, NInput, NProgress } from 'naive-ui'
+import { NButton, NTime, NSplit, NInput, NProgress, NDatePicker, NInputNumber } from 'naive-ui'
 import { useAccessToken } from '@/services-composable/firebase'
 import type { AppType } from '@sandglass/apiv1'
 import { hc, type InferResponseType } from 'hono/client'
 import { ref } from 'vue'
 import { computeWorkTimeOfToday } from './hooks'
-import type { AttendanceLeaveRecord } from '../../../../schema/generated/prisma/client'
 
 async function useAuthHeader() {
   return { Authorization: 'Bearer ' + (await useAccessToken()) }
@@ -108,5 +103,21 @@ const useLeaveOfToday = async () => {
   const res = await client.attendanceTarget.leave.today.$get({}, { headers: await useAuthHeader() })
   const data = await res.json()
   leaveOfToday.value = data
+}
+
+const datepickerInput = ref<number | null>(null)
+const leaveHoursInput = ref<number | null>(null)
+const triggerLeave = async () => {
+  const res = await client.attendanceTarget.leave.$put(
+    {
+      json: {
+        date: new Date(datepickerInput.value!).toDateString(),
+        timeMs: leaveHoursInput.value! * 3600,
+        description: 'test',
+      },
+    },
+    { headers: await useAuthHeader() },
+  )
+  console.log(await res.json())
 }
 </script>

@@ -8,8 +8,8 @@ const app = factory
   .createApp()
 
   // initialize middleware
-  .use(middleware.firebaseAuthMiddleware)
   .use(middleware.loggerMiddleware)
+  .use(middleware.firebaseAuthMiddleware)
 
   // health check endpoint
   .get("/", (c) => {
