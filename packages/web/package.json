@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "ONLINE=true SG_WEB_API_BASEURL=http://localhost:5173/api vite",
-    "dev:local": "SG_WEB_API_BASEURL=http://localhost:5173/api SG_WEB_APIV1_BASEURL=http://localhost:5173/v1 vite",
+    "dev:local": "SG_WEB_API_BASEURL=http://localhost:5173/api vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "preview:prod": "firebase hosting:channel:deploy npm_vite_preview",
@@ -16,13 +16,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@sandglass/apiv1": "workspace:*",
+    "@sandglass/api": "workspace:*",
     "@sandglass/schema": "workspace:*",
     "@tanstack/vue-query": "^5.90.5",
     "@vicons/ionicons5": "^0.13.0",
     "@vueuse/core": "^14.1.0",
     "axios": "^1.12.2",
-    "bson": "^6.10.4",
     "firebase": "^12.4.0",
     "hono": "^4.11.7",
     "pinia": "^2.3.1",
@@ -30,7 +29,6 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.25.0",
     "@tsconfig/node22": "^22.0.2",
     "@types/gapi": "^0.0.47",
     "@types/gapi.client.calendar-v3": "^0.0.4",

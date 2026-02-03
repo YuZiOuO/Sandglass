@@ -1,5 +1,5 @@
 {
-  "name": "@sandglass/apiv1",
+  "name": "@sandglass/api",
   "main": "src/index.ts",
   "scripts": {
     "dev": "bun run --hot src/index.ts"

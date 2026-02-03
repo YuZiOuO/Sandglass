@@ -4,7 +4,6 @@
  */
 interface ImportMetaEnv {
   readonly SG_WEB_API_BASEURL: string
-  readonly SG_WEB_APIV1_BASEURL: string
   readonly SG_WEB_FB_APIKEY: string
   readonly SG_WEB_FB_AUTH_DOMAIN: string
   readonly SG_WEB_FB_PROJECT_ID: string

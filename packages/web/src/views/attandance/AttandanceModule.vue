@@ -58,7 +58,7 @@
 import { useNow } from '@vueuse/core'
 import { NButton, NTime, NSplit, NInput, NProgress, NDatePicker, NInputNumber } from 'naive-ui'
 import { useAccessToken } from '@/services-composable/firebase'
-import type { AppType } from '@sandglass/apiv1'
+import type { AppType } from '@sandglass/api'
 import { hc, type InferResponseType } from 'hono/client'
 import { ref } from 'vue'
 import { computeWorkTimeOfToday } from './hooks'
@@ -67,7 +67,7 @@ async function useAuthHeader() {
   return { Authorization: 'Bearer ' + (await useAccessToken()) }
 }
 
-const client = hc<AppType>(import.meta.env.SG_WEB_APIV1_BASEURL)
+const client = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL)
 const checkInOrOut = async (type: 'IN' | 'OUT') => {
   const res = await client.attendanceRecord.$post(
     { json: { time: new Date(), type: type } },
