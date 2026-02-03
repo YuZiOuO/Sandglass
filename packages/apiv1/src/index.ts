@@ -3,6 +3,7 @@ import { factory } from "./shared";
 
 import * as middleware from "./middleware";
 import { attendaceTargetRoutes } from "./attendace-target";
+import { projectRoutes } from "./project";
 
 const app = factory
   .createApp()
@@ -18,7 +19,8 @@ const app = factory
 
   // load routes
   .route("/attendanceRecord", attendanceRecordRoutes)
-  .route("/attendanceTarget", attendaceTargetRoutes);
+  .route("/attendanceTarget", attendaceTargetRoutes)
+  .route("/project", projectRoutes);
 
 export default app;
 export type AppType = typeof app;
