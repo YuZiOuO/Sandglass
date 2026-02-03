@@ -1,11 +1,5 @@
 {
   "workspaces": [
     "packages/*"
-  ],
-  "scripts": {
-    "build:emulators": "firebase emulators:start --project dev"
-  },
-  "devDependencies": {
-    "prisma": "^7.3.0"
-  }
+  ]
 }
