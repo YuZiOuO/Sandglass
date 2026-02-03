@@ -75,6 +75,7 @@
         "@hono/zod-validator": "^0.7.6",
         "@sandglass/schema": "workspace:*",
         "firebase-admin": "^13.6.0",
+        "googleapis": "^171.1.0",
         "hono": "^4.11.7",
         "zod": "^4.3.6",
       },
@@ -3000,6 +3001,8 @@
 
     "@rollup/pluginutils/estree-walker": ["estree-walker@2.0.2", "https://mirrors.tencent.com/npm/estree-walker/-/estree-walker-2.0.2.tgz", {}, "sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w=="],
 
+    "@sandglass/apiv1/googleapis": ["googleapis@171.1.0", "https://mirrors.tencent.com/npm/googleapis/-/googleapis-171.1.0.tgz", { "dependencies": { "google-auth-library": "^10.2.0", "googleapis-common": "^8.0.0" } }, "sha512-2f3O75VjbKRnvwN5Pwi6ZZEcnOiO10ZfPSX19oE2ehxC8689NxWZLMPKsap7qgT48adu2NEA8tlUQZK2nt0EDA=="],
+
     "@sandglass/schema/@types/node": ["@types/node@25.1.0", "https://mirrors.tencent.com/npm/@types/node/-/node-25.1.0.tgz", { "dependencies": { "undici-types": "~7.16.0" } }, "sha512-t7frlewr6+cbx+9Ohpl0NOTKXZNV9xHRmNOvql47BFJKcEG1CxtxlPEEe+gR9uhVWM4DwhnvTF110mIL4yP9RA=="],
 
     "@sandglass/web/typescript": ["typescript@5.7.3", "https://mirrors.tencent.com/npm/typescript/-/typescript-5.7.3.tgz", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw=="],
@@ -3388,6 +3391,8 @@
 
     "@openapitools/openapi-generator-cli/glob/minimatch": ["minimatch@10.1.1", "https://mirrors.tencent.com/npm/minimatch/-/minimatch-10.1.1.tgz", { "dependencies": { "@isaacs/brace-expansion": "^5.0.0" } }, "sha512-enIvLvRAFZYXJzkCYG5RKmPfrFArdLv+R+lbQ53BmIMLIry74bjKzX6iHAm8WYamJkhSSEabrWN5D97XnKObjQ=="],
 
+    "@sandglass/apiv1/googleapis/google-auth-library": ["google-auth-library@10.5.0", "https://mirrors.tencent.com/npm/google-auth-library/-/google-auth-library-10.5.0.tgz", { "dependencies": { "base64-js": "^1.3.0", "ecdsa-sig-formatter": "^1.0.11", "gaxios": "^7.0.0", "gcp-metadata": "^8.0.0", "google-logging-utils": "^1.0.0", "gtoken": "^8.0.0", "jws": "^4.0.0" } }, "sha512-7ABviyMOlX5hIVD60YOfHw4/CxOfBhyduaYB+wbFWCWoni4N7SLcV46hrVRktuBbZjFC9ONyqamZITN7q3n32w=="],
+
     "@sandglass/schema/@types/node/undici-types": ["undici-types@7.16.0", "https://mirrors.tencent.com/npm/undici-types/-/undici-types-7.16.0.tgz", {}, "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="],
 
     "@swc/cli/minimatch/brace-expansion": ["brace-expansion@2.0.2", "https://mirrors.tencent.com/npm/brace-expansion/-/brace-expansion-2.0.2.tgz", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ=="],
@@ -3675,6 +3680,10 @@
     "@nuxtjs/opencollective/node-fetch/whatwg-url/tr46": ["tr46@0.0.3", "https://mirrors.tencent.com/npm/tr46/-/tr46-0.0.3.tgz", {}, "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="],
 
     "@nuxtjs/opencollective/node-fetch/whatwg-url/webidl-conversions": ["webidl-conversions@3.0.1", "https://mirrors.tencent.com/npm/webidl-conversions/-/webidl-conversions-3.0.1.tgz", {}, "sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ=="],
+
+    "@sandglass/apiv1/googleapis/google-auth-library/gcp-metadata": ["gcp-metadata@8.1.2", "https://mirrors.tencent.com/npm/gcp-metadata/-/gcp-metadata-8.1.2.tgz", { "dependencies": { "gaxios": "^7.0.0", "google-logging-utils": "^1.0.0", "json-bigint": "^1.0.0" } }, "sha512-zV/5HKTfCeKWnxG0Dmrw51hEWFGfcF2xiXqcA3+J90WDuP0SvoiSO5ORvcBsifmx/FoIjgQN3oNOGaQ5PhLFkg=="],
+
+    "@sandglass/apiv1/googleapis/google-auth-library/gtoken": ["gtoken@8.0.0", "https://mirrors.tencent.com/npm/gtoken/-/gtoken-8.0.0.tgz", { "dependencies": { "gaxios": "^7.0.0", "jws": "^4.0.0" } }, "sha512-+CqsMbHPiSTdtSO14O51eMNlrp9N79gmeqmXeouJOhfucAedHw9noVe/n5uJk3tbKE6a+6ZCQg3RPhVhHByAIw=="],
 
     "gcp-metadata/gaxios/node-fetch/whatwg-url": ["whatwg-url@5.0.0", "https://mirrors.tencent.com/npm/whatwg-url/-/whatwg-url-5.0.0.tgz", { "dependencies": { "tr46": "~0.0.3", "webidl-conversions": "^3.0.0" } }, "sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw=="],
 

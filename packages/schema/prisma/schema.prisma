@@ -61,3 +61,10 @@ model AttendanceLeaveRecord {
 
   @@unique([uid, date])
 }
+
+model OAuth {
+  uid String @id
+
+  githubAccessToken  String?
+  googleRefreshToken String?
+}
