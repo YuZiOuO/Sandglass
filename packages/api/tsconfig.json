@@ -3,5 +3,9 @@
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
+  },
+  "typeAcquisition": {
+    "enable": true,
+    "exclude": ["googleapis"]
   }
 }
