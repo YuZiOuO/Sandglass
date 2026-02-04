@@ -6,14 +6,19 @@
   <NButton @click="() => checkInOrOut('PAUSE')">暂停</NButton>
   <NButton @click="() => checkInOrOut('OUT')">打下班卡</NButton>
   <NInput v-model:value="clockDescription" placeholder="事由"></NInput>
-
-  <NButton @click="getData" :loading="todayButtonLoading">查询今日打卡记录</NButton>
-  <div v-for="r in recordsOfToday" :key="r.time">
+  <NButton
+    @click="async () => attendanceRecordToday.refetch()"
+    :loading="attendanceRecordToday.isFetching.value"
+    >今日打卡记录</NButton
+  >
+  <div v-for="r in attendanceRecordToday.data.value" :key="r.time">
     <NSplit />
     您于{{ new Date(r.time).toLocaleString() }} {{ r.type }},事由:{{ r.summary }}
   </div>
 
-  <div>今日已记录毫秒数: {{ useWorkTimeOfToday(recordsOfToday, current_time) }}</div>
+  <div>
+    今日已记录毫秒数: {{ useWorkTimeOfToday(attendanceRecordToday.data.value, current_time) }}
+  </div>
 
   <NInput :placeholder="'输入要修改的目标值'" v-model:value="inputTarget"> </NInput>
   <NButton
@@ -28,27 +33,24 @@
     >修改目标</NButton
   >
 
-  <NButton
-    @click="
-      async () => {
-        const data = await (
-          await client.attendanceTarget.$get({}, { headers: await useAuthHeader() })
-        ).json()
-        target = data?.timeMs ?? null
-      }
-    "
-    >获取目标</NButton
+  <NButton @click="() => attendanceTarget.refetch()" :loading="attendanceTarget.isFetching.value"
+    >每日目标</NButton
   >
-  <div>当前设定的每日目标: {{ target }}</div>
+  <div>{{ attendanceTarget.data.value }}</div>
   <NProgress
-    v-if="target"
-    :percentage="(useWorkTimeOfToday(recordsOfToday, current_time) / target) * 100"
+    v-if="attendanceTarget.isFetched && leaveRecordToday.data.value?.timeMs"
+    :percentage="
+      (useWorkTimeOfToday(attendanceRecordToday.data.value, current_time) /
+        leaveRecordToday.data.value.timeMs) *
+      100
+    "
   />
 
-  <NButton @click="useLeaveOfToday">查询今日请假</NButton>
+  <NButton @click="() => leaveRecordToday.refetch()" :loading="leaveRecordToday.isFetching.value"
+    >今日请假</NButton
+  >
   <div>
-    今日请假记录
-    {{ leaveOfToday }}
+    {{ leaveRecordToday.data.value }}
   </div>
 
   <NDatePicker v-model:formatted-value="datepickerInput" value-format="yyyy-MM-dd" type="date" />
@@ -64,12 +66,19 @@ import type { AppType } from '@sandglass/api'
 import { hc, type InferResponseType } from 'hono/client'
 import { ref } from 'vue'
 import { computeWorkTimeOfToday } from './hooks'
+import {
+  useAttendaceRecordTodayQuery,
+  useAttendanceTargetQuery,
+  useLeaveRecordTodayQuery,
+} from '@/services-composable/attendance'
 
 async function useAuthHeader() {
   return { Authorization: 'Bearer ' + (await useAccessToken()) }
 }
 
 const client = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL)
+
+const attendanceRecordToday = useAttendaceRecordTodayQuery()
 
 const clockDescription = ref<string | null>(null)
 const checkInOrOut = async (type: 'IN' | 'OUT' | 'PAUSE') => {
@@ -82,32 +91,21 @@ const checkInOrOut = async (type: 'IN' | 'OUT' | 'PAUSE') => {
 
 export type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.today.$get>[number]
 
-const recordsOfToday = ref<AttendanceRecord[]>([])
-const todayButtonLoading = ref(false)
-const getData = async () => {
-  todayButtonLoading.value = true
-  const res = await client.attendanceRecord.today.$get({}, { headers: await useAuthHeader() })
-  recordsOfToday.value = await res.json()
-  todayButtonLoading.value = false
-}
-
 const current_time = useNow()
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const useWorkTimeOfToday = (records: AttendanceRecord[], _ticks: Date) => {
+const useWorkTimeOfToday = (records: AttendanceRecord[] | undefined, _ticks: Date) => {
+  if (!records) {
+    return 0
+  }
   return computeWorkTimeOfToday(records)
 }
 
-const target = ref<number | null>(null)
+const attendanceTarget = useAttendanceTargetQuery()
+
 const inputTarget = ref<string>()
 
-type AttendanceLeaveRecord = InferResponseType<typeof client.attendanceTarget.leave.today.$get>
-const leaveOfToday = ref<AttendanceLeaveRecord | null>(null)
-const useLeaveOfToday = async () => {
-  const res = await client.attendanceTarget.leave.today.$get({}, { headers: await useAuthHeader() })
-  const data = await res.json()
-  leaveOfToday.value = data
-}
+const leaveRecordToday = useLeaveRecordTodayQuery()
 
 const datepickerInput = ref<string | null>(null)
 const leaveHoursInput = ref<number | null>(null)
