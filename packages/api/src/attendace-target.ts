@@ -5,7 +5,7 @@ import {
   AttendanceTargetCreateInputObjectZodSchema,
 } from "@sandglass/schema/generated/schemas";
 import { db } from "./db";
-import z from "zod";
+import { z } from "zod";
 
 export const attendaceTargetRoutes = factory
   .createApp()

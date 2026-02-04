@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import * as authSdk from 'firebase/auth'
 import { computed, ref } from 'vue'
 import { useFirebase } from '@/services-composable/firebase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 export const useAuthenticationStore = defineStore('authentication', () => {
   const currentUid = ref<string | null>(null)
@@ -14,7 +14,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
 
     const fbService = useFirebase()
     try {
-      await authSdk.signInWithEmailAndPassword(fbService.auth, email, password)
+      await signInWithEmailAndPassword(fbService.auth, email, password)
       currentUid.value = fbService.auth.currentUser!.uid
     } catch (e) {
       throw e
