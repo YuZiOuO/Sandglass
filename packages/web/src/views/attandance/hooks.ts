@@ -1,6 +1,12 @@
 import type { AttendanceRecord } from './AttandanceModule.vue'
 import type { AttendanceType } from '../../../../schema/generated/schemas'
 
+const attendanceTypeStateTransition: Record<AttendanceType, AttendanceType[]> = {
+  IN: ['OUT', 'PAUSE'],
+  OUT: ['IN'],
+  PAUSE: ['IN'],
+}
+
 export function computeWorkTimeOfToday(records: AttendanceRecord[]) {
   let statusMachine: AttendanceType = 'OUT'
   let statusMachineCachedTime: Date = new Date()
@@ -8,16 +14,18 @@ export function computeWorkTimeOfToday(records: AttendanceRecord[]) {
   for (const r of records) {
     switch (r.type) {
       case 'IN':
-        if (statusMachine == 'OUT') {
+        if (statusMachine != 'IN') {
           statusMachineCachedTime = new Date(r.time)
           statusMachine = 'IN'
         }
         break
+
       case 'OUT':
+      case 'PAUSE':
         if (statusMachine == 'IN') {
           statusMachineCountTimeMs += new Date(r.time).getTime() - statusMachineCachedTime.getTime()
-          statusMachine = 'OUT'
         }
+        statusMachine = r.type
     }
   }
 

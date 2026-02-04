@@ -3,12 +3,14 @@
   <div></div>
   <NTime :time="current_time.getTime()" format="HH:mm:ss"> </NTime>
   <NButton @click="() => checkInOrOut('IN')">打上班卡</NButton>
+  <NButton @click="() => checkInOrOut('PAUSE')">暂停</NButton>
   <NButton @click="() => checkInOrOut('OUT')">打下班卡</NButton>
+  <NInput v-model:value="clockDescription" placeholder="事由"></NInput>
 
   <NButton @click="getData" :loading="todayButtonLoading">查询今日打卡记录</NButton>
   <div v-for="r in recordsOfToday" :key="r.time">
     <NSplit />
-    您于{{ new Date(r.time).toLocaleString() }} {{ r.type == 'IN' ? '签到' : '签退' }}
+    您于{{ new Date(r.time).toLocaleString() }} {{ r.type }},事由:{{ r.summary }}
   </div>
 
   <div>今日已记录毫秒数: {{ useWorkTimeOfToday(recordsOfToday, current_time) }}</div>
@@ -68,9 +70,11 @@ async function useAuthHeader() {
 }
 
 const client = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL)
-const checkInOrOut = async (type: 'IN' | 'OUT') => {
+
+const clockDescription = ref<string | null>(null)
+const checkInOrOut = async (type: 'IN' | 'OUT' | 'PAUSE') => {
   const res = await client.attendanceRecord.$post(
-    { json: { time: new Date(), type: type } },
+    { json: { time: new Date(), type: type, summary: clockDescription.value } },
     { headers: await useAuthHeader() },
   )
   console.log(res)
@@ -113,7 +117,7 @@ const triggerLeave = async () => {
       json: {
         date: datepickerInput.value!,
         timeMs: leaveHoursInput.value! * 3600 * 1000,
-        description: 'test',
+        summary: 'test',
       },
     },
     { headers: await useAuthHeader() },

@@ -33,6 +33,7 @@ model Project {
 enum AttendanceType {
   IN
   OUT
+  PAUSE
 }
 
 model AttendanceRecord {
@@ -41,6 +42,8 @@ model AttendanceRecord {
   uid String
 
   time DateTime
+
+  summary String?
 
   type AttendanceType
 }
@@ -56,8 +59,8 @@ model AttendanceLeaveRecord {
   uid  String
   date DateTime @db.Date
 
-  timeMs      Int
-  description String?
+  timeMs  Int
+  summary String?
 
   @@unique([uid, date])
 }
