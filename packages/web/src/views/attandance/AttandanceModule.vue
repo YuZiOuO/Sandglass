@@ -104,14 +104,16 @@ import { computeWorkTimeOfToday } from './hooks'
 import {
   useAttendaceRecordCreateMutate,
   useAttendaceRecordTodayQuery,
+  type AttendanceRecordCreateDTO,
+} from '@/services-composable/attendance-record'
+import {
   useAttendanceTargetQuery,
   useAttendanceTargetUpdateMutate,
   useLeaveRecordCreateMutate,
   useLeaveRecordTodayQuery,
-  type AttendanceRecordCreateDTO,
   type AttendanceTargetUpdateDTO,
   type LeaveRecordCreateDTO,
-} from '@/services-composable/attendance'
+} from '@/services-composable/attendance-target'
 import type { FormattedValue } from 'naive-ui/es/date-picker/src/interface'
 import type { client } from '@/services-composable/common'
 
