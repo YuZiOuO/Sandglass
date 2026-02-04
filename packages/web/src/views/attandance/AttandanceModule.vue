@@ -2,10 +2,34 @@
   <NTime :time="current_time.getTime()" format="PPPP"> </NTime>
   <div></div>
   <NTime :time="current_time.getTime()" format="HH:mm:ss"> </NTime>
-  <NButton @click="() => checkInOrOut('IN')">打上班卡</NButton>
-  <NButton @click="() => checkInOrOut('PAUSE')">暂停</NButton>
-  <NButton @click="() => checkInOrOut('OUT')">打下班卡</NButton>
-  <NInput v-model:value="clockDescription" placeholder="事由"></NInput>
+  <NButton
+    @click="
+      async () => {
+        attendanceRecordCreateRef.json.type = 'IN'
+        attendanceRecordCreate.mutate(attendanceRecordCreateRef)
+      }
+    "
+    >打上班卡</NButton
+  >
+  <NButton
+    @click="
+      async () => {
+        attendanceRecordCreateRef.json.type = 'PAUSE'
+        attendanceRecordCreate.mutate(attendanceRecordCreateRef)
+      }
+    "
+    >暂停</NButton
+  >
+  <NButton
+    @click="
+      async () => {
+        attendanceRecordCreateRef.json.type = 'OUT'
+        attendanceRecordCreate.mutate(attendanceRecordCreateRef)
+      }
+    "
+    >打下班卡</NButton
+  >
+  <NInput v-model:value="attendanceRecordCreateRef.json.summary" placeholder="事由"></NInput>
   <NButton
     @click="async () => attendanceRecordToday.refetch()"
     :loading="attendanceRecordToday.isFetching.value"
@@ -20,14 +44,15 @@
     今日已记录毫秒数: {{ useWorkTimeOfToday(attendanceRecordToday.data.value, current_time) }}
   </div>
 
-  <NInput :placeholder="'输入要修改的目标值'" v-model:value="inputTarget"> </NInput>
+  <NInputNumber
+    :placeholder="'输入要修改的目标值'"
+    v-model:value="attendanceTargetUpdateRef.json.timeMs"
+  >
+  </NInputNumber>
   <NButton
     @click="
-      async () => {
-        client.attendanceTarget.$put(
-          { json: { timeMs: Number(inputTarget) } },
-          { headers: await useAuthHeader() },
-        )
+      () => {
+        attendanceTargetUpdate.mutate(attendanceTargetUpdateRef)
       }
     "
     >修改目标</NButton
@@ -53,41 +78,52 @@
     {{ leaveRecordToday.data.value }}
   </div>
 
-  <NDatePicker v-model:formatted-value="datepickerInput" value-format="yyyy-MM-dd" type="date" />
-  <NInputNumber :placeholder="'小时数'" v-model:value="leaveHoursInput" />
-  <NButton @click="triggerLeave">请假</NButton>
+  <NDatePicker
+    v-model:formatted-value="leaveRecordCreateRef.json.date as FormattedValue"
+    value-format="yyyy-MM-dd"
+    type="date"
+  />
+  <NInputNumber :placeholder="'小时数'" v-model:value="leaveRecordCreateRef.json.timeMs" />
+  <NButton
+    @click="
+      () => {
+        leaveRecordCreateRef.json.timeMs *= 3600 * 1000
+        leaveRecordCreate.mutate(leaveRecordCreateRef)
+      }
+    "
+    >请假</NButton
+  >
 </template>
 
 <script setup lang="ts">
 import { useNow } from '@vueuse/core'
 import { NButton, NTime, NSplit, NInput, NProgress, NDatePicker, NInputNumber } from 'naive-ui'
-import { useAccessToken } from '@/services-composable/firebase'
-import type { AppType } from '@sandglass/api'
-import { hc, type InferResponseType } from 'hono/client'
+import { type InferResponseType } from 'hono/client'
 import { ref } from 'vue'
 import { computeWorkTimeOfToday } from './hooks'
 import {
+  useAttendaceRecordCreateMutate,
   useAttendaceRecordTodayQuery,
   useAttendanceTargetQuery,
+  useAttendanceTargetUpdateMutate,
+  useLeaveRecordCreateMutate,
   useLeaveRecordTodayQuery,
+  type AttendanceRecordCreateDTO,
+  type AttendanceTargetUpdateDTO,
+  type LeaveRecordCreateDTO,
 } from '@/services-composable/attendance'
-
-async function useAuthHeader() {
-  return { Authorization: 'Bearer ' + (await useAccessToken()) }
-}
-
-const client = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL)
+import type { FormattedValue } from 'naive-ui/es/date-picker/src/interface'
+import type { client } from '@/services-composable/common'
 
 const attendanceRecordToday = useAttendaceRecordTodayQuery()
 
-const clockDescription = ref<string | null>(null)
-const checkInOrOut = async (type: 'IN' | 'OUT' | 'PAUSE') => {
-  const res = await client.attendanceRecord.$post(
-    { json: { time: new Date(), type: type, summary: clockDescription.value } },
-    { headers: await useAuthHeader() },
-  )
-  console.log(res)
-}
+const attendanceRecordCreate = useAttendaceRecordCreateMutate()
+const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
+  json: {
+    time: new Date(),
+    type: 'IN',
+  },
+})
 
 export type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.today.$get>[number]
 
@@ -103,23 +139,13 @@ const useWorkTimeOfToday = (records: AttendanceRecord[] | undefined, _ticks: Dat
 
 const attendanceTarget = useAttendanceTargetQuery()
 
-const inputTarget = ref<string>()
-
 const leaveRecordToday = useLeaveRecordTodayQuery()
 
-const datepickerInput = ref<string | null>(null)
-const leaveHoursInput = ref<number | null>(null)
-const triggerLeave = async () => {
-  const res = await client.attendanceTarget.leave.$put(
-    {
-      json: {
-        date: datepickerInput.value!,
-        timeMs: leaveHoursInput.value! * 3600 * 1000,
-        summary: 'test',
-      },
-    },
-    { headers: await useAuthHeader() },
-  )
-  console.log(await res.json())
-}
+const leaveRecordCreate = useLeaveRecordCreateMutate()
+const leaveRecordCreateRef = ref<LeaveRecordCreateDTO>({
+  json: { date: null, timeMs: 0 },
+})
+
+const attendanceTargetUpdate = useAttendanceTargetUpdateMutate()
+const attendanceTargetUpdateRef = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })
 </script>
