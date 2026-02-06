@@ -4,12 +4,9 @@
     {
       "type": "bun",
       "request": "launch",
-      "name": "Debug API V1",
-      "program": "${workspaceFolder}/packages/apiv1/src/index.ts",
-      "cwd": "${workspaceFolder}/packages/apiv1",
-      "env": {
-        "PORT": "3001"
-      },
+      "name": "Debug API",
+      "program": "${workspaceFolder}/packages/api/src/index.ts",
+      "cwd": "${workspaceFolder}/packages/api",
       "watchMode": true,
       "stopOnEntry": false
     }

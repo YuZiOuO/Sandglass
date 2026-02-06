@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/vue-query'
 import { useAccessToken, useFirebase } from './firebase'
-import { GithubAuthApi } from '@/api'
-
-const githubOAuthApi = new GithubAuthApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
+import { authClient } from './common'
 
 export function useGithubAuthUrlQuery() {
   return useQuery({
     queryKey: ['github-auth', 'url'],
     queryFn: async () => {
-      const token = await useAccessToken()
-      const req = githubOAuthApi.getGithubAuthUrl({ headers: { Authorization: 'Bearer ' + token } })
-      return (await req).data
+      const cli = await authClient()
+      const res = await cli.oauth.github.authUrl.$get()
+      const url = await res.json()
+
+      return url
     },
     enabled: useFirebase().auth.currentUser !== null,
   })
@@ -20,11 +20,11 @@ export function useGithubAuthStatusQuery() {
   return useQuery({
     queryKey: ['github-auth', 'status'],
     queryFn: async () => {
-      const token = await useAccessToken()
-      const req = githubOAuthApi.getGithubAuthStatus({
-        headers: { Authorization: 'Bearer ' + token },
-      })
-      return (await req).data
+      const cli = await authClient()
+      const res = await cli.oauth.github.token.$get()
+      const token = await res.json()
+
+      return token !== null
     },
     enabled: useFirebase().auth.currentUser !== null,
   })

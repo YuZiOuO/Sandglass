@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import CreateProjectModule from './CreateProjectModule.vue'
+import CreateProjectModule from './project/CreateProjectModule.vue'
 import { onMounted, ref } from 'vue'
 
 // const gCalStore = useGoogleCalendarStore()

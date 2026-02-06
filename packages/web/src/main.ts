@@ -7,6 +7,15 @@ import { checkEnvsDefinedAndNotEmpty } from '../env/env'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { initializeFirebase } from './services-composable/firebase'
 import { globalQueryClient } from './services-composable'
+import { use } from 'echarts/core'
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+import { PieChart, BarChart, LineChart } from 'echarts/charts'
 
 async function bootstrap() {
   checkEnvsDefinedAndNotEmpty()
@@ -17,6 +26,19 @@ async function bootstrap() {
   app.use(VueQueryPlugin, { queryClient: globalQueryClient })
 
   await initializeFirebase()
+
+  use([
+    CanvasRenderer,
+
+    PieChart,
+    BarChart,
+    LineChart,
+
+    TitleComponent,
+    TooltipComponent,
+    LegendComponent,
+    GridComponent,
+  ])
 
   app.mount('#app')
 }

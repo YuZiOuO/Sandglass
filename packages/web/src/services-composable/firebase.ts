@@ -21,6 +21,12 @@ export function useFirebase() {
   return { app: app, auth: getAuth(app) }
 }
 
+export function useAuthStatus() {
+  const fbService = useFirebase()
+  const user = fbService.auth.currentUser
+  return user !== null
+}
+
 export async function useAccessToken() {
   const fbService = useFirebase()
   const user = fbService.auth.currentUser

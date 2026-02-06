@@ -23,34 +23,51 @@ generator zod {
 model Project {
   id String @id @default(uuid())
 
-  /// @zod.string.min(1)
   uid String
 
-  /// @zod.string.min(1)
   calendarId String
 
-  /// @zod.string.min(1)
   tasklistId String
-
-  // 建议增加时间戳，PostgreSQL 开发的标配
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("projects") // 习惯上数据库表名用复数
 }
 
 enum AttendanceType {
   IN
   OUT
+  PAUSE
 }
 
 model AttendanceRecord {
   id String @id @default(uuid())
 
-  /// @zod.omit()
   uid String
 
   time DateTime
 
+  summary String?
+
   type AttendanceType
+}
+
+model AttendanceTarget {
+  uid    String @id @unique
+  timeMs Int
+}
+
+model AttendanceLeaveRecord {
+  id String @id @default(uuid())
+
+  uid  String
+  date DateTime @db.Date
+
+  timeMs  Int
+  summary String?
+
+  @@unique([uid, date])
+}
+
+model OAuth {
+  uid String @id
+
+  githubAccessToken  String?
+  googleRefreshToken String?
 }

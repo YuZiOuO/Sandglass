@@ -1,19 +1,15 @@
 import { useQuery } from '@tanstack/vue-query'
-import { useAccessToken } from './firebase'
-import { ProjectApi } from '@/api'
 import type { Ref } from 'vue'
-
-const projectApi = new ProjectApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
+import { authClient } from './common'
 
 export function useProjectsQuery() {
   return useQuery({
     queryKey: ['project'],
     queryFn: async () => {
-      const res = await projectApi.listProject({
-        headers: { Authorization: 'Bearer ' + (await useAccessToken()) },
-      })
+      const cli = await authClient()
 
-      return res.data
+      const res = await cli.project.my.$get()
+      return await res.json()
     },
   })
 }
@@ -23,11 +19,10 @@ export function useProjectQuery(projectId: Ref<string>) {
     queryKey: ['calendar', projectId.value],
     queryFn: async (context) => {
       const id = context.queryKey[1]
-      const res = await projectApi.getProject(id, {
-        headers: { Authorization: 'Bearer ' + (await useAccessToken()) },
-      })
 
-      return res.data
+      const cli = await authClient()
+      const res = await cli.project.$get({ json: { id: id } })
+      return await res.json()
     },
   })
 }
