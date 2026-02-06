@@ -1,10 +1,10 @@
 import { env } from "bun";
 import { factory } from "./shared";
-import { google } from "googleapis";
 import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import { db } from "./db";
 import { fetch } from "bun";
+import { OAuth2Client } from "google-auth-library";
 
 const googleOAuthCallbackSchema = z.object({
   code: z.string(), // Authorization Code
@@ -102,11 +102,11 @@ export const OAuthPublicRoutes = factory
     },
   );
 
-const googleOAuthCli = new google.auth.OAuth2({
+const googleOAuthCli = new OAuth2Client({
   clientId: env.GApis_OAuth2CliId,
   clientSecret: env.GApis_OAuth2CliSecret,
   redirectUri: env.GApis_RedirectURL,
-});
+})
 
 const githubEnvs = {
   client_id: env.GH_clientId,
@@ -141,7 +141,7 @@ export const OAuthRoutes = factory
       return c.json(null);
     }
 
-    const localCli = new google.auth.OAuth2(); // in case of race condition
+    const localCli = new OAuth2Client(); // in case of race condition
     localCli.setCredentials({ refresh_token: refreshToken });
 
     const res = await localCli.getAccessToken();

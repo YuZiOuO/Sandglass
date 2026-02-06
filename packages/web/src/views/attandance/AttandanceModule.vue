@@ -69,6 +69,7 @@
         leaveRecordToday.data.value.timeMs) *
       100
     "
+    :processing="attendanceRecordToday.data.value?.at(-1)?.type == 'IN'"
   />
 
   <NButton @click="() => leaveRecordToday.refetch()" :loading="leaveRecordToday.isFetching.value"
@@ -116,6 +117,7 @@ import {
 } from '@/services-composable/attendance-target'
 import type { FormattedValue } from 'naive-ui/es/date-picker/src/interface'
 import type { client } from '@/services-composable/common'
+import { ArrowForwardCircleSharp } from '@vicons/ionicons5'
 
 const attendanceRecordToday = useAttendaceRecordTodayQuery()
 
