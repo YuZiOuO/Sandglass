@@ -7,7 +7,7 @@ export function useAttendaceRecordTodayQuery() {
     queryKey: ['attendance', 'today'],
     queryFn: async () => {
       const cli = await authClient()
-      const res = await cli.attendanceRecord.today.$get({})
+      const res = await cli.attendanceRecord.$get({ query: { preset: 'today' } })
       const data = await res.json()
       return data
     },
