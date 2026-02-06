@@ -52,38 +52,51 @@ export const attendanceRecordRoutes = factory
     zValidator(
       "query",
       z.discriminatedUnion("preset", [
-        z.object({
-          from: z.coerce.date(),
-          to: z.coerce.date(),
-          preset: z.undefined().optional(),
-        }).refine((data) => {
-          return data.from < data.to;
-        }),
+        z
+          .object({
+            from: z.coerce.date(),
+            to: z.coerce.date(),
+            preset: z.undefined().optional(),
+          })
+          .refine((data) => {
+            return data.from < data.to;
+          }),
         z.object({
           from: z.undefined().optional(),
           to: z.undefined().optional(),
-          preset: z.enum(["today", "withIn7days"]),
-        })
+          preset: z.enum(["today", "withIn7days","withIn30days"]),
+        }),
       ]),
     ),
     async (c) => {
       const uid = c.var.uid;
       const data = c.req.valid("query");
 
-      let from:Date;
-      let to:Date;
+      let from: Date;
+      let to: Date;
 
+      const MS_PER_DAY = 24 * 60 * 60 * 1000
       switch (data.preset) {
         case undefined:
-          from = data.from
-          to = data.to
+          from = data.from;
+          to = data.to;
           break;
         case "today":
-          ({ startOfThisDay:from, startOfTheNextDay:to } = getDayRange(new Date()));
+          ({ startOfThisDay: from, startOfTheNextDay: to } = getDayRange(
+            new Date(),
+          ));
           break;
         case "withIn7days":
           to = getDayRange(new Date()).startOfTheNextDay;
-          from = getDayRange(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).startOfThisDay;
+          from = getDayRange(
+            new Date(Date.now() - 7 * MS_PER_DAY),
+          ).startOfThisDay;
+          break;
+        case "withIn30days":
+          to = getDayRange(new Date()).startOfTheNextDay;
+          from = getDayRange(
+            new Date(Date.now() - 30 * MS_PER_DAY),
+          ).startOfThisDay;
           break;
       }
 
@@ -95,6 +108,7 @@ export const attendanceRecordRoutes = factory
           },
           uid: uid,
         },
+        orderBy: { time: "asc" },
       });
 
       return c.json(res);

@@ -125,7 +125,7 @@ import VChart from 'vue-echarts'
 import type { EChartsOption } from 'echarts'
 
 const attendanceRecordToday = useAttendaceRecordQuery('today')
-const attendanceRecordWithIn7days = useAttendaceRecordQuery('withIn7days')
+const attendanceRecordWithIn7days = useAttendaceRecordQuery('withIn30days')
 
 const attendanceRecordCreate = useAttendaceRecordCreateMutate()
 const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
@@ -173,7 +173,7 @@ const chartOptions = computed<EChartsOption>(() => {
       {
         type: 'bar',
         data: Array.from(attendanceRecordByDate.value.values()).map((i) =>
-          computeWorkTimeOfToday(i),
+          computeWorkTimeOfToday(i) / 1000 / 3600,
         ),
       },
     ],
