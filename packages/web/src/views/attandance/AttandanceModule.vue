@@ -94,17 +94,21 @@
     "
     >请假</NButton
   >
+  <div style="width: 100%; height: 400px">
+    <VChart class="chart" :option="chartOptions"> </VChart>
+  </div>
+  {{}}
 </template>
 
 <script setup lang="ts">
 import { useNow } from '@vueuse/core'
 import { NButton, NTime, NSplit, NInput, NProgress, NDatePicker, NInputNumber } from 'naive-ui'
 import { type InferResponseType } from 'hono/client'
-import { ref } from 'vue'
-import { computeWorkTimeOfToday } from './hooks'
+import { computed, ref } from 'vue'
+import { computeWorkTimeOfToday, groupByDate } from './hooks'
 import {
   useAttendaceRecordCreateMutate,
-  useAttendaceRecordTodayQuery,
+  useAttendaceRecordQuery,
   type AttendanceRecordCreateDTO,
 } from '@/services-composable/attendance-record'
 import {
@@ -117,8 +121,11 @@ import {
 } from '@/services-composable/attendance-target'
 import type { FormattedValue } from 'naive-ui/es/date-picker/src/interface'
 import type { client } from '@/services-composable/common'
+import VChart from 'vue-echarts'
+import type { EChartsOption } from 'echarts'
 
-const attendanceRecordToday = useAttendaceRecordTodayQuery()
+const attendanceRecordToday = useAttendaceRecordQuery('today')
+const attendanceRecordWithIn7days = useAttendaceRecordQuery('withIn7days')
 
 const attendanceRecordCreate = useAttendaceRecordCreateMutate()
 const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
@@ -128,7 +135,7 @@ const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
   },
 })
 
-export type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.today.$get>[number]
+export type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.$get>[number]
 
 const current_time = useNow()
 
@@ -151,4 +158,25 @@ const leaveRecordCreateRef = ref<LeaveRecordCreateDTO>({
 
 const attendanceTargetUpdate = useAttendanceTargetUpdateMutate()
 const attendanceTargetUpdateRef = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })
+
+const attendanceRecordByDate = computed(() => groupByDate(attendanceRecordWithIn7days.data.value))
+const chartOptions = computed<EChartsOption>(() => {
+  return {
+    xAxis: {
+      type: 'category',
+      data: Array.from(attendanceRecordByDate.value.keys()),
+    },
+    yAxis: {
+      type: 'value',
+    },
+    series: [
+      {
+        type: 'bar',
+        data: Array.from(attendanceRecordByDate.value.values()).map((i) =>
+          computeWorkTimeOfToday(i),
+        ),
+      },
+    ],
+  }
+})
 </script>

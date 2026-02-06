@@ -2,12 +2,13 @@ import { useMutation, useQuery } from '@tanstack/vue-query'
 import { authClient, client } from './common'
 import type { InferRequestType } from 'hono'
 
-export function useAttendaceRecordTodayQuery() {
+type AttendanceRecordQueryType = "today" | "withIn7days"
+export function useAttendaceRecordQuery(type: AttendanceRecordQueryType) {
   return useQuery({
-    queryKey: ['attendance', 'today'],
+    queryKey: ['attendance', type],
     queryFn: async () => {
       const cli = await authClient()
-      const res = await cli.attendanceRecord.$get({ query: { preset: 'today' } })
+      const res = await cli.attendanceRecord.$get({ query: { preset: type } })
       const data = await res.json()
       return data
     },
