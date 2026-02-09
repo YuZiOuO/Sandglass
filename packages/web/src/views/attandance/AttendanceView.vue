@@ -12,10 +12,6 @@
         <NCard>
           <AttendanceStatisticsModule />
         </NCard>
-
-        <NCard>
-          <AttendanceTimelineModule />
-        </NCard>
       </div>
     </n-gi>
     <n-gi>
@@ -24,8 +20,8 @@
           <AttendanceActionsModule />
         </NCard>
 
-        <NCard>
-          <AttendanceLeaveActionsModule />
+        <NCard title="今日打卡记录">
+          <AttendanceTimelineModule />
         </NCard>
       </div>
     </n-gi>
@@ -36,7 +32,6 @@
 import { NCard, NGrid, NGi } from 'naive-ui'
 import AttendanceStatisticsModule from './AttendanceStatisticsModule.vue'
 import AttendanceActionsModule from './AttendanceActionsModule.vue'
-import AttendanceLeaveActionsModule from './AttendanceLeaveActionsModule.vue'
 import AttendanceStatusModule from './AttendanceStatusModule.vue'
 import AttendanceTimelineModule from './AttendanceTimelineModule.vue'
 </script>

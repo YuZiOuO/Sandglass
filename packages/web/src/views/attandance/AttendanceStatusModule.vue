@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAttendaceRecordQuery } from '@/services-composable/attendance-record'
+import { useAttendaceRecordQuery, type AttendanceRecord } from '@/services-composable/attendance-record'
 import {
   useAttendanceTargetQuery,
   useLeaveRecordTodayQuery,
@@ -44,11 +44,9 @@ import {
 import { useNow } from '@vueuse/core'
 import { NTime, NButton, NProgress, NGrid, NGi, NH2,NH3,NH1 } from 'naive-ui'
 import { computeWorkTimeOfToday } from './hooks'
-import type { InferResponseType } from 'hono/client'
-import type { client } from '@/services-composable/common'
 import { computed } from 'vue'
 
-export type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.$get>[number]
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useWorkTimeOfToday = (records: AttendanceRecord[] | undefined, _ticks: Date) => {

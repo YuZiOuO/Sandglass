@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { authClient, client } from './common'
-import type { InferRequestType } from 'hono'
+import type { InferRequestType, InferResponseType } from 'hono'
 import { globalQueryClient } from '.'
 
 type AttendanceRecordQueryType = NonNullable<InferRequestType<typeof client.attendanceRecord.$get>['query']['preset']>
@@ -29,3 +29,6 @@ export function useAttendaceRecordCreateMutate() {
     }
   })
 }
+
+export type AttendanceRecord = InferResponseType<typeof client.attendanceRecord.$get>[number]
+export type AttendanceRecordType = InferResponseType<typeof client.attendanceRecord.$get>[number]['type']
