@@ -3,7 +3,7 @@
     @click="
       async () => {
         await globalQueryClient.refetchQueries({
-          queryKey:['attendance']
+          queryKey: ['attendance'],
         })
       }
     "
@@ -13,48 +13,54 @@
   <div></div>
 
   <div class="flex-around">
-  <NButton
-    type="primary"
-    :ghost="['IN', undefined].includes(attendanceStatus)"
-    :disabled="['IN', undefined].includes(attendanceStatus)"
-    :loading="attendanceRecordIsCreating === 'IN'"
-    @click="
-      async () => {
-        attendanceRecordCreateRef.json.time = new Date()
-        attendanceRecordCreateRef.json.type = 'IN'
-        attendanceRecordCreate.mutate(attendanceRecordCreateRef)
-      }
-    "
-    >{{ attendanceStatus === 'PAUSE' ? '恢复' : '打上班卡' }}</NButton
-  >
-  <NButton
-    type="warning"
-    :ghost="attendanceStatus !== 'IN'"
-    :disabled="attendanceStatus !== 'IN'"
-    :loading="attendanceRecordIsCreating === 'PAUSE'"
-    @click="
-      async () => {
-        attendanceRecordCreateRef.json.time = new Date()
-        attendanceRecordCreateRef.json.type = 'PAUSE'
-        attendanceRecordCreate.mutate(attendanceRecordCreateRef)
-      }
-    "
-    >暂停</NButton
-  >
-  <NButton
-    type="error"
-    :ghost="['OUT', undefined].includes(attendanceStatus)"
-    :disabled="['OUT', undefined].includes(attendanceStatus)"
-    :loading="attendanceRecordIsCreating === 'OUT'"
-    @click="
-      async () => {
-        attendanceRecordCreateRef.json.time = new Date()
-        attendanceRecordCreateRef.json.type = 'OUT'
-        attendanceRecordCreate.mutate(attendanceRecordCreateRef)
-      }
-    "
-    >打下班卡</NButton
-  >
+    <NButton
+      type="primary"
+      :ghost="['IN', undefined].includes(attendanceStatus)"
+      :disabled="['IN', undefined].includes(attendanceStatus)"
+      :loading="attendanceRecordIsCreating === 'IN'"
+      @click="
+        async () => {
+          attendanceRecordCreateRef.json.time = new Date()
+          attendanceRecordCreateRef.json.type = 'IN'
+          attendanceRecordCreate.mutate(attendanceRecordCreateRef)
+        }
+      "
+      >{{ attendanceStatus === 'PAUSE' ? '恢复' : '打上班卡' }}</NButton
+    >
+    <NButton
+      type="warning"
+      :ghost="attendanceStatus !== 'IN'"
+      :disabled="attendanceStatus !== 'IN'"
+      :loading="attendanceRecordIsCreating === 'PAUSE'"
+      @click="
+        async () => {
+          attendanceRecordCreateRef.json.time = new Date()
+          attendanceRecordCreateRef.json.type = 'PAUSE'
+          attendanceRecordCreate.mutate(attendanceRecordCreateRef)
+        }
+      "
+      >暂停</NButton
+    >
+    <NPopconfirm
+      @positive-click="
+        async () => {
+          attendanceRecordCreateRef.json.time = new Date()
+          attendanceRecordCreateRef.json.type = 'OUT'
+          attendanceRecordCreate.mutate(attendanceRecordCreateRef)
+        }
+      "
+    >
+      <template #trigger>
+        <NButton
+          type="error"
+          :ghost="['OUT', undefined].includes(attendanceStatus)"
+          :disabled="['OUT', undefined].includes(attendanceStatus)"
+          :loading="attendanceRecordIsCreating === 'OUT'"
+          >打下班卡</NButton
+        >
+      </template>
+      您将签出。当前时间:{{ useNow() }}
+    </NPopconfirm>
   </div>
 
   <NInput v-model:value="attendanceRecordCreateRef.json.summary" placeholder="事由"></NInput>
@@ -72,6 +78,7 @@
     "
     >修改目标</NButton
   >
+  
 </template>
 
 <script setup lang="ts">
@@ -85,8 +92,9 @@ import {
   type AttendanceTargetUpdateDTO,
 } from '@/services-composable/attendance-target'
 import { computed, ref } from 'vue'
-import { NButton } from 'naive-ui'
+import { NButton, NPopconfirm,NInput,NInputNumber } from 'naive-ui'
 import { globalQueryClient } from '@/services-composable'
+import { useNow } from '@vueuse/core'
 
 const attendanceRecordLatest = useAttendaceRecordQuery('latest')
 const attendanceStatus = computed(() => {
