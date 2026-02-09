@@ -12,7 +12,7 @@
   </NButton>
   <div></div>
 
-  <div>
+  <div class="flex-around">
   <NButton
     type="primary"
     :ghost="['IN', undefined].includes(attendanceStatus)"
@@ -109,3 +109,11 @@ const attendanceRecordIsCreating = computed(() => {
 const attendanceTargetUpdate = useAttendanceTargetUpdateMutate()
 const attendanceTargetUpdateRef = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })
 </script>
+
+<style scoped>
+.flex-around {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+</style>
