@@ -77,28 +77,48 @@
     <NFlex :align="'center'" :wrap="false">
       <NInput placeholder="事由(选填)" style="flex: 1"> </NInput>
       <NSpace size="small" :wrap="false">
-        <NButton circle>
-          <template #icon>
-            <component :is="attendanceModuleIconMap.FIX"></component>
+        <!-- 补卡按钮 -->
+        <NPopover :delay="200">
+          <template #trigger>
+            <NButton circle>
+              <template #icon>
+                <component :is="attendanceModuleIconMap.FIX"></component>
+              </template>
+            </NButton>
           </template>
-        </NButton>
-        <NButton circle>
-          <template #icon>
-            <component :is="attendanceModuleIconMap.LEAVE"></component>
+          补卡
+        </NPopover>
+
+        <!-- 请假按钮 -->
+        <NPopover :delay="200">
+          <template #trigger>
+            <NButton circle>
+              <template #icon>
+                <component :is="attendanceModuleIconMap.LEAVE"></component>
+              </template>
+            </NButton>
           </template>
-        </NButton>
-        <NButton
-          circle
-          @click="
-            () => {
-              attendanceTargetUpdate.mutate(attendanceTargetUpdateRef)
-            }
-          "
-        >
-          <template #icon>
-            <component :is="attendanceModuleIconMap.TARGET"></component>
+          请假
+        </NPopover>
+
+        <!-- 修改目标按钮 -->
+        <NPopover :delay="200">
+          <template #trigger>
+            <NButton
+              circle
+              @click="
+                () => {
+                  attendanceTargetUpdate.mutate(attendanceTargetUpdateRef)
+                }
+              "
+            >
+              <template #icon>
+                <component :is="attendanceModuleIconMap.TARGET"></component>
+              </template>
+            </NButton>
           </template>
-        </NButton>
+          修改目标
+        </NPopover>
       </NSpace>
     </NFlex>
   </NSpace>
@@ -115,7 +135,7 @@ import {
   type AttendanceTargetUpdateDTO,
 } from '@/services-composable/attendance-target'
 import { computed, ref } from 'vue'
-import { NButton, NInput, NPopconfirm, NSpace, NFlex } from 'naive-ui'
+import { NButton, NInput, NPopconfirm, NSpace, NFlex, NPopover } from 'naive-ui'
 import { useNow } from '@vueuse/core'
 import { attendanceModuleIconMap } from './icon'
 
