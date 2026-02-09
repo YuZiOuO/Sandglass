@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/vue-query'
 import { authClient, client } from './common'
 import type { InferRequestType } from 'hono'
 
-type AttendanceRecordQueryType = "today" | "withIn7days" | "withIn30days"
+type AttendanceRecordQueryType = NonNullable<InferRequestType<typeof client.attendanceRecord.$get>['query']['preset']>
 export function useAttendaceRecordQuery(type: AttendanceRecordQueryType) {
   return useQuery({
     queryKey: ['attendance', type],
