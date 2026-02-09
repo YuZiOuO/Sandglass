@@ -1,11 +1,5 @@
+import type { AttendanceRecord } from '@/services-composable/attendance-record'
 import type { AttendanceType } from '../../../../schema/generated/schemas'
-import type { AttendanceRecord } from './AttendanceStatusModule.vue'
-
-const attendanceTypeStateTransition: Record<AttendanceType, AttendanceType[]> = {
-  IN: ['OUT', 'PAUSE'],
-  OUT: ['IN'],
-  PAUSE: ['IN'],
-}
 
 export function computeWorkTimeOfToday(records: AttendanceRecord[]) {
   let statusMachine: AttendanceType = 'OUT'

@@ -15,12 +15,21 @@
           trigger="hover"
           placement="right"
           :options="dropdownOption"
-          @select="(key) => {key}"
+          @select="
+            (key) => {
+              key
+            }
+          "
         >
           <NText style="cursor: pointer">
             {{ recordType2Name[r.type] }}
           </NText>
         </NDropdown>
+      </template>
+      <template #icon>
+        <NIcon size="large">
+          <component :is="attendanceModuleIconMap[r.type]" />
+        </NIcon>
       </template>
     </NTimelineItem>
   </NTimeline>
@@ -39,7 +48,9 @@ import {
   NDropdown,
   type DropdownOption,
   NText,
+  NIcon
 } from 'naive-ui'
+import { attendanceModuleIconMap } from './icon'
 
 const attendanceRecordToday = useAttendaceRecordQuery('today')
 

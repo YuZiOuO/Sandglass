@@ -15,8 +15,18 @@
             attendanceRecordCreate.mutate(attendanceRecordCreateRef)
           }
         "
-        >{{ attendanceStatus === 'PAUSE' ? '恢复' : '打上班卡' }}</NButton
       >
+        <template #icon>
+          <component
+            :is="
+              attendanceStatus === 'PAUSE'
+                ? attendanceModuleIconMap.RESUME
+                : attendanceModuleIconMap.IN
+            "
+          />
+        </template>
+        {{ attendanceStatus === 'PAUSE' ? '恢复' : '打上班卡' }}
+      </NButton>
       <NButton
         size="large"
         type="warning"
@@ -30,8 +40,12 @@
             attendanceRecordCreate.mutate(attendanceRecordCreateRef)
           }
         "
-        >暂停</NButton
       >
+        <template #icon>
+          <component :is="attendanceModuleIconMap.PAUSE"></component>
+        </template>
+        暂停
+      </NButton>
       <NPopconfirm
         @positive-click="
           async () => {
@@ -48,8 +62,12 @@
             :ghost="['OUT', undefined].includes(attendanceStatus)"
             :disabled="['OUT', undefined].includes(attendanceStatus)"
             :loading="attendanceRecordIsCreating === 'OUT'"
-            >打下班卡</NButton
           >
+            <template #icon>
+              <component :is="attendanceModuleIconMap.OUT"></component>
+            </template>
+            打下班卡
+          </NButton>
         </template>
         您将签出。当前时间:{{ useNow() }}
       </NPopconfirm>
@@ -59,8 +77,16 @@
     <NFlex :align="'center'" :wrap="false">
       <NInput placeholder="事由(选填)" style="flex: 1"> </NInput>
       <NSpace size="small" :wrap="false">
-        <NButton circle> 补卡 </NButton>
-        <NButton circle> 请假 </NButton>
+        <NButton circle>
+          <template #icon>
+            <component :is="attendanceModuleIconMap.FIX"></component>
+          </template>
+        </NButton>
+        <NButton circle>
+          <template #icon>
+            <component :is="attendanceModuleIconMap.LEAVE"></component>
+          </template>
+        </NButton>
         <NButton
           circle
           @click="
@@ -68,8 +94,11 @@
               attendanceTargetUpdate.mutate(attendanceTargetUpdateRef)
             }
           "
-          >修改目标</NButton
         >
+          <template #icon>
+            <component :is="attendanceModuleIconMap.TARGET"></component>
+          </template>
+        </NButton>
       </NSpace>
     </NFlex>
   </NSpace>
@@ -88,6 +117,7 @@ import {
 import { computed, ref } from 'vue'
 import { NButton, NInput, NPopconfirm, NSpace, NFlex } from 'naive-ui'
 import { useNow } from '@vueuse/core'
+import { attendanceModuleIconMap } from './icon'
 
 const attendanceRecordLatest = useAttendaceRecordQuery('latest')
 const attendanceStatus = computed(() => {
