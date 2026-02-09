@@ -1,7 +1,0 @@
-{
-  "projects": {
-    "dev": "sandglass-dev-2bc90",
-    "prod": "sandglass-ccce4",
-    "default": "sandglass-dev-2bc90"
-  }
-}
