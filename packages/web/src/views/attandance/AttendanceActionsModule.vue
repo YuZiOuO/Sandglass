@@ -1,10 +1,24 @@
 <template>
   <NButton
+    @click="
+      async () => {
+        await globalQueryClient.refetchQueries({
+          queryKey:['attendance']
+        })
+      }
+    "
+  >
+    Debug:刷新所有数据
+  </NButton>
+  <div></div>
+  
+  <NButton
     type="primary"
-    :disabled="attendanceStatus !== 'OUT'"
+    :disabled="attendanceStatus === 'IN'"
     :loading="attendanceRecordIsCreating === 'IN'"
     @click="
       async () => {
+        attendanceRecordCreateRef.json.time = new Date()
         attendanceRecordCreateRef.json.type = 'IN'
         attendanceRecordCreate.mutate(attendanceRecordCreateRef)
       }
@@ -17,6 +31,7 @@
     :loading="attendanceRecordIsCreating === 'PAUSE'"
     @click="
       async () => {
+        attendanceRecordCreateRef.json.time = new Date()
         attendanceRecordCreateRef.json.type = 'PAUSE'
         attendanceRecordCreate.mutate(attendanceRecordCreateRef)
       }
@@ -28,6 +43,7 @@
     :loading="attendanceRecordIsCreating === 'OUT'"
     @click="
       async () => {
+        attendanceRecordCreateRef.json.time = new Date()
         attendanceRecordCreateRef.json.type = 'OUT'
         attendanceRecordCreate.mutate(attendanceRecordCreateRef)
       }
@@ -63,6 +79,7 @@ import {
 } from '@/services-composable/attendance-target'
 import { computed, ref } from 'vue'
 import { NButton } from 'naive-ui'
+import { globalQueryClient } from '@/services-composable'
 
 const attendanceRecordLatest = useAttendaceRecordQuery('latest')
 const attendanceStatus = computed(() => {
@@ -79,7 +96,7 @@ const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
 })
 const attendanceRecordIsCreating = computed(() => {
   const recordMutateHook = attendanceRecordCreate
-  return recordMutateHook.isPending ? recordMutateHook.variables.value?.json.type : undefined
+  return recordMutateHook.isPending.value ? recordMutateHook.variables.value?.json.type : undefined
 })
 
 const attendanceTargetUpdate = useAttendanceTargetUpdateMutate()

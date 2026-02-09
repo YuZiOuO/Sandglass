@@ -31,10 +31,10 @@ export const attendanceRecordRoutes = factory
     async (c) => {
       const uid = c.var.uid;
       const data = c.req.valid("json");
-      await db.attendanceRecord.create({
+      const res = await db.attendanceRecord.create({
         data: { ...data, uid: uid },
       });
-      return c.json({ success: true, error: null }, 201);
+      return c.json(res);
     },
   )
   .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
