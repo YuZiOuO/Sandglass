@@ -11,10 +11,12 @@
     Debug:刷新所有数据
   </NButton>
   <div></div>
-  
+
+  <div>
   <NButton
     type="primary"
-    :disabled="attendanceStatus === 'IN'"
+    :ghost="['IN', undefined].includes(attendanceStatus)"
+    :disabled="['IN', undefined].includes(attendanceStatus)"
     :loading="attendanceRecordIsCreating === 'IN'"
     @click="
       async () => {
@@ -23,10 +25,11 @@
         attendanceRecordCreate.mutate(attendanceRecordCreateRef)
       }
     "
-    >打上班卡</NButton
+    >{{ attendanceStatus === 'PAUSE' ? '恢复' : '打上班卡' }}</NButton
   >
   <NButton
-    type="primary"
+    type="warning"
+    :ghost="attendanceStatus !== 'IN'"
     :disabled="attendanceStatus !== 'IN'"
     :loading="attendanceRecordIsCreating === 'PAUSE'"
     @click="
@@ -39,7 +42,9 @@
     >暂停</NButton
   >
   <NButton
-    :disabled="attendanceStatus !== 'IN'"
+    type="error"
+    :ghost="['OUT', undefined].includes(attendanceStatus)"
+    :disabled="['OUT', undefined].includes(attendanceStatus)"
     :loading="attendanceRecordIsCreating === 'OUT'"
     @click="
       async () => {
@@ -50,6 +55,8 @@
     "
     >打下班卡</NButton
   >
+  </div>
+
   <NInput v-model:value="attendanceRecordCreateRef.json.summary" placeholder="事由"></NInput>
 
   <NInputNumber
