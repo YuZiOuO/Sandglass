@@ -87,7 +87,7 @@
         <!-- 补卡按钮 -->
         <NPopover :delay="200">
           <template #trigger>
-            <NButton circle>
+            <NButton secondary circle>
               <template #icon>
                 <component :is="attendanceModuleIconMap.FIX"></component>
               </template>
@@ -99,7 +99,7 @@
         <!-- 请假按钮 -->
         <NPopover :delay="200">
           <template #trigger>
-            <NButton circle>
+            <NButton secondary circle>
               <template #icon>
                 <component :is="attendanceModuleIconMap.LEAVE"></component>
               </template>
@@ -109,23 +109,33 @@
         </NPopover>
 
         <!-- 修改目标按钮 -->
-        <NPopover :delay="200">
+        <NPopconfirm
+          :show="attendanceTargetUpdate.isPending.value || undefined"
+          @positive-click="
+            async () => {
+              attendanceTargetUpdate.mutate(attendanceTargetUpdateRef)
+            }
+          "
+          :positive-button-props="{ loading: attendanceTargetUpdate.isPending.value }"
+        >
           <template #trigger>
-            <NButton
-              circle
-              @click="
-                () => {
-                  attendanceTargetUpdate.mutate(attendanceTargetUpdateRef)
-                }
-              "
-            >
-              <template #icon>
-                <component :is="attendanceModuleIconMap.TARGET"></component>
+            <NPopover :delay="200">
+              <template #trigger>
+                <NButton secondary circle>
+                  <template #icon>
+                    <component :is="attendanceModuleIconMap.TARGET"></component>
+                  </template>
+                </NButton>
               </template>
-            </NButton>
+              修改目标
+            </NPopover>
           </template>
           修改目标
-        </NPopover>
+          <NInputNumber
+            placeholder="新目标值"
+            v-model:value="attendanceTargetUpdateRef.json.timeMs"
+          />
+        </NPopconfirm>
       </NSpace>
     </NFlex>
   </NSpace>
@@ -142,7 +152,17 @@ import {
   type AttendanceTargetUpdateDTO,
 } from '@/services-composable/attendance-target'
 import { computed, ref } from 'vue'
-import { NButton, NInput, NPopconfirm, NSpace, NFlex, NPopover, NH1, NTime } from 'naive-ui'
+import {
+  NButton,
+  NInput,
+  NPopconfirm,
+  NSpace,
+  NFlex,
+  NPopover,
+  NH1,
+  NTime,
+  NInputNumber,
+} from 'naive-ui'
 import { useNow } from '@vueuse/core'
 import { attendanceModuleIconMap } from './icon'
 

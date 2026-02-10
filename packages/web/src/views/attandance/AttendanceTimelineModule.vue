@@ -9,6 +9,7 @@
       :type="recordType2TimelineType[r.type]"
       :content="r.summary ?? undefined"
       :time="r.time"
+      :line-type="r.type === 'IN' ? 'default' : 'dashed'"
     >
       <template #header>
         <NDropdown
