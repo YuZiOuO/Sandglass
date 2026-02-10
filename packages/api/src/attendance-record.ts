@@ -17,7 +17,7 @@ function getDayRange(whichDay: Date) {
 export const attendanceRecordRoutes = factory
   .createApp()
   /**
-   * Create a attendaceRecord.
+   * Create a attendanceRecord.
    */
   .post(
     "/",

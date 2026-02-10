@@ -8,10 +8,10 @@
 import type { EChartsOption } from 'echarts'
 import { computed } from 'vue'
 import { computeWorkTimeOfToday, groupByDate } from './hooks'
-import { useAttendaceRecordQuery } from '@/services-composable/attendance-record'
+import { useAttendanceRecordQuery } from '@/services-composable/attendance-record'
 import VChart from 'vue-echarts'
 
-const attendanceRecordWithIn30days = useAttendaceRecordQuery('withIn30days')
+const attendanceRecordWithIn30days = useAttendanceRecordQuery('withIn30days')
 const attendanceRecordByDate = computed(() => groupByDate(attendanceRecordWithIn30days.data.value))
 const chartOptions = computed<EChartsOption>(() => {
   return {

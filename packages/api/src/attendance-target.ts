@@ -7,7 +7,7 @@ import {
 import { db } from "./db";
 import { z } from "zod";
 
-export const attendaceTargetRoutes = factory
+export const attendanceTargetRoutes = factory
   .createApp()
   .put(
     "/",

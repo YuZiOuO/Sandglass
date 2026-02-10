@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import {
-  useAttendaceRecordQuery,
+  useAttendanceRecordQuery,
   useAttendanceLatestStatus,
   type AttendanceRecord,
 } from '@/services-composable/attendance-record'
@@ -70,7 +70,7 @@ const attendanceStatus2TagType = {
 } as const
 
 const current_time = useNow()
-const attendanceRecordToday = useAttendaceRecordQuery('today')
+const attendanceRecordToday = useAttendanceRecordQuery('today')
 
 const attendanceTarget = useAttendanceTargetQuery()
 

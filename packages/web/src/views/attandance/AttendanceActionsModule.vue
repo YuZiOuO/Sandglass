@@ -143,7 +143,7 @@
 
 <script setup lang="ts">
 import {
-  useAttendaceRecordCreateMutate,
+  useAttendanceRecordCreateMutate,
   useAttendanceLatestStatus,
   type AttendanceRecordCreateDTO,
 } from '@/services-composable/attendance-record'
@@ -170,7 +170,7 @@ const now = useNow()
 
 const attendanceStatus = useAttendanceLatestStatus()
 
-const attendanceRecordCreate = useAttendaceRecordCreateMutate()
+const attendanceRecordCreate = useAttendanceRecordCreateMutate()
 const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
   json: {
     time: new Date(),

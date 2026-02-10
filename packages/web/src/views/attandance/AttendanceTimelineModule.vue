@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import {
-  useAttendaceRecordQuery,
+  useAttendanceRecordQuery,
   type AttendanceRecordType,
 } from '@/services-composable/attendance-record'
 import {
@@ -53,7 +53,7 @@ import {
 } from 'naive-ui'
 import { attendanceModuleIconMap } from './icon'
 
-const attendanceRecordToday = useAttendaceRecordQuery('today')
+const attendanceRecordToday = useAttendanceRecordQuery('today')
 
 const recordType2TimelineType: Record<AttendanceRecordType, TimelineItemProps['type']> = {
   IN: 'success',
