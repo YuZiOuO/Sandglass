@@ -1,9 +1,9 @@
 <template>
   <n-layout>
-    <n-layout-header bordered class="header">
+    <n-layout-header bordered>
       <NavBarLayout />
     </n-layout-header>
-    <n-layout-content class="content">
+    <n-layout-content content-style="padding: 1% 2.5%; display: flex;flex-direction: column;">
       <RouterView />
     </n-layout-content>
     <n-layout-footer bordered>
@@ -19,19 +19,3 @@ import { RouterView } from 'vue-router'
 import NavBarLayout from './NavBarLayout.vue'
 import FooterLayout from './FooterLayout.vue'
 </script>
-
-<style scoped>
-.header {
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  line-height: 1;
-}
-
-.content {
-  display: flex;
-  justify-content: center;
-  max-width: 95%;
-  margin: 12px auto;
-}
-</style>

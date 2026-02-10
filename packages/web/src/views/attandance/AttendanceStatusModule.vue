@@ -1,52 +1,54 @@
 <template>
-  <n-grid :cols="2" x-gap="12">
-    <n-gi>
-      <div class="left">
-        <NH3><NTime :time="current_time.getTime()" format="PPPP"> </NTime></NH3>
-        <NH1 style="font-family: 'Segoe UI', 'PingFang SC', sans-serif;"><NTime :time="current_time.getTime()" format="HH:mm:ss"> </NTime></NH1>
-        <NButton
-          @click="() => attendanceTarget.refetch()"
-          :loading="attendanceTarget.isFetching.value"
-          >每日目标</NButton
-        >
-        <div>{{ attendanceTarget.data.value }}</div>
-      </div>
-    </n-gi>
-    <n-gi>
-      <div class="right">
-        <NProgress
-          type="circle"
-          :status="percentage >= 1 ? 'success' : undefined"
-          :percentage="percentage"
-          :processing="attendanceRecordToday.data.value?.at(-1)?.type == 'IN'"
-        />
-        <div>
-          今日已记录毫秒数: {{ useWorkTimeOfToday(attendanceRecordToday.data.value, current_time) }}
-        </div>
-      </div>
-    </n-gi>
-  </n-grid>
-
-  <NButton @click="() => leaveRecordToday.refetch()" :loading="leaveRecordToday.isFetching.value"
-    >今日请假</NButton
-  >
-  <div>
-    {{ leaveRecordToday.data.value }}
-  </div>
+  <NTime :time="current_time.getTime()" format="PPP  ·  eeee  ·  " />
+  <NDivider style="margin: 1%" />
+  <NFlex :wrap="false" :align="'center'">
+    <NTag :type="attendanceStatus2TagType[attendanceStatus]" :bordered="false">
+      {{ attendanceStatus2TagString[attendanceStatus] }}
+    </NTag>
+    <NProgress
+      :status="percentage >= 1 ? 'success' : undefined"
+      :percentage="percentage"
+      :processing="attendanceStatus === 'IN'"
+      indicator-placement="inside"
+      style="margin: 1%; padding: 1%"
+    />
+  </NFlex>
+  <NDivider style="margin: 1%" />
+  <NGrid :cols="4">
+    <NGi>
+      <NStatistic label="今日累计" value="7.5">
+        <template #suffix>h</template>
+      </NStatistic>
+    </NGi>
+    <NGi>
+      <NStatistic label="距离达标" value="0.5">
+        <template #suffix>h</template>
+      </NStatistic>
+    </NGi>
+    <NGi>
+      <NStatistic label="本周累计" value="0.5">
+        <template #suffix>h</template>
+      </NStatistic>
+    </NGi>
+    <NGi>
+      <NStatistic label="本月累计" value="0.5">
+        <template #suffix>h</template>
+      </NStatistic>
+    </NGi>
+  </NGrid>
 </template>
 
 <script setup lang="ts">
-import { useAttendaceRecordQuery, type AttendanceRecord } from '@/services-composable/attendance-record'
 import {
-  useAttendanceTargetQuery,
-  useLeaveRecordTodayQuery,
-} from '@/services-composable/attendance-target'
+  useAttendaceRecordQuery,
+  useAttendanceLatestStatus,
+  type AttendanceRecord,
+} from '@/services-composable/attendance-record'
+import { useAttendanceTargetQuery } from '@/services-composable/attendance-target'
 import { useNow } from '@vueuse/core'
-import { NTime, NButton, NProgress, NGrid, NGi, NH2,NH3,NH1 } from 'naive-ui'
+import { NTime, NProgress, NDivider, NStatistic, NGrid, NGi, NFlex, NTag } from 'naive-ui'
 import { computeWorkTimeOfToday } from './hooks'
 import { computed } from 'vue'
-
-
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useWorkTimeOfToday = (records: AttendanceRecord[] | undefined, _ticks: Date) => {
@@ -55,11 +57,21 @@ const useWorkTimeOfToday = (records: AttendanceRecord[] | undefined, _ticks: Dat
   }
   return computeWorkTimeOfToday(records)
 }
+const attendanceStatus = useAttendanceLatestStatus()
+const attendanceStatus2TagString:Record<AttendanceRecord['type'],string> = {
+  "IN":"工作中",
+  "OUT":"空闲中",
+  "PAUSE":"休息中",
+} as const
+const attendanceStatus2TagType = {
+  "IN": "success",
+  "OUT": "info",
+  "PAUSE": "warning"
+} as const
 
 const current_time = useNow()
 const attendanceRecordToday = useAttendaceRecordQuery('today')
 
-const leaveRecordToday = useLeaveRecordTodayQuery()
 const attendanceTarget = useAttendanceTargetQuery()
 
 const percentage = computed(() => {

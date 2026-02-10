@@ -4,7 +4,7 @@
    右侧为按钮组、请假 -->
   <n-grid :cols="3" x-gap="12">
     <n-gi :span="2">
-      <div style="background-color: #f0f0f0">
+      <NFlex vertical>
         <NCard>
           <AttendanceStatusModule />
         </NCard>
@@ -12,10 +12,10 @@
         <NCard>
           <AttendanceStatisticsModule />
         </NCard>
-      </div>
+      </NFlex>
     </n-gi>
     <n-gi>
-      <div style="background-color: #e0e0e0">
+      <NFlex vertical>
         <NCard>
           <AttendanceActionsModule />
         </NCard>
@@ -23,13 +23,13 @@
         <NCard title="今日打卡记录">
           <AttendanceTimelineModule />
         </NCard>
-      </div>
+      </NFlex>
     </n-gi>
   </n-grid>
 </template>
 
 <script setup lang="ts">
-import { NCard, NGrid, NGi } from 'naive-ui'
+import { NCard, NGrid, NGi, NFlex } from 'naive-ui'
 import AttendanceStatisticsModule from './AttendanceStatisticsModule.vue'
 import AttendanceActionsModule from './AttendanceActionsModule.vue'
 import AttendanceStatusModule from './AttendanceStatusModule.vue'

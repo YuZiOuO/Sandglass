@@ -1,5 +1,12 @@
 <template>
   <NSpace vertical size="large">
+    <!-- Clock Area -->
+    <NH1
+      style="width: 100%; margin: 0; display: flex; align-items: center; justify-content: center"
+    >
+      <NTime :time="now.getTime()" format="HH:mm:ss"> </NTime>
+    </NH1>
+
     <!-- Main Button Area -->
     <NSpace :wrap="false" justify="center" size="large">
       <NButton
@@ -127,7 +134,7 @@
 <script setup lang="ts">
 import {
   useAttendaceRecordCreateMutate,
-  useAttendaceRecordQuery,
+  useAttendanceLatestStatus,
   type AttendanceRecordCreateDTO,
 } from '@/services-composable/attendance-record'
 import {
@@ -135,15 +142,13 @@ import {
   type AttendanceTargetUpdateDTO,
 } from '@/services-composable/attendance-target'
 import { computed, ref } from 'vue'
-import { NButton, NInput, NPopconfirm, NSpace, NFlex, NPopover } from 'naive-ui'
+import { NButton, NInput, NPopconfirm, NSpace, NFlex, NPopover, NH1, NTime } from 'naive-ui'
 import { useNow } from '@vueuse/core'
 import { attendanceModuleIconMap } from './icon'
 
-const attendanceRecordLatest = useAttendaceRecordQuery('latest')
-const attendanceStatus = computed(() => {
-  const data = attendanceRecordLatest.data.value?.at(0)
-  return data?.type
-})
+const now = useNow()
+
+const attendanceStatus = useAttendanceLatestStatus()
 
 const attendanceRecordCreate = useAttendaceRecordCreateMutate()
 const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
