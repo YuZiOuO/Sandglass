@@ -3,7 +3,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import pinia from './stores'
 import router from './router'
-import { checkEnvsDefinedAndNotEmpty } from '../env/env'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { initializeFirebase } from './services-composable/firebase'
 import { globalQueryClient } from './services-composable'
@@ -18,8 +17,6 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, BarChart, LineChart } from 'echarts/charts'
 
 async function bootstrap() {
-  checkEnvsDefinedAndNotEmpty()
-
   const app = createApp(App)
   app.use(pinia)
   app.use(router)

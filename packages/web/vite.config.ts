@@ -4,12 +4,10 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
-import { SG_API_PREFIX, SG_ENV_DIR } from './env/env'
 
 // https://vite.dev/config/
 export default defineConfig({
-  envDir: SG_ENV_DIR,
-  envPrefix: SG_API_PREFIX,
+  envPrefix: 'SG_',
   plugins: [vue(), vueJsx(), vueDevTools()],
   resolve: {
     alias: {
@@ -19,10 +17,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target:
-          process.env.ONLINE == 'true'
-            ? 'https://dev.api.sandglass.kanata.ink'
-            : 'http://localhost:3000',
+        target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
