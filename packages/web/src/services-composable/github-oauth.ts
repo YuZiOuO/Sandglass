@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/vue-query'
-import { useAccessToken, useFirebase } from './firebase'
+import { useFirebase } from './firebase'
 import { authClient } from './common'
 
 export function useGithubAuthUrlQuery() {

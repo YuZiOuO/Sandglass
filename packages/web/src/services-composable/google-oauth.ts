@@ -1,10 +1,8 @@
 import { useQuery } from '@tanstack/vue-query'
-import { useAccessToken, useFirebase } from './firebase'
-import { GoogleAuthApi } from '@/api'
+import { useFirebase } from './firebase'
 import { globalQueryClient } from '.'
 import { authClient } from './common'
 
-const googleOAuthApi = new GoogleAuthApi(undefined, import.meta.env.SG_WEB_API_BASEURL)
 
 export function useGoogleAuthUrlQuery() {
   return useQuery({
