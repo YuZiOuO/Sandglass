@@ -6,7 +6,7 @@ import { globalQueryClient } from '.'
 type AttendanceRecordQueryType = NonNullable<
   InferRequestType<typeof client.attendanceRecord.$get>['query']['preset']
 >
-function useAttendanceRecordQueryRaw<T>(type: AttendanceRecordQueryType,selector?: (data: AttendanceRecord[]) => T) {
+export function useAttendanceRecordQuery(type: AttendanceRecordQueryType) {
   return useQuery({
     queryKey: ['attendance', type],
     queryFn: async () => {
@@ -15,16 +15,19 @@ function useAttendanceRecordQueryRaw<T>(type: AttendanceRecordQueryType,selector
       const data = await res.json()
       return data
     },
-    select: selector
   })
 }
 
-export function useAttendanceRecordQuery(type: AttendanceRecordQueryType){
-  return useAttendanceRecordQueryRaw(type,data => data)
-}
-
 export function useAttendanceLatestStatus() {
-  return useAttendanceRecordQueryRaw('latest',data => data.at(0)?.type)
+  return useQuery({
+    queryKey: ['attendance', 'status'],
+    queryFn: async () => {
+      const cli = await authClient()
+      const res = await cli.attendance.status.$get()
+      const data = await res.json()
+      return data
+    },
+  })
 }
 
 export type AttendanceRecordCreateDTO = InferRequestType<typeof client.attendanceRecord.$post>

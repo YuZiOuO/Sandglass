@@ -12,8 +12,8 @@
       <NButton
         size="large"
         type="primary"
-        :ghost="['IN', undefined].includes(attendanceStatus)"
-        :disabled="['IN', undefined].includes(attendanceStatus)"
+        :ghost="['IN', undefined].includes(attendanceStatus.data.value)"
+        :disabled="['IN', undefined].includes(attendanceStatus.data.value)"
         :loading="attendanceRecordIsCreating === 'IN'"
         @click="
           async () => {
@@ -26,19 +26,19 @@
         <template #icon>
           <component
             :is="
-              attendanceStatus === 'PAUSE'
+              attendanceStatus.data.value === 'PAUSE'
                 ? attendanceModuleIconMap.RESUME
                 : attendanceModuleIconMap.IN
             "
           />
         </template>
-        {{ attendanceStatus === 'PAUSE' ? '恢复' : '打上班卡' }}
+        {{ attendanceStatus.data.value === 'PAUSE' ? '恢复' : '打上班卡' }}
       </NButton>
       <NButton
         size="large"
         type="warning"
-        :ghost="attendanceStatus !== 'IN'"
-        :disabled="attendanceStatus !== 'IN'"
+        :ghost="attendanceStatus.data.value !== 'IN'"
+        :disabled="attendanceStatus.data.value !== 'IN'"
         :loading="attendanceRecordIsCreating === 'PAUSE'"
         @click="
           async () => {
@@ -66,8 +66,8 @@
           <NButton
             size="large"
             type="error"
-            :ghost="['OUT', undefined].includes(attendanceStatus)"
-            :disabled="['OUT', undefined].includes(attendanceStatus)"
+            :ghost="['OUT', undefined].includes(attendanceStatus.data.value)"
+            :disabled="['OUT', undefined].includes(attendanceStatus.data.value)"
             :loading="attendanceRecordIsCreating === 'OUT'"
           >
             <template #icon>

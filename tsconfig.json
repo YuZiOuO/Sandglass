@@ -7,8 +7,8 @@
     }
   },
   "references": [
-    { "path": "./packages/shared" },
-    { "path": "./apps/api" },
-    { "path": "./apps/web" }
+    { "path": "./packages/schema" },
+    { "path": "./packages/api" },
+    { "path": "./packages/web" }
   ]
 }

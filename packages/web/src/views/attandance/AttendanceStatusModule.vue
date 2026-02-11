@@ -1,18 +1,19 @@
 <template>
   <NTime :time="current_time.getTime()" format="PPP  ·  eeee  ·  " />
   <NDivider style="margin: 1%" />
-  <NFlex :wrap="false" :align="'center'">
-    <NTag :type="attendanceStatus2TagType[attendanceStatus]" :bordered="false">
-      {{ attendanceStatus2TagString[attendanceStatus] }}
+  <NFlex :wrap="false" :align="'center'" v-if="attendanceStatus.data.value">
+    <NTag :type="attendanceStatus2TagType[attendanceStatus.data.value]" :bordered="false">
+      {{ attendanceStatus2TagString[attendanceStatus.data.value] }}
     </NTag>
     <NProgress
       :status="percentage >= 1 ? 'success' : undefined"
       :percentage="percentage"
-      :processing="attendanceStatus === 'IN'"
+      :processing="attendanceStatus.data.value === 'IN'"
       indicator-placement="inside"
       style="margin: 1%; padding: 1%"
     />
   </NFlex>
+  <NSkeleton :size="'large'" v-else />
   <NDivider style="margin: 1%" />
   <NGrid :cols="4">
     <NGi>
@@ -46,7 +47,17 @@ import {
 } from '@/services-composable/attendance-record'
 import { useAttendanceTargetQuery } from '@/services-composable/attendance-target'
 import { useNow } from '@vueuse/core'
-import { NTime, NProgress, NDivider, NStatistic, NGrid, NGi, NFlex, NTag } from 'naive-ui'
+import {
+  NTime,
+  NProgress,
+  NDivider,
+  NStatistic,
+  NGrid,
+  NGi,
+  NFlex,
+  NTag,
+  NSkeleton,
+} from 'naive-ui'
 import { computeWorkTimeOfToday } from './hooks'
 import { computed } from 'vue'
 
@@ -58,15 +69,15 @@ const useWorkTimeOfToday = (records: AttendanceRecord[] | undefined, _ticks: Dat
   return computeWorkTimeOfToday(records)
 }
 const attendanceStatus = useAttendanceLatestStatus()
-const attendanceStatus2TagString:Record<AttendanceRecord['type'],string> = {
-  "IN":"工作中",
-  "OUT":"空闲中",
-  "PAUSE":"休息中",
+const attendanceStatus2TagString: Record<AttendanceRecord['type'], string> = {
+  IN: '工作中',
+  OUT: '空闲中',
+  PAUSE: '休息中',
 } as const
 const attendanceStatus2TagType = {
-  "IN": "success",
-  "OUT": "info",
-  "PAUSE": "warning"
+  IN: 'success',
+  OUT: 'info',
+  PAUSE: 'warning',
 } as const
 
 const current_time = useNow()
