@@ -6,11 +6,13 @@ import { attendanceTargetRoutes } from "./attendance-target";
 import { projectRoutes } from "./project";
 import { OAuthPublicRoutes, OAuthRoutes } from "./oauth";
 import { attendanceRoutes } from "./attendance";
+import { cors } from "hono/cors";
 
 const app = factory
   .createApp()
 
   // initialize middleware
+  .use("*", cors())
   .use(middleware.loggerMiddleware)
   .use(middleware.firebaseAuthMiddleware)
 
@@ -22,7 +24,7 @@ const app = factory
   // load routes
   .route("/attendanceRecord", attendanceRecordRoutes)
   .route("/attendanceTarget", attendanceTargetRoutes)
-  .route('/attendance',attendanceRoutes)
+  .route("/attendance", attendanceRoutes)
   .route("/project", projectRoutes)
   .route("/oauth", OAuthRoutes)
   .route("/oauth", OAuthPublicRoutes);
