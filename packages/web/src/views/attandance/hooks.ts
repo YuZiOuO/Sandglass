@@ -1,11 +1,5 @@
-import type { AttendanceRecord } from './AttandanceModule.vue'
+import type { AttendanceRecord } from '@/services-composable/attendance-record'
 import type { AttendanceType } from '../../../../schema/generated/schemas'
-
-const attendanceTypeStateTransition: Record<AttendanceType, AttendanceType[]> = {
-  IN: ['OUT', 'PAUSE'],
-  OUT: ['IN'],
-  PAUSE: ['IN'],
-}
 
 export function computeWorkTimeOfToday(records: AttendanceRecord[]) {
   let statusMachine: AttendanceType = 'OUT'
@@ -43,11 +37,13 @@ export function groupByDate(records:AttendanceRecord[] | undefined){
     return initial
   }
 
-  return records.reduce((acc,cur) => {
+  records.reduce((acc,cur) => {
     const key = new Date(cur.time).toLocaleDateString() // date of current record
     const group = acc.get(key) || [];
     group.push(cur);
     acc.set(key,group)
     return acc;
   },initial);
+
+  return initial
 }

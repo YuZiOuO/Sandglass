@@ -17,7 +17,7 @@ function getDayRange(whichDay: Date) {
 export const attendanceRecordRoutes = factory
   .createApp()
   /**
-   * Create a attendaceRecord.
+   * Create a attendanceRecord.
    */
   .post(
     "/",
@@ -31,10 +31,10 @@ export const attendanceRecordRoutes = factory
     async (c) => {
       const uid = c.var.uid;
       const data = c.req.valid("json");
-      await db.attendanceRecord.create({
+      const res = await db.attendanceRecord.create({
         data: { ...data, uid: uid },
       });
-      return c.json({ success: true, error: null }, 201);
+      return c.json(res);
     },
   )
   .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
@@ -64,13 +64,25 @@ export const attendanceRecordRoutes = factory
         z.object({
           from: z.undefined().optional(),
           to: z.undefined().optional(),
-          preset: z.enum(["today", "withIn7days","withIn30days"]),
+          preset: z.enum(["today", "withIn7days","withIn30days","latest"]),
         }),
       ]),
     ),
     async (c) => {
       const uid = c.var.uid;
       const data = c.req.valid("query");
+
+      if(data.preset === "latest"){
+        const res = await db.attendanceRecord.findFirst({
+          where:{
+            uid:uid,
+          },
+          orderBy:{
+            time: 'desc',
+          }
+        })
+        return c.json(res ? [res] : [])
+      }
 
       let from: Date;
       let to: Date;
@@ -103,8 +115,8 @@ export const attendanceRecordRoutes = factory
       const res = await db.attendanceRecord.findMany({
         where: {
           time: {
-            gte: from,
-            lt: to,
+            gte: from!,
+            lt: to!,
           },
           uid: uid,
         },

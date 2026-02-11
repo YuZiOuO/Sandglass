@@ -2,9 +2,10 @@ import { attendanceRecordRoutes } from "./attendance-record";
 import { factory } from "./shared";
 
 import * as middleware from "./middleware";
-import { attendaceTargetRoutes } from "./attendace-target";
+import { attendanceTargetRoutes } from "./attendance-target";
 import { projectRoutes } from "./project";
 import { OAuthPublicRoutes, OAuthRoutes } from "./oauth";
+import { attendanceRoutes } from "./attendance";
 
 const app = factory
   .createApp()
@@ -20,7 +21,8 @@ const app = factory
 
   // load routes
   .route("/attendanceRecord", attendanceRecordRoutes)
-  .route("/attendanceTarget", attendaceTargetRoutes)
+  .route("/attendanceTarget", attendanceTargetRoutes)
+  .route('/attendance',attendanceRoutes)
   .route("/project", projectRoutes)
   .route("/oauth", OAuthRoutes)
   .route("/oauth", OAuthPublicRoutes);

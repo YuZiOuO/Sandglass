@@ -3,7 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import DebugView from '@/views/debug/DebugView.vue'
 import PreviewView from '@/views/PreviewView.vue'
-import AttandanceModule from '@/views/attandance/AttandanceModule.vue'
+import AttendanceView from '@/views/attandance/AttendanceView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,7 +31,7 @@ const router = createRouter({
     {
       path: '/attandance',
       name: 'attandance',
-      component: AttandanceModule,
+      component: AttendanceView,
     },
   ],
 })
