@@ -29,7 +29,7 @@ export const attendanceRecordRoutes = factory
       }),
     ),
     async (c) => {
-      const uid = c.var.uid;
+      const uid = c.var.user.id;
       const data = c.req.valid("json");
       const res = await db.attendanceRecord.create({
         data: { ...data, uid: uid },
@@ -38,7 +38,7 @@ export const attendanceRecordRoutes = factory
     },
   )
   .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
-    const uid = c.var.uid;
+    const uid = c.var.user.id;
     const idObject = c.req.valid("json");
 
     const result = await db.attendanceRecord.delete({
@@ -69,7 +69,7 @@ export const attendanceRecordRoutes = factory
       ]),
     ),
     async (c) => {
-      const uid = c.var.uid;
+      const uid = c.var.user.id;
       const data = c.req.valid("query");
 
       if(data.preset === "latest"){

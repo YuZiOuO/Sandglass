@@ -4,7 +4,7 @@ import { factory } from "./shared";
 export const attendanceRoutes = factory
   .createApp()
   .get("/status", async (c) => {
-    const uid = c.var.uid;
+    const uid = c.var.user.id;
     const res = await db.attendanceRecord.findFirst({
       where: {
         uid: uid,

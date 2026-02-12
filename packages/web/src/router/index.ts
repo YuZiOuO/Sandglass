@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import DebugView from '@/views/debug/DebugView.vue'
-import PreviewView from '@/views/PreviewView.vue'
 import AttendanceView from '@/views/attandance/AttendanceView.vue'
 
 const router = createRouter({
@@ -18,16 +16,11 @@ const router = createRouter({
       name: 'Login',
       component: LoginView,
     },
-    {
-      path: '/debug',
-      name: 'debug',
-      component: DebugView,
-    },
-    {
-      path: '/preview',
-      name: 'preview',
-      component: PreviewView,
-    },
+    // {
+    //   path: '/preview',
+    //   name: 'preview',
+    //   component: PreviewView,
+    // },
     {
       path: '/attandance',
       name: 'attandance',

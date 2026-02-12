@@ -16,7 +16,7 @@ export const attendanceTargetRoutes = factory
       AttendanceTargetCreateInputObjectZodSchema.omit({ uid: true }),
     ),
     async (c) => {
-      const uid = c.var.uid;
+      const uid = c.var.user.id;
       const data = c.req.valid("json");
 
       const res = await db.attendanceTarget.upsert({
@@ -31,7 +31,7 @@ export const attendanceTargetRoutes = factory
     },
   )
   .get("/", async (c) => {
-    const uid = c.var.uid;
+    const uid = c.var.user.id;
     const result = await db.attendanceTarget.findUnique({
       where: { uid: uid },
     });
@@ -47,7 +47,7 @@ export const attendanceTargetRoutes = factory
       }),
     ),
     async (c) => {
-      const uid = c.var.uid;
+      const uid = c.var.user.id;
       const data = c.req.valid("json");
 
       const res = await db.attendanceLeaveRecord.upsert({
@@ -68,7 +68,7 @@ export const attendanceTargetRoutes = factory
     "leave",
     zValidator("json", z.object({ id: z.uuid() })),
     async (c) => {
-      const uid = c.var.uid;
+      const uid = c.var.user.id;
       const data = c.req.valid("json");
 
       const res = await db.attendanceLeaveRecord.delete({
@@ -79,7 +79,7 @@ export const attendanceTargetRoutes = factory
     },
   )
   .get("leave/today", async (c) => {
-    const uid = c.var.uid;
+    const uid = c.var.user.id;
 
     const q = await db.attendanceLeaveRecord.findUnique({
       where: { uid_date: { date: new Date(), uid: uid } },
