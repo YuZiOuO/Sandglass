@@ -6,7 +6,7 @@ import { attendanceTargetRoutes } from "./attendance-target";
 import { projectRoutes } from "./project";
 import { attendanceRoutes } from "./attendance";
 import { cors } from "hono/cors";
-import { auth } from "./auth";
+import { auth, OAuthRoutes } from "./auth";
 
 const app = factory
   .createApp()
@@ -30,7 +30,8 @@ const app = factory
   .route("/attendanceRecord", attendanceRecordRoutes)
   .route("/attendanceTarget", attendanceTargetRoutes)
   .route("/attendance", attendanceRoutes)
-  .route("/project", projectRoutes);
+  .route("/project", projectRoutes)
+  .route("oauth", OAuthRoutes);
 
 export default app;
 export type AppType = typeof app;
