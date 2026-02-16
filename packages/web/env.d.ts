@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="@types/gapi.client.tasks" />
 /**
  * You should append what you added to env/env.ts when modify this interface
  */
