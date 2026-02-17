@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
+    "@types/gapi.client.calendar": "^3.0.12",
     "@types/gapi.client.tasks": "^1.0.6",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.18.11",

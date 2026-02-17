@@ -1,21 +1,7 @@
 import { useQuery } from '@tanstack/vue-query'
-import { authCli } from './common'
+import { defaultEnabled, fetchGoogleApi } from './common-google'
 
 const baseURL = 'https://tasks.googleapis.com'
-
-const defaultEnabled = () => !!authCli.useSession().value.data?.user.id
-async function fetchGoogleApi<T>(endpoint: string) {
-  const token = await authCli.getAccessToken({ providerId: 'google' })
-
-  if (token.error || !token.data.accessToken) {
-    return null
-  }
-
-  const res = await fetch(endpoint, { headers: { Authorization: 'Bearer ' + token }})
-  const data = (await res.json()) as T
-
-  return data
-}
 
 export function useGoogleTaskListsQuery() {
   return useQuery({

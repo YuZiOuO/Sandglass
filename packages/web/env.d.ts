@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 /// <reference types="@types/gapi.client.tasks" />
+/// <reference types="@types/gapi.client.calendar" />
 /**
  * You should append what you added to env/env.ts when modify this interface
  */
