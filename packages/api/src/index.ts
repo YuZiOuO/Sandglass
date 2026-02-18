@@ -7,6 +7,13 @@ import { projectRoutes } from "./project";
 import { attendanceRoutes } from "./attendance";
 import { cors } from "hono/cors";
 import { auth, OAuthRoutes } from "./auth";
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from "@sandglass/schema/generated/prisma/internal/prismaNamespace";
 
 const app = factory
   .createApp()
@@ -31,7 +38,23 @@ const app = factory
   .route("/attendanceTarget", attendanceTargetRoutes)
   .route("/attendance", attendanceRoutes)
   .route("/project", projectRoutes)
-  .route("oauth", OAuthRoutes);
+  .route("oauth", OAuthRoutes)
+
+  .onError((err, c) => {
+    if (
+      err instanceof PrismaClientKnownRequestError ||
+      err instanceof PrismaClientUnknownRequestError ||
+      err instanceof PrismaClientRustPanicError ||
+      err instanceof PrismaClientInitializationError ||
+      err instanceof PrismaClientValidationError
+    ) {
+      console.error("Database error:", err);
+      return c.json({ ok: false, error: { code: "INTERNAL_DB" } }, 500);
+    }
+
+    console.error("Unhandled error:", err);
+    return c.json({ ok: false, error: { code: "INTERNAL" } }, 500);
+  });
 
 export default app;
 export type AppType = typeof app;
