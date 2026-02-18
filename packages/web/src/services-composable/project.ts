@@ -14,11 +14,21 @@ export function useProjectsQuery() {
 
 export function useProjectQuery(projectId: Ref<string>) {
   return useQuery({
-    queryKey: ['calendar', projectId.value],
+    queryKey: ['project', projectId.value],
     queryFn: async (context) => {
       const id = context.queryKey[1]
       const res = await cli.project.$get({ json: { id: id } })
       return await res.json()
+    },
+  })
+}
+
+export function useProjectResourcesQuery(projectId: string) {
+  return useQuery({
+    queryKey: ['project', projectId, 'resource'],
+    queryFn: async () => {
+      const resources = await cli.resource.$get({ query: { projectId: projectId } })
+      return await resources.json()
     },
   })
 }
