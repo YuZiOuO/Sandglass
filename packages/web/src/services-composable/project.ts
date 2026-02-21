@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/vue-query'
+import { useMutation, useQuery } from '@tanstack/vue-query'
 import type { Ref } from 'vue'
 import { cli } from './common'
+import type { InferRequestType } from 'hono'
 
 export function useProjectsQuery() {
   return useQuery({
@@ -29,6 +30,16 @@ export function useProjectResourcesQuery(projectId: string) {
     queryFn: async () => {
       const resources = await cli.resource.$get({ query: { projectId: projectId } })
       return await resources.json()
+    },
+  })
+}
+
+export type ProjectCreateDTO = InferRequestType<typeof cli.project.$post>['json']
+export function useProjectCreateMutation() {
+  return useMutation({
+    mutationFn: async (dto: ProjectCreateDTO) => {
+      const createdProject = await cli.project.$post({ json: { ...dto } })
+      return await createdProject.json()
     },
   })
 }
