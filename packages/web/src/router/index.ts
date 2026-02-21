@@ -15,11 +15,11 @@ const router = createRouter({
       name: 'Login',
       component: LoginView,
     },
-    // {
-    //   path: '/preview',
-    //   name: 'preview',
-    //   component: PreviewView,
-    // },
+    {
+      path: '/project',
+      name: 'ProjectList',
+      component: () => import('@/views/ProjectListView.vue'),
+    },
     {
       path: '/attandance',
       name: 'attandance',
