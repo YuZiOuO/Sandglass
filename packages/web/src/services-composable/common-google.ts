@@ -1,4 +1,4 @@
-import { authCli } from "./common"
+import { authCli } from './common'
 
 export const defaultEnabled = () => !!authCli.useSession().value.data?.user.id
 export async function fetchGoogleApi<T>(endpoint: string) {
@@ -8,7 +8,9 @@ export async function fetchGoogleApi<T>(endpoint: string) {
     return null
   }
 
-  const res = await fetch(endpoint, { headers: { Authorization: 'Bearer ' + token } })
+  const res = await fetch(endpoint, {
+    headers: { Authorization: 'Bearer ' + token.data.accessToken },
+  })
   const data = (await res.json()) as T
 
   return data
