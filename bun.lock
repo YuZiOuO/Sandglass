@@ -55,6 +55,7 @@
         "vue-router": "^4.6.3",
       },
       "devDependencies": {
+        "@tanstack/vue-query-devtools": "^6.1.5",
         "@tsconfig/node22": "^22.0.2",
         "@types/gapi.client.calendar": "^3.0.12",
         "@types/gapi.client.tasks": "^1.0.6",
@@ -422,7 +423,11 @@
 
     "@tanstack/query-core": ["@tanstack/query-core@5.90.20", "https://mirrors.tencent.com/npm/@tanstack/query-core/-/query-core-5.90.20.tgz", {}, "sha512-OMD2HLpNouXEfZJWcKeVKUgQ5n+n3A2JFmBaScpNDUqSrQSjiveC7dKMe53uJUg1nDG16ttFPz2xfilz6i2uVg=="],
 
+    "@tanstack/query-devtools": ["@tanstack/query-devtools@5.93.0", "https://mirrors.tencent.com/npm/@tanstack/query-devtools/-/query-devtools-5.93.0.tgz", {}, "sha512-+kpsx1NQnOFTZsw6HAFCW3HkKg0+2cepGtAWXjiiSOJJ1CtQpt72EE2nyZb+AjAbLRPoeRmPJ8MtQd8r8gsPdg=="],
+
     "@tanstack/vue-query": ["@tanstack/vue-query@5.92.9", "https://mirrors.tencent.com/npm/@tanstack/vue-query/-/vue-query-5.92.9.tgz", { "dependencies": { "@tanstack/match-sorter-utils": "^8.19.4", "@tanstack/query-core": "5.90.20", "@vue/devtools-api": "^6.6.3", "vue-demi": "^0.14.10" }, "peerDependencies": { "@vue/composition-api": "^1.1.2", "vue": "^2.6.0 || ^3.3.0" }, "optionalPeers": ["@vue/composition-api"] }, "sha512-jjAZcqKveyX0C4w/6zUqbnqk/XzuxNWaFsWjGTJWULVFizUNeLGME2gf9vVSDclIyiBhR13oZJPPs6fJgfpIJQ=="],
+
+    "@tanstack/vue-query-devtools": ["@tanstack/vue-query-devtools@6.1.5", "https://mirrors.tencent.com/npm/@tanstack/vue-query-devtools/-/vue-query-devtools-6.1.5.tgz", { "dependencies": { "@tanstack/query-devtools": "5.93.0" }, "peerDependencies": { "@tanstack/vue-query": "^5.92.9", "vue": "^3.3.0" } }, "sha512-5tQf/4GKfDyvu+Jqv/Fq1im93nXQyge0yWphCmwNHz6Y6+kqA9swJY2G/kLU2TaT2s1CE+elt5EfYNGE1tsDqQ=="],
 
     "@tsconfig/node22": ["@tsconfig/node22@22.0.5", "https://mirrors.tencent.com/npm/@tsconfig/node22/-/node22-22.0.5.tgz", {}, "sha512-hLf2ld+sYN/BtOJjHUWOk568dvjFQkHnLNa6zce25GIH+vxKfvTgm3qpaH6ToF5tu/NN0IH66s+Bb5wElHrLcw=="],
 

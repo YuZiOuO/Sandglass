@@ -7,9 +7,11 @@
       </n-message-provider>
     </n-loading-bar-provider>
   </n-config-provider>
+  <VueQueryDevtools :initial-is-open="false" button-position="bottom-right" />
 </template>
 
 <script setup lang="ts">
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import {
   // createTheme,
   // datePickerDark,
