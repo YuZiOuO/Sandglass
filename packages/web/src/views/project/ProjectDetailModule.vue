@@ -22,9 +22,9 @@ import TasksTimelineModule from '../tasks/TasksTimelineModule.vue'
 import HeatmapModule from '@/common/HeatmapModule.vue'
 import ProjectSummaryModule from './ProjectSummaryModule.vue'
 import type { InferResponseType } from 'hono'
-import { client } from '@/services-composable/common'
+import { cli } from '@/services-composable/common'
 
-type ProjectDTO = InferResponseType<typeof client.project.$get>
+type ProjectDTO = InferResponseType<typeof cli.project.$get>
 const props = defineProps<{
   projectData: ProjectDTO
   tasksData: gapi.client.tasks.Task[]

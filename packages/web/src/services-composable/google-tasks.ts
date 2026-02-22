@@ -1,37 +1,35 @@
-import { useGApi } from '@/hooks/gapi'
 import { useQuery } from '@tanstack/vue-query'
-import { useGoogleAccessToken } from './google-oauth'
-import type { Ref } from 'vue'
+import { defaultEnabled, fetchGoogleApi } from './common-google'
 
-export function useTaskListsQuery() {
+const baseURL = 'https://tasks.googleapis.com'
+
+export function useGoogleTaskListsQuery() {
   return useQuery({
-    queryKey: ['tasklists'],
+    queryKey: ['google', 'tasklists'],
     queryFn: async () => {
-      await useGApi(['tasks'])
-      const req = gapi.client.tasks.tasklists.list({
-        oauth_token: await useGoogleAccessToken(),
-      })
-
-      return (await req).result
+      return fetchGoogleApi<gapi.client.tasks.TaskLists>(baseURL + '/tasks/v1/users/@me/lists')
     },
+    enabled: defaultEnabled,
   })
 }
 
-export function useTasksQuery(TaskListId: Ref<string>) {
+export function useGoogleTaskListQuery(id: string) {
   return useQuery({
-    queryKey: ['tasklists', TaskListId.value],
-    queryFn: async (context) => {
-      await useGApi(['tasks'])
+    queryKey: ['google', 'tasklists', id],
+    queryFn: async () => {
+      return fetchGoogleApi<gapi.client.tasks.TaskList>(baseURL + `/tasks/v1/users/@me/lists/${id}`)
+    },
+    enabled: defaultEnabled,
+  })
+}
 
-      const id = context.queryKey[1]
-
-      const req = gapi.client.tasks.tasks.list({
-        tasklist: id,
-        showHidden: true,
-        oauth_token: await useGoogleAccessToken(),
-      })
-
-      return (await req).result
+export function useGoogleTasksQuery(tasklistId: string) {
+  return useQuery({
+    queryKey: ['google', 'tasks', tasklistId],
+    queryFn: async () => {
+      return fetchGoogleApi<gapi.client.tasks.Tasks>(
+        baseURL + `/tasks/v1/lists/${tasklistId}/tasks`,
+      )
     },
   })
 }

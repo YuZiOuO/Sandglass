@@ -1,13 +1,20 @@
 import { hc } from 'hono/client'
-import { useAccessToken } from './firebase'
 import type { AppType } from '@sandglass/api'
+import { createAuthClient } from 'better-auth/vue'
+import { QueryClient } from '@tanstack/vue-query'
 
-const useDefaultAuthHeader = async () => {
-  return { headers: { Authorization: 'Bearer ' + (await useAccessToken()) } }
-}
+export const cli = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL, {
+  init: {
+    credentials: 'include',
+  },
+})
+export const authCli = createAuthClient()
 
-export const authClient = async () => {
-  return hc<AppType>(import.meta.env.SG_WEB_API_BASEURL, await useDefaultAuthHeader())
-}
-
-export const client = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL)
+export const globalQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      enabled: () => !!authCli.useSession().value.data,
+    },
+    mutations: {},
+  },
+})

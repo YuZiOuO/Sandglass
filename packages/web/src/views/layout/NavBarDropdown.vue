@@ -1,6 +1,6 @@
 <template>
-  <n-dropdown :disabled="uid === null" :options="dropdownOptions" @select="handleDropdownSelect">
-    <n-button v-if="uid !== null" tertiary type="primary"> 我的 </n-button>
+  <n-dropdown :disabled="!!session.data" :options="dropdownOptions" @select="handleDropdownSelect">
+    <n-button v-if="!!session.data" tertiary type="primary"> 我的 </n-button>
     <RouterLink v-else to="/login">
       <n-button tertiary type="primary"> 登录 </n-button>
     </RouterLink>
@@ -16,11 +16,9 @@ import {
   LogOutOutline as LogoutIcon,
   PersonCircleOutline as UserIcon,
 } from '@vicons/ionicons5'
-import { useAuthenticationStore } from '@/stores/authentication'
-import { storeToRefs } from 'pinia'
+import { authCli } from '@/services-composable/common'
 
-const authStore = useAuthenticationStore()
-const { uid } = storeToRefs(authStore)
+const session = authCli.useSession()
 
 const message = useMessage()
 let logoutMessage: MessageReactive | null = null
@@ -29,7 +27,7 @@ async function handleDropdownSelect(key: string) {
   if (key === 'logout') {
     logoutMessage = message.create('正在注销...', { type: 'loading' })
     try {
-      await authStore.logout()
+      await authCli.signOut()
       logoutMessage.content = '注销成功'
       logoutMessage.type = 'success'
       logoutMessage.duration = 2
