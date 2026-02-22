@@ -14,19 +14,18 @@ import ProjectHeatmapModule from './ProjectHeatmapModule.vue'
 
 const route = useRoute()
 const projectId = computed(() => route.params.id as string)
-const { data: project } = useProjectQuery(projectId)
-
-const tasklistId = computed(() => project.value?.tasklistId)
-const calendarId = computed(() => project.value?.calendarId)
+const project = useProjectQuery(projectId)
 </script>
 
 <template>
   <div class="project-view p-4 h-full">
+    {{ project.fetchStatus }}
+    {{ project.data.value }}
     <n-grid x-gap="12" :cols="24" class="h-full">
       <n-grid-item span="6" class="flex flex-col gap-4">
         <NFlex>
-          <ProjectTasksModule :tasklist-id="tasklistId" />
-          <ProjectCalendarModule />
+          <ProjectTasksModule :tasklist-id="project.data.value?.tasklistId" />
+          <ProjectCalendarModule :calendar-id="project.data.value?.calendarId"/>
           <ProjectResourcesModule :project-id="projectId" />
         </NFlex>
       </n-grid-item>
@@ -37,7 +36,7 @@ const calendarId = computed(() => project.value?.calendarId)
 
       <n-grid-item span="6" class="flex flex-col gap-4">
         <NFlex>
-          <ProjectFlowModule :calendar-id="calendarId" />
+          <ProjectFlowModule :calendar-id="project.data.value?.calendarId" />
           <ProjectStatusModule />
           <ProjectHeatmapModule />
         </NFlex>
