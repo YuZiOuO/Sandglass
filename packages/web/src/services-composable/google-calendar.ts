@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/vue-query'
 import { fetchGoogleApi } from './common-google'
+import { toValue, type MaybeRefOrGetter } from 'vue'
 
 const baseURL = 'https://www.googleapis.com/calendar/v3'
 
@@ -11,10 +12,12 @@ export function useGoogleCalendarListQuery() {
   })
 }
 
-export function useGoogleCalendarEventsQuery(calendarId: string) {
+export function useGoogleCalendarEventsQuery(calendarId: MaybeRefOrGetter<string>) {
   return useQuery({
     queryKey: ['google', 'calendar', calendarId],
     queryFn: async () =>
-      fetchGoogleApi<gapi.client.calendar.Calendar>(baseURL + `/calendars/${calendarId}/events`),
+      fetchGoogleApi<gapi.client.calendar.Events>(
+        baseURL + `/calendars/${encodeURIComponent(toValue(calendarId))}/events`,
+      ),
   })
 }

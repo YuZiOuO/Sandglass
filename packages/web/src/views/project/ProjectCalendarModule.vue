@@ -1,14 +1,42 @@
 <script setup lang="ts">
-import { NCard, NEmpty } from 'naive-ui'
+import { useGoogleCalendarEventsQuery } from '@/services-composable/google-calendar'
+import { NCalendar, NEmpty } from 'naive-ui'
 
-defineProps<{
+const props = defineProps<{
   calendarId?: string
 }>()
+
+const events = useGoogleCalendarEventsQuery(props.calendarId ?? '')
+const isSameDay = (e: gapi.client.calendar.Event, y: number, m: number, d: number) => {
+  const start = e.start
+  if (!start) return false
+
+  let ey: number, em: number, ed: number
+  if (start.date) {
+    ;[ey, em, ed] = start.date.split('-').map(Number)
+  } else if (start.dateTime) {
+    const dateObj = new Date(start.dateTime)
+    ey = dateObj.getFullYear()
+    em = dateObj.getMonth() + 1
+    ed = dateObj.getDate()
+  } else {
+    console.error('Assertion Error: isSameDay')
+    return false
+  }
+
+  return ey === y && em === m && ed === d
+}
 </script>
 
 <template>
-  <n-card size="small" title="4. 沉淀历 (Calendar)">
-    {{ calendarId }}
-    <n-empty></n-empty>
-  </n-card>
+  ID: {{ calendarId }} STATUS: {{ events.status }}
+  <n-calendar style="height: 480px" #="{ year, month, date }" v-if="events.data.value?.items">
+    <div
+      v-for="e in events.data.value.items.filter((item) => isSameDay(item, year, month, date))"
+      :key="e.id"
+    >
+      {{ e.summary }}
+    </div>
+  </n-calendar>
+  <n-empty></n-empty>
 </template>
