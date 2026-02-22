@@ -1,36 +1,67 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { NCard, NTag, NCheckbox, NCheckboxGroup } from 'naive-ui'
-import { useGoogleTasksQuery } from '@/services-composable/google-tasks'
+import {
+  NCard,
+  NCheckbox,
+  NCheckboxGroup,
+  NEmpty,
+  NPopconfirm,
+  NInput,
+  NButton,
+  NFlex,
+  NDatePicker,
+} from 'naive-ui'
+import {
+  useGoogleTasksCreateMutation,
+  useGoogleTasksQuery,
+  type googleTasksCreateDTO,
+} from '@/services-composable/google-tasks'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   tasklistId?: string
 }>()
 
-const { data: tasks } = useGoogleTasksQuery(computed(() => props.tasklistId || ''))
+const tasks = useGoogleTasksQuery(props.tasklistId ?? '')
+const resolvedTasks = computed(() => tasks.data.value)
+
+const taskCreateModel = ref<googleTasksCreateDTO>({})
+const taskCreate = useGoogleTasksCreateMutation()
 </script>
 
 <template>
-  <n-card size="small" title="1. 任务进度 (Tasks)" class="flex-1">
+  <n-card size="small" title="Tasks">
     <template #header-extra>
-      <n-tag type="success" size="small"
-        >{{ tasks?.items?.filter((t: any) => t.status === 'completed').length || 0 }} /
-        {{ tasks?.items?.length || 0 }}</n-tag
+      <n-popconfirm
+        @positive-click="
+          () => taskCreate.mutate({ tasklistId: props.tasklistId!, data: taskCreateModel })
+        "
+        :positive-button-props="{ loading: taskCreate.isPending.value }"
+        :show="taskCreate.isPending.value || undefined"
       >
+        <template #trigger>
+          <n-button :size="'tiny'"> + </n-button>
+        </template>
+        <n-flex>
+          新增一个
+          <n-input v-model:value="taskCreateModel.title" placeholder="标题"> </n-input>
+          <!-- v-model provides a number, and we need string here. -->
+          <n-date-picker
+            v-model:formatted-value="taskCreateModel.due"
+            value-format="yyyy-MM-dd'T00:00:00.000Z'"
+            placeholder="截止日期"
+          />
+          <n-input v-model:value="taskCreateModel.notes" placeholder="备注"> </n-input>
+        </n-flex>
+      </n-popconfirm>
     </template>
-    <div v-if="tasks?.items?.length">
-      {{ tasklistId }}
+
+    <div v-if="resolvedTasks?.items">
       <n-checkbox-group class="flex flex-col gap-2">
-        <div v-for="task in tasks.items" :key="task.id" class="flex items-center gap-2">
-          <n-checkbox :checked="task.status === 'completed'" :label="task.title" />
+        <div v-for="t in resolvedTasks.items" :key="t.id">
+          <n-checkbox :checked="t.status === 'completed'" :label="t.title" />
         </div>
       </n-checkbox-group>
     </div>
-    <div v-else class="text-gray-400 text-sm py-4 text-center">
-      暂无任务 (Mocked)
-      <div class="mt-2 text-xs">
-        {{ tasks }}
-      </div>
-    </div>
+    <n-empty v-else> </n-empty>
   </n-card>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGoogleCalendarEventsQuery } from '@/services-composable/google-calendar'
-import { NCalendar, NEmpty } from 'naive-ui'
+import { NCalendar, NEmpty, NTag } from 'naive-ui'
 
 const props = defineProps<{
   calendarId?: string
@@ -29,13 +29,12 @@ const isSameDay = (e: gapi.client.calendar.Event, y: number, m: number, d: numbe
 </script>
 
 <template>
-  ID: {{ calendarId }} STATUS: {{ events.status }}
   <n-calendar style="height: 480px" #="{ year, month, date }" v-if="events.data.value?.items">
     <div
       v-for="e in events.data.value.items.filter((item) => isSameDay(item, year, month, date))"
       :key="e.id"
     >
-      {{ e.summary }}
+      <NTag>{{ e.summary }} </NTag>
     </div>
   </n-calendar>
   <n-empty></n-empty>
