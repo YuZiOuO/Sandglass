@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/vue-query'
 import { defaultEnabled, fetchGoogleApi } from './common-google'
+import { toValue, type MaybeRefOrGetter } from 'vue'
 
 const baseURL = 'https://tasks.googleapis.com'
 
@@ -23,12 +24,12 @@ export function useGoogleTaskListQuery(id: string) {
   })
 }
 
-export function useGoogleTasksQuery(tasklistId: string) {
+export function useGoogleTasksQuery(tasklistId: MaybeRefOrGetter<string>) {
   return useQuery({
     queryKey: ['google', 'tasks', tasklistId],
     queryFn: async () => {
       return fetchGoogleApi<gapi.client.tasks.Tasks>(
-        baseURL + `/tasks/v1/lists/${tasklistId}/tasks`,
+        baseURL + `/tasks/v1/lists/${toValue(tasklistId)}/tasks`,
       )
     },
   })

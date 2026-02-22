@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import type { Ref } from 'vue'
+import { toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 import { cli } from './common'
 import type { InferRequestType } from 'hono'
 
@@ -13,22 +13,21 @@ export function useProjectsQuery() {
   })
 }
 
-export function useProjectQuery(projectId: Ref<string>) {
+export function useProjectQuery(projectId: MaybeRefOrGetter<string>) {
   return useQuery({
-    queryKey: ['project', projectId.value],
-    queryFn: async (context) => {
-      const id = context.queryKey[1]
-      const res = await cli.project.$get({ json: { id: id } })
+    queryKey: ['project', projectId],
+    queryFn: async () => {
+      const res = await cli.project.$get({ query: { id: toValue(projectId) } })
       return await res.json()
     },
   })
 }
 
-export function useProjectResourcesQuery(projectId: string) {
+export function useProjectResourcesQuery(projectId: MaybeRefOrGetter<string>) {
   return useQuery({
     queryKey: ['project', projectId, 'resource'],
     queryFn: async () => {
-      const resources = await cli.resource.$get({ query: { projectId: projectId } })
+      const resources = await cli.resource.$get({ query: { projectId: toValue(projectId) } })
       return await resources.json()
     },
   })
