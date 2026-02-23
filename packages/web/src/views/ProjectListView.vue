@@ -6,6 +6,8 @@
   <NCard>
     <NInput v-model:value="projectModel.calendarId" placeholder="calendarId"></NInput>
     <NInput v-model:value="projectModel.tasklistId" placeholder="tasklistId"></NInput>
+    <NInput v-model:value="projectModel.repoOwner" placeholder="repoOwner"></NInput>
+    <NInput v-model:value="projectModel.repoName" placeholder="repoName"></NInput>
     <NButton
       @click="async () => projectCreate.mutate(projectModel)"
       :loading="projectCreate.isPending.value"
@@ -27,6 +29,11 @@
     </NButton>
     {{ tasklists.data.value }}
   </NCard>
+
+  <NCard title="repos">
+    <NButton @click="() => repos.refetch" :loading="repos.isFetched.value"> refresh </NButton>
+    {{ repos.data.value }}
+  </NCard>
 </template>
 
 <script setup lang="ts">
@@ -39,12 +46,19 @@ import {
 import { ref } from 'vue'
 import { useGoogleCalendarListQuery } from '@/services-composable/google-calendar'
 import { useGoogleTaskListsQuery } from '@/services-composable/google-tasks'
+import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/github'
 
 const projectList = useProjectsQuery()
 
-const projectModel = ref<ProjectCreateDTO>({ calendarId: '', tasklistId: '' })
+const projectModel = ref<ProjectCreateDTO>({
+  calendarId: '',
+  tasklistId: '',
+  repoOwner: '',
+  repoName: '',
+})
 const projectCreate = useProjectCreateMutation()
 
 const calendars = useGoogleCalendarListQuery()
 const tasklists = useGoogleTaskListsQuery()
+const repos = useGithubReposOfAuthenticatedUserQuery()
 </script>

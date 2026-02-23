@@ -33,7 +33,10 @@ const project = useProjectQuery(projectId)
         <NCard>
           <n-tabs type="line" animated>
             <n-tab-pane name="stat" tab="统计">
-              <ProjectHeatmapModule />
+              <ProjectHeatmapModule
+                :owner="project.data.value?.repoOwner"
+                :repo="project.data.value?.repoName"
+              />
               and Others...
             </n-tab-pane>
             <n-tab-pane name="editor" tab="工作区">
