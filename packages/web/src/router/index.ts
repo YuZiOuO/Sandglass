@@ -23,7 +23,7 @@ const router = createRouter({
     {
       path: '/attandance',
       name: 'attandance',
-      component: () => import('@/views/attandance/AttendanceView.vue'),
+      component: () => import('@/views/attendance/AttendanceView.vue'),
     },
     {
       path: '/project/:id',

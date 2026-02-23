@@ -10,7 +10,7 @@ import ProjectResourcesModule from './ProjectResourcesModule.vue'
 import ProjectEditorModule from './ProjectEditorModule.vue'
 import ProjectFlowModule from './ProjectFlowModule.vue'
 import ProjectHeatmapModule from './ProjectHeatmapModule.vue'
-import AttendanceActionsModule from '../attandance/AttendanceActionsModule.vue'
+import AttendanceActionsModule from '../attendance/AttendanceActionsModule.vue'
 
 const route = useRoute()
 const projectId = computed(() => route.params.id as string)
