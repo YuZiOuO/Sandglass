@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGithubListRepoCommitsQuery } from '@/services-composable/github'
-import { NCard, NHeatmap, type HeatmapData } from 'naive-ui'
+import { NHeatmap, type HeatmapData } from 'naive-ui'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -8,9 +8,13 @@ const props = defineProps<{
   repo?: string
 }>()
 
+const lastYearToday = new Date()
+lastYearToday.setFullYear(lastYearToday.getFullYear() - 1)
+
 const commits = useGithubListRepoCommitsQuery(
   () => props.owner,
   () => props.repo,
+  lastYearToday,
 )
 
 type Commits = NonNullable<ReturnType<typeof useGithubListRepoCommitsQuery>['data']['value']>
@@ -63,17 +67,21 @@ const heatmapData = computed(() => {
 </script>
 
 <template>
-  <n-card size="small">
-    <n-heatmap
-      style="min-width: 0"
-      :data="
-        heatmapData?.map((item) => {
-          return {
-            timestamp: item.timestamp,
-            value: getLevel(item.value),
-          }
-        })
-      "
-    />
-  </n-card>
+  <n-heatmap
+    size="small"
+    :first-day-of-week="6"
+    :fill-calendar-leading="true"
+    :show-week-labels="false"
+    :show-month-labels="false"
+    :loading="commits.isLoading.value"
+    :data="
+      heatmapData?.map((item) => {
+        return {
+          timestamp: item.timestamp,
+          value: getLevel(item.value),
+        }
+      })
+    "
+    :tooltip="true"
+  />
 </template>
