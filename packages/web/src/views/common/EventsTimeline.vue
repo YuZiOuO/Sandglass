@@ -94,7 +94,7 @@ function commits2Events(c: (typeof commits)['data']['value']): Event[] {
     c?.map((item) => {
       return {
         type: EventType.GITHUB_COMMIT,
-        timestamp: new Date(item.commit.committer?.date!).getTime(),
+        timestamp: new Date(item.commit.author?.date ?? 0).getTime(),
         icon: CodeOutline,
         lineDashed: true,
         name: 'Github commit @' + item.sha,

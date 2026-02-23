@@ -8,13 +8,16 @@ const props = defineProps<{
   repo?: string
 }>()
 
-const commits = useGithubListRepoCommitsQuery(() => props.owner, () => props.repo)
+const commits = useGithubListRepoCommitsQuery(
+  () => props.owner,
+  () => props.repo,
+)
 
 type Commits = NonNullable<ReturnType<typeof useGithubListRepoCommitsQuery>['data']['value']>
 function commits2rawHeatmapData(c: Commits): HeatmapData {
   return c.map((item) => {
     return {
-      timestamp: new Date(item.commit.committer!.date!).getTime(),
+      timestamp: new Date(item.commit.author?.date ?? 0).getTime(),
       value: 1,
     }
   })
