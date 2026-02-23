@@ -21,17 +21,21 @@ const useAuthOctokit = async () => {
 export function useGithubListRepoCommitsQuery(
   owner: MaybeRefOrGetter<string | undefined>,
   repo: MaybeRefOrGetter<string | undefined>,
+  since?: MaybeRefOrGetter<Date | undefined>,
+  until?: MaybeRefOrGetter<Date | undefined>,
 ) {
   return useQuery({
-    queryKey: ['github', 'commits', owner, repo],
+    queryKey: ['github', 'commits', owner, repo, since, until],
     queryFn: async () => {
       const octokit = await useAuthOctokit()
 
       const res = await octokit.paginate(octokit.rest.repos.listCommits, {
         owner: toValue(owner)!,
         repo: toValue(repo)!,
+        since: toValue(since)?.toISOString(),
+        until: toValue(until)?.toISOString(),
       })
-
+      
       return res.flat()
     },
     enabled: () => !!toValue(owner) && !!toValue(repo)
