@@ -24,14 +24,15 @@ export function useGoogleTaskListQuery(id: string) {
   })
 }
 
-export function useGoogleTasksQuery(tasklistId: MaybeRefOrGetter<string>) {
+export function useGoogleTasksQuery(tasklistId: MaybeRefOrGetter<string | undefined>) {
   return useQuery({
     queryKey: ['google', 'tasks', tasklistId],
     queryFn: async () => {
       return queryGoogle<gapi.client.tasks.Tasks>(
-        baseURL + `/tasks/v1/lists/${encodeURIComponent(toValue(tasklistId))}/tasks`,
+        baseURL + `/tasks/v1/lists/${encodeURIComponent(toValue(tasklistId)!)}/tasks`,
       )
     },
+    enabled: () => !!toValue(tasklistId)
   })
 }
 

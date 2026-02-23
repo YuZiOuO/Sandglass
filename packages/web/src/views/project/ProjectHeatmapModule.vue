@@ -4,11 +4,11 @@ import { NCard, NHeatmap, type HeatmapData } from 'naive-ui'
 import { computed } from 'vue'
 
 const props = defineProps<{
-  owner?: string,
+  owner?: string
   repo?: string
 }>()
 
-const commits = useGithubListRepoCommitsQuery(props.owner,props.repo)
+const commits = useGithubListRepoCommitsQuery(() => props.owner, () => props.repo)
 
 type Commits = NonNullable<ReturnType<typeof useGithubListRepoCommitsQuery>['data']['value']>
 function commits2rawHeatmapData(c: Commits): HeatmapData {
@@ -50,9 +50,13 @@ function getLevel(value: number | null | undefined): number {
   return thresholds.filter((t) => value >= t).length
 }
 
-const heatmapData = computed(() =>
-  aggregateRawHeatmapData(commits2rawHeatmapData(commits.data.value!)),
-)
+const heatmapData = computed(() => {
+  if (commits.data.value) {
+    return aggregateRawHeatmapData(commits2rawHeatmapData(commits.data.value))
+  } else {
+    return undefined
+  }
+})
 </script>
 
 <template>
@@ -60,7 +64,7 @@ const heatmapData = computed(() =>
     <n-heatmap
       style="min-width: 0"
       :data="
-        heatmapData.map((item) => {
+        heatmapData?.map((item) => {
           return {
             timestamp: item.timestamp,
             value: getLevel(item.value),

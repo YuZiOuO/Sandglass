@@ -21,7 +21,7 @@ const props = defineProps<{
   tasklistId?: string
 }>()
 
-const tasks = useGoogleTasksQuery(props.tasklistId ?? '')
+const tasks = useGoogleTasksQuery(() => props.tasklistId)
 const resolvedTasks = computed(() => tasks.data.value)
 
 const taskCreateModel = ref<googleTasksCreateDTO>({})

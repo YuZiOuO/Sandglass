@@ -1,4 +1,4 @@
-import { skipToken, useQuery } from '@tanstack/vue-query'
+import { useQuery } from '@tanstack/vue-query'
 import { type MaybeRefOrGetter, toValue } from 'vue'
 import { authCli } from './common'
 import { Octokit } from 'octokit'
@@ -24,19 +24,17 @@ export function useGithubListRepoCommitsQuery(
 ) {
   return useQuery({
     queryKey: ['github', 'commits', owner, repo],
-    queryFn:
-      toValue(owner) && toValue(repo)
-        ? async () => {
-            const octokit = await useAuthOctokit()
+    queryFn: async () => {
+      const octokit = await useAuthOctokit()
 
-            const res = await octokit.paginate(octokit.rest.repos.listCommits, {
-              owner: toValue(owner)!,
-              repo: toValue(repo)!,
-            })
+      const res = await octokit.paginate(octokit.rest.repos.listCommits, {
+        owner: toValue(owner)!,
+        repo: toValue(repo)!,
+      })
 
-            return res.flat()
-          }
-        : skipToken, // used for narrowing type
+      return res.flat()
+    },
+    enabled: () => !!toValue(owner) && !!toValue(repo)
   })
 }
 

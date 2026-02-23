@@ -10,11 +10,4 @@ export const cli = hc<AppType>(import.meta.env.SG_WEB_API_BASEURL, {
 })
 export const authCli = createAuthClient()
 
-export const globalQueryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      enabled: () => !!authCli.useSession().value.data,
-    },
-    mutations: {},
-  },
-})
+export const globalQueryClient = new QueryClient()
