@@ -21,7 +21,7 @@
         </NCard>
 
         <NCard title="今日打卡记录">
-          <AttendanceTimelineModule />
+          <EventsTimeline :attendance="{preset:'today'}" />
         </NCard>
       </NFlex>
     </n-gi>
@@ -33,5 +33,5 @@ import { NCard, NGrid, NGi, NFlex } from 'naive-ui'
 import AttendanceStatisticsModule from './AttendanceStatisticsModule.vue'
 import AttendanceActionsModule from './AttendanceActionsModule.vue'
 import AttendanceStatusModule from './AttendanceStatusModule.vue'
-import AttendanceTimelineModule from './AttendanceTimelineModule.vue'
+import EventsTimeline from '../common/EventsTimeline.vue'
 </script>
