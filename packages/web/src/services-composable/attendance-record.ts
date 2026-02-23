@@ -1,18 +1,22 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { cli, globalQueryClient} from './common'
+import { cli, globalQueryClient } from './common'
 import type { InferRequestType, InferResponseType } from 'hono'
+import { toValue, type MaybeRefOrGetter } from 'vue'
 
-type AttendanceRecordQueryType = NonNullable<
+export type AttendanceRecordQueryType = NonNullable<
   InferRequestType<typeof cli.attendanceRecord.$get>['query']['preset']
 >
-export function useAttendanceRecordQuery(type: AttendanceRecordQueryType) {
+export function useAttendanceRecordQuery(
+  type: MaybeRefOrGetter<AttendanceRecordQueryType | undefined>,
+) {
   return useQuery({
     queryKey: ['attendance', type],
     queryFn: async () => {
-      const res = await cli.attendanceRecord.$get({ query: { preset: type } })
+      const res = await cli.attendanceRecord.$get({ query: { preset: toValue(type)! } })
       const data = await res.json()
       return data
     },
+    enabled: !!toValue(type),
   })
 }
 
