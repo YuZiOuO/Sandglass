@@ -1,7 +1,10 @@
 <template>
   <NCard title="Project List">
-    <NMenu v-if="projectListMenuOptions" :options="projectListMenuOptions" />
-    <NEmpty v-else />
+    <NSpin :show="projectList.isFetching.value">
+      <NMenu v-if="projectListMenuOptions" :options="projectListMenuOptions" />
+      <NEmpty v-if="projectList.isSuccess.value && !projectListMenuOptions" />
+      <ModuleLoadingErrorResult :query-hook="projectList" />
+    </NSpin>
   </NCard>
 
   <NCard>
@@ -38,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NInput, NButton, NMenu, NEmpty, type MenuOption } from 'naive-ui'
+import { NCard, NInput, NButton, NMenu, NEmpty, type MenuOption, NSpin } from 'naive-ui'
 import {
   useProjectCreateMutation,
   useProjectsQuery,
@@ -49,17 +52,19 @@ import { useGoogleCalendarListQuery } from '@/services-composable/google-calenda
 import { useGoogleTaskListsQuery } from '@/services-composable/google-tasks'
 import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/github'
 import { RouterLink } from 'vue-router'
+import ModuleLoadingErrorResult from '@/common/ModuleLoadingErrorResult.vue'
 
 const projectList = useProjectsQuery()
 
 const projectListMenuOptions = computed<MenuOption[] | undefined>(() => {
   return projectList.data.value?.map((item) => {
     return {
-      label: () => h(
-        RouterLink,
-        { to: { name: 'Project', params: { id: item.id } } },
-        { default: () => item.id },
-      ),
+      label: () =>
+        h(
+          RouterLink,
+          { to: { name: 'Project', params: { id: item.id } } },
+          { default: () => item.id },
+        ),
       key: item.id,
     }
   })
