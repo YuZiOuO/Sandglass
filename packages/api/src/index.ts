@@ -23,7 +23,13 @@ const app = factory
     return c.text("Hello Hono!");
   })
 
-  .use("*", cors())
+  .use(
+    "*",
+    cors({
+      origin: process.env.ALLOWED_ORIGIN || 'http://localhost:5173',
+      credentials: true,
+    }),
+  )
   .use(middleware.loggerMiddleware)
 
   .on(["POST", "GET"], "auth/*", (c) => {
