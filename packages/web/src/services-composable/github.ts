@@ -9,7 +9,9 @@ const useAuthOctokit = async () => {
   })
 
   if (token.error || !token.data?.accessToken) {
-    throw new Error('No GitHub access token')
+    const err = new Error('failed to retrive access token.');
+    err.name = 'Github API Error'
+    throw err
   }
 
   const octokit = new Octokit({

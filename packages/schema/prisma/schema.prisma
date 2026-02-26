@@ -23,6 +23,7 @@ generator zod {
 model Project {
   id String @id @default(uuid())
   uid String
+  name String
   calendarId String
   tasklistId String
   repoOwner String
