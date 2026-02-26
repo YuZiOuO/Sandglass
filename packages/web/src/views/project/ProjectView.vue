@@ -19,8 +19,6 @@ const project = useProjectQuery(projectId)
 
 <template>
   <div class="project-view p-4 h-full">
-    {{ project.fetchStatus }}
-    {{ project.data.value }}
     <n-grid x-gap="12" :cols="24" class="h-full">
       <n-grid-item span="4" class="flex flex-col gap-4">
         <NFlex>

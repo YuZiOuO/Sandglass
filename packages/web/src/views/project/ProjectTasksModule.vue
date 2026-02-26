@@ -12,8 +12,9 @@ import {
 } from 'naive-ui'
 import {
   useGoogleTasksCreateMutation,
+  useGoogleTasksPatchMutation,
   useGoogleTasksQuery,
-  type googleTasksCreateDTO,
+  type googleTask,
 } from '@/services-composable/google-tasks'
 import { computed, ref } from 'vue'
 
@@ -24,8 +25,10 @@ const props = defineProps<{
 const tasks = useGoogleTasksQuery(() => props.tasklistId)
 const resolvedTasks = computed(() => tasks.data.value)
 
-const taskCreateModel = ref<googleTasksCreateDTO>({})
+const taskCreateModel = ref<googleTask>({})
 const taskCreate = useGoogleTasksCreateMutation()
+
+const taskPatch = useGoogleTasksPatchMutation()
 </script>
 
 <template>
@@ -55,10 +58,22 @@ const taskCreate = useGoogleTasksCreateMutation()
       </n-popconfirm>
     </template>
 
-    <div v-if="resolvedTasks?.items">
-      <n-checkbox-group class="flex flex-col gap-2">
+    <div v-if="tasklistId && resolvedTasks?.items">
+      <n-checkbox-group>
         <div v-for="t in resolvedTasks.items" :key="t.id">
-          <n-checkbox :checked="t.status === 'completed'" :label="t.title" />
+          <n-checkbox
+            :checked="t.status === 'completed'"
+            :label="t.title"
+            @update:checked="
+              (checked: boolean) => {
+                const patchedTask: googleTask = {
+                  id: t.id,
+                  status: checked ? 'completed' : 'needsAction',
+                }
+                taskPatch.mutate({ data: patchedTask, tasklistId: tasklistId! })
+              }
+            "
+          />
         </div>
       </n-checkbox-group>
     </div>
