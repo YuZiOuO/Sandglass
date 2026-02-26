@@ -1,11 +1,13 @@
 import { authCli } from './common'
 
 export const defaultEnabled = () => !!authCli.useSession().value.data?.user.id
-export async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Partial<T>) {
+async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Partial<T>) {
   const token = await authCli.getAccessToken({ providerId: 'google' })
 
   if (token.error || !token.data.accessToken) {
-    return null
+    const err = new Error('failed to retrive access token.')
+    err.name = 'Google API Error'
+    throw err
   }
 
   const res = await fetch(endpoint, {
@@ -16,9 +18,14 @@ export async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, bo
     },
     body: JSON.stringify(body),
   })
-  const data = (await res.json()) as T
 
-  return data
+  if (res.ok) {
+    return (await res.json()) as T
+  } else {
+    const err = new Error(res.status + ' ' + res.statusText)
+    err.name = 'Google API Error'
+    throw err
+  }
 }
 
 export async function queryGoogle<T>(endpoint: string) {
