@@ -16,11 +16,7 @@
           trigger="hover"
           placement="right"
           :options="r.dropDownOptions"
-          @select="
-            (key) => {
-              key
-            }
-          "
+          @select="r.dropDownCallback"
         >
           <NText style="cursor: pointer">
             {{ r.header }}
@@ -40,6 +36,7 @@
 
 <script setup lang="ts">
 import {
+  useAttendanceRecordDeleteMutate,
   useAttendanceRecordQuery,
   type AttendanceRecordQueryType,
   type AttendanceRecordType,
@@ -81,6 +78,7 @@ type Event = {
   timelineType: TimelineItemProps['type']
   lineDashed: boolean
   dropDownOptions?: DropdownOption[]
+  dropDownCallback?: (key:string,options:DropdownOption) => void
 }
 
 const attendanceRecords = useAttendanceRecordQuery(() => props.attendance?.preset)
@@ -106,6 +104,7 @@ function commits2Events(c: (typeof commits)['data']['value']): Event[] {
   )
 }
 
+const attendanceRecordDelete = useAttendanceRecordDeleteMutate()
 function attendnaceRecord2Events(r: (typeof attendanceRecords)['data']['value']): Event[] {
   const recordType2Name: Record<AttendanceRecordType, string> = {
     IN: '签到',
@@ -122,7 +121,7 @@ function attendnaceRecord2Events(r: (typeof attendanceRecords)['data']['value'])
   const dropdownOptions: DropdownOption[] = [
     {
       label: '删除',
-      key: '删除',
+      key: 'delete',
     },
   ] as const
 
@@ -135,6 +134,9 @@ function attendnaceRecord2Events(r: (typeof attendanceRecords)['data']['value'])
         header: recordType2Name[item.type],
         timelineType: recordType2TimelineType[item.type],
         dropDownOptions: dropdownOptions,
+        dropDownCallback: () => {
+          attendanceRecordDelete.mutate(item.id)
+        }
       }
     }) ?? []
   )

@@ -48,3 +48,20 @@ export type AttendanceRecord = InferResponseType<typeof cli.attendanceRecord.$ge
 export type AttendanceRecordType = InferResponseType<
   typeof cli.attendanceRecord.$get
 >[number]['type']
+
+export function useAttendanceRecordDeleteMutate() {
+  return useMutation({
+    mutationKey: ['attendance', 'delete'],
+    mutationFn: async (id: string) => {
+      const deletedRecord = await cli.attendanceRecord.$delete({
+        json: {
+          id: id,
+        },
+      })
+      return deletedRecord
+    },
+    onSuccess: async () => {
+      await globalQueryClient.invalidateQueries({ queryKey: ['attendance'] })
+    },
+  })
+}
