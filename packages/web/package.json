@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "SG_WEB_API_BASEURL=http://localhost:5173/api vite",
+    "dev": "SG_WEB_API_BASEURL=http://localhost:3000 vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "start": "serve -s ./dist",
     "preview": "vite preview",

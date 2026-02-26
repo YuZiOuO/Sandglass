@@ -3,9 +3,11 @@ import { betterAuth } from "better-auth";
 import { db } from "./db";
 import { factory } from "./shared";
 
+export const authBasePath = '/auth'
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
   trustedOrigins: [process.env.ALLOWED_ORIGIN!],
+  basePath: authBasePath,
   account: {
     accountLinking: {
       allowDifferentEmails: true,

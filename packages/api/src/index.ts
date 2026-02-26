@@ -6,7 +6,7 @@ import { attendanceTargetRoutes } from "./attendance-target";
 import { projectRoutes, ResourcesRoutes } from "./project";
 import { attendanceRoutes } from "./attendance";
 import { cors } from "hono/cors";
-import { auth, OAuthRoutes } from "./auth";
+import { auth, authBasePath, OAuthRoutes } from "./auth";
 import {
   PrismaClientInitializationError,
   PrismaClientKnownRequestError,
@@ -26,13 +26,13 @@ const app = factory
   .use(
     "*",
     cors({
-      origin: process.env.ALLOWED_ORIGIN || 'http://localhost:5173',
+      origin: (origin) => origin, // FIXME: danger
       credentials: true,
     }),
   )
   .use(middleware.loggerMiddleware)
 
-  .on(["POST", "GET"], "auth/*", (c) => {
+  .on(["POST", "GET"], authBasePath + '/*', (c) => {
     return auth.handler(c.req.raw);
   })
 
