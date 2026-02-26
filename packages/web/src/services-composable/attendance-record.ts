@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { cli, globalQueryClient } from './common'
+import { cli, globalQueryClient, processHonoResponse } from './common'
 import type { InferRequestType, InferResponseType } from 'hono'
 import { toValue, type MaybeRefOrGetter } from 'vue'
 
@@ -13,8 +13,7 @@ export function useAttendanceRecordQuery(
     queryKey: ['attendance', type],
     queryFn: async () => {
       const res = await cli.attendanceRecord.$get({ query: { preset: toValue(type)! } })
-      const data = await res.json()
-      return data
+      return await processHonoResponse(res)
     },
     enabled: !!toValue(type),
   })
@@ -25,8 +24,7 @@ export function useAttendanceLatestStatus() {
     queryKey: ['attendance', 'status'],
     queryFn: async () => {
       const res = await cli.attendance.status.$get()
-      const data = await res.json()
-      return data
+      return await processHonoResponse(res)
     },
   })
 }
@@ -36,7 +34,8 @@ export function useAttendanceRecordCreateMutate() {
   return useMutation({
     mutationKey: ['attendance'],
     mutationFn: async (dto: AttendanceRecordCreateDTO) => {
-      await cli.attendanceRecord.$post(dto)
+      const res = await cli.attendanceRecord.$post(dto)
+      return await processHonoResponse(res)
     },
     onSuccess: async () => {
       await globalQueryClient.invalidateQueries({ queryKey: ['attendance'] })
@@ -58,7 +57,7 @@ export function useAttendanceRecordDeleteMutate() {
           id: id,
         },
       })
-      return deletedRecord
+      return await processHonoResponse(deletedRecord)
     },
     onSuccess: async () => {
       await globalQueryClient.invalidateQueries({ queryKey: ['attendance'] })
