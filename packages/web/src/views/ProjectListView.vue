@@ -1,6 +1,7 @@
 <template>
   <NCard title="Project List">
-    {{ projectList.data.value }}
+    <NMenu v-if="projectListMenuOptions" :options="projectListMenuOptions" />
+    <NEmpty v-else />
   </NCard>
 
   <NCard>
@@ -37,18 +38,32 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NInput, NButton } from 'naive-ui'
+import { NCard, NInput, NButton, NMenu, NEmpty, type MenuOption } from 'naive-ui'
 import {
   useProjectCreateMutation,
   useProjectsQuery,
   type ProjectCreateDTO,
 } from '@/services-composable/project'
-import { ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import { useGoogleCalendarListQuery } from '@/services-composable/google-calendar'
 import { useGoogleTaskListsQuery } from '@/services-composable/google-tasks'
 import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/github'
+import { RouterLink } from 'vue-router'
 
 const projectList = useProjectsQuery()
+
+const projectListMenuOptions = computed<MenuOption[] | undefined>(() => {
+  return projectList.data.value?.map((item) => {
+    return {
+      label: () => h(
+        RouterLink,
+        { to: { name: 'Project', params: { id: item.id } } },
+        { default: () => item.id },
+      ),
+      key: item.id,
+    }
+  })
+})
 
 const projectModel = ref<ProjectCreateDTO>({
   calendarId: '',
