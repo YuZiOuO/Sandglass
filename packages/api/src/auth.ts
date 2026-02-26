@@ -5,7 +5,7 @@ import { factory } from "./shared";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
-  trustedOrigins: ["http://localhost:5173"],
+  trustedOrigins: [process.env.ALLOWED_ORIGIN!],
   account: {
     accountLinking: {
       allowDifferentEmails: true,
@@ -60,10 +60,10 @@ export const OAuthRoutes = factory
         },
       });
 
-      return c.json(refreshed.accessToken!)
+      return c.json(refreshed.accessToken!);
     }
 
-    return c.json(account.accessToken!)
+    return c.json(account.accessToken!);
   })
   .get("/github/token", async (c) => {
     const uid = c.var.user.id;
@@ -73,6 +73,6 @@ export const OAuthRoutes = factory
         providerId: "github",
       },
     });
-    
+
     return c.json(account?.accessToken ?? null);
   });

@@ -23,7 +23,9 @@ export async function processHonoResponse<T, U extends number, F extends string>
   }
 }
 
-export const authCli = createAuthClient()
+export const authCli = createAuthClient({
+  baseURL: import.meta.env.SG_WEB_API_BASEURL,
+})
 
 const UIApi = createDiscreteApi(['notification'])
 const notifyError = (err: Error) => {
