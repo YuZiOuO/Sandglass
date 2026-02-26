@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "SG_WEB_API_BASEURL=http://localhost:5173/api vite",
     "build": "run-p type-check \"build-only {@}\" --",
-    "start": "serve ./dist",
+    "start": "serve -s ./dist",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
