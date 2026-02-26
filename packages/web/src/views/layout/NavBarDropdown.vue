@@ -1,5 +1,5 @@
 <template>
-  <n-dropdown :disabled="!!session.data" :options="dropdownOptions" @select="handleDropdownSelect">
+  <n-dropdown :disabled="!session.data" :options="dropdownOptions" @select="handleDropdownSelect">
     <n-button v-if="!!session.data" tertiary type="primary"> 我的 </n-button>
     <RouterLink v-else to="/login">
       <n-button tertiary type="primary"> 登录 </n-button>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { renderIcon } from '@/util'
 import { NButton, NDropdown, useMessage, type MessageReactive } from 'naive-ui'
 import {
@@ -19,6 +19,7 @@ import {
 import { authCli } from '@/services-composable/common'
 
 const session = authCli.useSession()
+const router = useRouter()
 
 const message = useMessage()
 let logoutMessage: MessageReactive | null = null
@@ -28,15 +29,13 @@ async function handleDropdownSelect(key: string) {
     logoutMessage = message.create('正在注销...', { type: 'loading' })
     try {
       await authCli.signOut()
-      logoutMessage.content = '注销成功'
+      logoutMessage.content = '注销成功，跳转到首页...'
       logoutMessage.type = 'success'
-      logoutMessage.duration = 2
+      router.push('/')
     } catch (e) {
       console.log(e)
       logoutMessage.content = '注销失败,请参阅控制台'
       logoutMessage.type = 'error'
-      logoutMessage.duration = 2
-      logoutMessage.keepAliveOnHover = true
     }
   }
 }
