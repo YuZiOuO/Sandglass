@@ -8,6 +8,7 @@
   </NCard>
 
   <NCard>
+    <NInput v-model:value="projectModel.name" placeholder="name"></NInput>
     <NInput v-model:value="projectModel.calendarId" placeholder="calendarId"></NInput>
     <NInput v-model:value="projectModel.tasklistId" placeholder="tasklistId"></NInput>
     <NInput v-model:value="projectModel.repoOwner" placeholder="repoOwner"></NInput>
@@ -75,6 +76,7 @@ const projectModel = ref<ProjectCreateDTO>({
   tasklistId: '',
   repoOwner: '',
   repoName: '',
+  name: '',
 })
 const projectCreate = useProjectCreateMutation()
 
