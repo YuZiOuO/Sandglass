@@ -23,7 +23,7 @@ const menuOptions: MenuOption[] = [
     key: '项目',
   },
   {
-    label: () => h(RouterLink, { to: { path: '/attandance' } }, { default: () => '考勤' }),
+    label: () => h(RouterLink, { to: { path: '/attendance' } }, { default: () => '考勤' }),
     key: '考勤',
   },
 ]

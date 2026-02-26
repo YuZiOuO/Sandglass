@@ -25,6 +25,8 @@ model Project {
   uid String
   calendarId String
   tasklistId String
+  repoOwner String
+  repoName String
   resources Resources[] 
 }
 

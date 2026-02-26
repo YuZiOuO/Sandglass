@@ -14,18 +14,18 @@ export const projectRoutes = factory
     const res = await db.project.findMany({ where: { uid: uid } });
     return c.json(res);
   })
-  .get("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
+  .get("/", zValidator("query", z.object({ id: z.uuid() })), async (c) => {
     const uid = c.var.user.id;
-    const data = c.req.valid("json");
+    const data = c.req.valid("query");
 
     const res = await db.project.findUnique({
       where: { id: data.id, uid: uid },
     });
     return c.json(res);
   })
-  .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
+  .delete("/", zValidator("query", z.object({ id: z.uuid() })), async (c) => {
     const uid = c.var.user.id;
-    const data = c.req.valid("json");
+    const data = c.req.valid("query");
 
     const res = await db.project.delete({ where: { id: data.id, uid: uid } });
     return c.json(res);

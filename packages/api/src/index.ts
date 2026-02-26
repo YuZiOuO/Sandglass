@@ -3,7 +3,7 @@ import { factory } from "./shared";
 
 import * as middleware from "./middleware";
 import { attendanceTargetRoutes } from "./attendance-target";
-import { projectRoutes } from "./project";
+import { projectRoutes, ResourcesRoutes } from "./project";
 import { attendanceRoutes } from "./attendance";
 import { cors } from "hono/cors";
 import { auth, OAuthRoutes } from "./auth";
@@ -39,6 +39,7 @@ const app = factory
   .route("/attendance", attendanceRoutes)
   .route("/project", projectRoutes)
   .route("oauth", OAuthRoutes)
+  .route("/resource", ResourcesRoutes)
 
   .onError((err, c) => {
     if (
