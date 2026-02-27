@@ -6,7 +6,7 @@ import { attendanceTargetRoutes } from "./attendance-target";
 import { projectRoutes, ResourcesRoutes } from "./project";
 import { attendanceRoutes } from "./attendance";
 import { cors } from "hono/cors";
-import { auth, authBasePath, OAuthRoutes } from "./auth";
+import { auth, authBasePath } from "./auth";
 import {
   PrismaClientInitializationError,
   PrismaClientKnownRequestError,
@@ -45,7 +45,6 @@ const app = factory
   .route("/attendanceTarget", attendanceTargetRoutes)
   .route("/attendance", attendanceRoutes)
   .route("/project", projectRoutes)
-  .route("oauth", OAuthRoutes)
   .route("/resource", ResourcesRoutes)
 
   .onError((err, c) => {
