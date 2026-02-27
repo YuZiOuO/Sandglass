@@ -13,9 +13,6 @@
 <script setup lang="ts">
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import {
-  // createTheme,
-  // datePickerDark,
-  // inputDark,
   NConfigProvider,
   zhCN,
   dateZhCN,
@@ -23,9 +20,6 @@ import {
   NMessageProvider,
 } from 'naive-ui'
 import LoadingBarController from './common/LoadingBarController.vue';
-
-// import { ref } from 'vue'
 import RootLayout from './views/layout/RootLayout.vue';
-
-// const darkTheme = ref(createTheme([inputDark, datePickerDark]))
+import { process } from 'better-auth';
 </script>
