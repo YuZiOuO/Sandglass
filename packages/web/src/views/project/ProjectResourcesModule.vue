@@ -10,14 +10,20 @@ import {
   NPopconfirm,
   NPopselect,
   NFlex,
+  NSpace,
+  NTag,
+  NIcon,
   type SelectOption,
 } from 'naive-ui'
 import {
+  useProjectQuery,
   useProjectResourcesQuery,
   useResourcesCreateMutation,
   useResourcesDeleteMutation,
   type ResourcesCreateDTO,
 } from '@/services-composable/project'
+import { LogoGithub } from '@vicons/ionicons5'
+import { IconGoogleCalendar } from '@/assets'
 
 const props = defineProps<{
   projectId: string
@@ -33,6 +39,8 @@ const resourceCreate = useResourcesCreateMutation()
 const resourceDelete = useResourcesDeleteMutation()
 
 const selectOption: SelectOption[] = [{ label: '删除', value: 'delete' }]
+
+const project = useProjectQuery(() => props.projectId)
 </script>
 
 <template>
@@ -62,6 +70,37 @@ const selectOption: SelectOption[] = [{ label: '删除', value: 'delete' }]
         </n-flex>
       </n-popconfirm>
     </template>
+
+    <!-- repo and calendar entry  -->
+    <n-space :wrap="false">
+      <n-button
+        text
+        tag="a"
+        :href="
+          'https://github.com/' + project.data.value?.repoOwner + '/' + project.data.value?.repoName
+        "
+        target="_blank"
+      >
+        <n-tag style="cursor: pointer">
+          Github
+          <template #avatar>
+            <n-icon>
+              <logo-github />
+            </n-icon>
+          </template>
+        </n-tag>
+      </n-button>
+      <n-button text tag="a" :href="'TODO'" target="_blank">
+        <n-tag style="cursor: pointer">
+          Calendar
+          <template #avatar>
+            <n-icon size="24">
+              <icon-google-calendar />
+            </n-icon>
+          </template>
+        </n-tag>
+      </n-button>
+    </n-space>
 
     <!-- display -->
     <n-list hoverable map clickable v-if="resources.data.value">
