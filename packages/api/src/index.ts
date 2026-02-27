@@ -14,6 +14,7 @@ import {
   PrismaClientUnknownRequestError,
   PrismaClientValidationError,
 } from "@sandglass/schema/generated/prisma/internal/prismaNamespace";
+import { env } from "./env";
 
 const app = factory
   .createApp()
@@ -26,13 +27,13 @@ const app = factory
   .use(
     "*",
     cors({
-      origin: (origin) => origin, // FIXME: danger
+      origin: env.ALLOWED_ORIGINS,
       credentials: true,
     }),
   )
   .use(middleware.loggerMiddleware)
 
-  .on(["POST", "GET"], authBasePath + '/*', (c) => {
+  .on(["POST", "GET"], authBasePath + "/*", (c) => {
     return auth.handler(c.req.raw);
   })
 

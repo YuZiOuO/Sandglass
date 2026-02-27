@@ -1,14 +1,8 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@sandglass/schema/generated/prisma/client";
-// import { env } from "bun";
+import { env } from "./env";
 
-const connectionString = process.env.DATABASE_URL;
-
-if(!connectionString){
-    console.error("No DB URL found. Exiting...")
-    process.exit(-1);
-}
-
+const connectionString = env.DATABASE_URL;
 const adapter = new PrismaPg({connectionString});
 export const db = new PrismaClient({ adapter: adapter });
 

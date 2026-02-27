@@ -2,11 +2,13 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
 import { db } from "./db";
 import { factory } from "./shared";
+import { env } from "./env";
 
-export const authBasePath = '/auth'
+export const authBasePath = "/auth";
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
-  trustedOrigins: [process.env.ALLOWED_ORIGIN!],
+  trustedOrigins: env.ALLOWED_ORIGINS,
+  baseURL: env.BETTER_AUTH_BASE_URL,
   basePath: authBasePath,
   account: {
     accountLinking: {
@@ -19,8 +21,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      clientId: process.env.GApis_OAuth2CliId,
-      clientSecret: process.env.GApis_OAuth2CliSecret,
+      clientId: env.GApis_OAuth2CliId,
+      clientSecret: env.GApis_OAuth2CliSecret,
       scope: [
         "https://www.googleapis.com/auth/calendar",
         "https://www.googleapis.com/auth/tasks",
@@ -29,8 +31,8 @@ export const auth = betterAuth({
       prompt: "consent",
     },
     github: {
-      clientId: process.env.GH_clientId,
-      clientSecret: process.env.GH_clientSecret,
+      clientId: env.GH_clientId,
+      clientSecret: env.GH_clientSecret,
       scope: ["user", "repo:status"],
     },
   },
