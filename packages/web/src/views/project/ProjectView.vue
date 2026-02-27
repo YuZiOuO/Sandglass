@@ -52,7 +52,10 @@ const project = useProjectQuery(projectId)
           <NCard>
             <AttendanceActionsModule :project-id="projectId" />
           </NCard>
-          <ProjectFlowModule :calendar-id="project.data.value?.calendarId" />
+          <ProjectFlowModule
+            :calendar-id="project.data.value?.calendarId"
+            :project-id="projectId"
+          />
         </NFlex>
       </n-grid-item>
     </n-grid>

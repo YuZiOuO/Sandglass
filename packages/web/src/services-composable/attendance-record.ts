@@ -11,14 +11,14 @@ export function useAttendanceRecordQuery(
   projectId?: MaybeRefOrGetter<string | undefined>,
 ) {
   return useQuery({
-    queryKey: ['attendance', type],
+    queryKey: ['attendance', type, projectId],
     queryFn: async () => {
       const res = await cli.attendanceRecord.$get({
         query: { preset: toValue(type)!, projectId: toValue(projectId)! },
       })
       return await processHonoResponse(res)
     },
-    enabled: !!toValue(type) && !!toValue(projectId),
+    enabled: !!toValue(type),
   })
 }
 
