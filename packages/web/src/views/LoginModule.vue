@@ -4,30 +4,43 @@
       <n-flex vertical>
         <n-flex justify="center">
           <n-h1> 登录 </n-h1>
-          <n-auto-complete
-            @input="
-              (input: string) => {
-                email = input
-              }
-            "
-            placeholder="邮箱"
-            clearable
-          />
+          <n-auto-complete v-model:value="form.email" placeholder="邮箱" clearable />
           <n-input
-            @input="
-              (input: string) => {
-                password = input
-              }
-            "
+            v-model:value="form.password"
             type="password"
             show-password-on="mousedown"
             placeholder="密码"
             clearable
           />
-          <n-button @click="trigger_login" :loading="loginLoading" :disabled="signupLoading"
+          <n-button
+            @click="
+              async () => {
+                const res = await signIn.mutateAsync({ ...form })
+                if (!res.error) {
+                  message.success('登录成功，正在跳转...')
+                  router.push('/')
+                } else {
+                  message.error('登录失败: ' + res.error.message)
+                }
+              }
+            "
+            :loading="signIn.isPending.value"
+            :disabled="signIn.isPending.value"
             >登录</n-button
           >
-          <n-button @click="trigger_signup" :loading="signupLoading" :disabled="loginLoading"
+          <n-button
+            @click="
+              async () => {
+                const res = await signUp.mutateAsync({ ...form, name: 'test' })
+                if (!res.error) {
+                  message.success('注册成功，请继续登录')
+                } else {
+                  message.error('注册失败: ' + res.error.message)
+                }
+              }
+            "
+            :loading="signUp.isPending.value"
+            :disabled="signUp.isPending.value"
             >注册</n-button
           >
         </n-flex>
@@ -42,45 +55,21 @@
 </template>
 
 <script setup lang="ts">
-import { authCli } from '@/services-composable/common'
+import { useSignInMutate, useSignUpMutate } from '@/services-composable/user'
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-const emit = defineEmits(['login-success'])
+const form = ref<{ email: string; password: string }>({
+  email: '',
+  password: '',
+})
 
+const router = useRouter()
 const message = useMessage()
 
-const email = ref('')
-const password = ref('')
-const loginLoading = ref(false)
-const signupLoading = ref(false)
-
-async function trigger_login() {
-  loginLoading.value = true
-  try {
-    await authCli.signIn.email({
-      email: email.value,
-      password: password.value,
-    })
-    emit('login-success')
-  } catch (e) {
-    message.error((e as Error).message)
-  }
-  loginLoading.value = false
-}
-async function trigger_signup() {
-  signupLoading.value = true
-  try {
-    authCli.signUp.email({
-      email: email.value,
-      password: password.value,
-      name: 'test',
-    })
-  } catch (e) {
-    message.error((e as Error).message)
-  }
-  signupLoading.value = false
-}
+const signIn = useSignInMutate()
+const signUp = useSignUpMutate()
 </script>
 
 <style scoped>
