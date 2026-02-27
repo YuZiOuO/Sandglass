@@ -34,7 +34,12 @@ export const projectRoutes = factory
     "/",
     zValidator(
       "json",
-      ProjectCreateInputObjectZodSchema.omit({ id: true, uid: true }),
+      ProjectCreateInputObjectZodSchema.omit({
+        id: true,
+        uid: true,
+        resources: true,
+        attendanceRecords: true,
+      }),
     ),
     async (c) => {
       const uid = c.var.user.id;

@@ -23,16 +23,26 @@ export const attendanceRecordRoutes = factory
     "/",
     zValidator(
       "json",
-      schema.AttendanceRecordCreateInputObjectZodSchema.omit({
+      schema.AttendanceRecordUncheckedCreateInputObjectZodSchema.omit({
         id: true,
         uid: true,
       }),
     ),
     async (c) => {
+      
       const uid = c.var.user.id;
       const data = c.req.valid("json");
       const res = await db.attendanceRecord.create({
-        data: { ...data, uid: uid },
+        data: {
+          ...data,
+          uid: uid,
+
+          // validate project Id
+          projectId: undefined,
+          project: data.projectId
+            ? { connect: { id: data.projectId } }
+            : undefined,
+        },
       });
       return c.json(res);
     },
@@ -56,6 +66,7 @@ export const attendanceRecordRoutes = factory
           .object({
             from: z.coerce.date(),
             to: z.coerce.date(),
+            projectId: z.uuid().optional(),
             preset: z.undefined().optional(),
           })
           .refine((data) => {
@@ -64,7 +75,8 @@ export const attendanceRecordRoutes = factory
         z.object({
           from: z.undefined().optional(),
           to: z.undefined().optional(),
-          preset: z.enum(["today", "withIn7days","withIn30days","latest"]),
+          projectId: z.uuid().optional(),
+          preset: z.enum(["today", "withIn7days", "withIn30days", "latest"]),
         }),
       ]),
     ),
@@ -72,22 +84,23 @@ export const attendanceRecordRoutes = factory
       const uid = c.var.user.id;
       const data = c.req.valid("query");
 
-      if(data.preset === "latest"){
+      if (data.preset === "latest") {
         const res = await db.attendanceRecord.findFirst({
-          where:{
-            uid:uid,
+          where: {
+            uid: uid,
+            projectId: data.projectId,
           },
-          orderBy:{
-            time: 'desc',
-          }
-        })
-        return c.json(res ? [res] : [])
+          orderBy: {
+            time: "desc",
+          },
+        });
+        return c.json(res ? [res] : []);
       }
 
       let from: Date;
       let to: Date;
 
-      const MS_PER_DAY = 24 * 60 * 60 * 1000
+      const MS_PER_DAY = 24 * 60 * 60 * 1000;
       switch (data.preset) {
         case undefined:
           from = data.from;

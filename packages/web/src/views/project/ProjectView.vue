@@ -50,9 +50,12 @@ const project = useProjectQuery(projectId)
       <n-grid-item span="8" class="flex flex-col gap-4">
         <NFlex>
           <NCard>
-            <AttendanceActionsModule />
+            <AttendanceActionsModule :project-id="projectId" />
           </NCard>
-          <ProjectFlowModule :calendar-id="project.data.value?.calendarId" />
+          <ProjectFlowModule
+            :calendar-id="project.data.value?.calendarId"
+            :project-id="projectId"
+          />
         </NFlex>
       </n-grid-item>
     </n-grid>

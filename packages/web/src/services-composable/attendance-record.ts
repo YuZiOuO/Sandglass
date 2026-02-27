@@ -8,11 +8,14 @@ export type AttendanceRecordQueryType = NonNullable<
 >
 export function useAttendanceRecordQuery(
   type: MaybeRefOrGetter<AttendanceRecordQueryType | undefined>,
+  projectId?: MaybeRefOrGetter<string | undefined>,
 ) {
   return useQuery({
-    queryKey: ['attendance', type],
+    queryKey: ['attendance', type, projectId],
     queryFn: async () => {
-      const res = await cli.attendanceRecord.$get({ query: { preset: toValue(type)! } })
+      const res = await cli.attendanceRecord.$get({
+        query: { preset: toValue(type)!, projectId: toValue(projectId)! },
+      })
       return await processHonoResponse(res)
     },
     enabled: !!toValue(type),
@@ -29,12 +32,12 @@ export function useAttendanceLatestStatus() {
   })
 }
 
-export type AttendanceRecordCreateDTO = InferRequestType<typeof cli.attendanceRecord.$post>
+export type AttendanceRecordCreateDTO = InferRequestType<typeof cli.attendanceRecord.$post>['json']
 export function useAttendanceRecordCreateMutate() {
   return useMutation({
     mutationKey: ['attendance'],
     mutationFn: async (dto: AttendanceRecordCreateDTO) => {
-      const res = await cli.attendanceRecord.$post(dto)
+      const res = await cli.attendanceRecord.$post({ json: dto })
       return await processHonoResponse(res)
     },
     onSuccess: async () => {

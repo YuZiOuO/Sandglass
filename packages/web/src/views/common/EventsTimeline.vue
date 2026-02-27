@@ -60,7 +60,7 @@ import { CodeOutline } from '@vicons/ionicons5'
  * if undefined, events of that type will not be displayed
  */
 const props = defineProps<{
-  attendance?: { preset: AttendanceRecordQueryType }
+  attendance?: { preset: AttendanceRecordQueryType; projectId?: string }
   github?: { owner: string; repo: string; since?: Date; until?: Date }
   googleTask?: { TasklistId: string }
   googleCalendar?: { calendarId: string }
@@ -78,10 +78,13 @@ type Event = {
   timelineType: TimelineItemProps['type']
   lineDashed: boolean
   dropDownOptions?: DropdownOption[]
-  dropDownCallback?: (key:string,options:DropdownOption) => void
+  dropDownCallback?: (key: string, options: DropdownOption) => void
 }
 
-const attendanceRecords = useAttendanceRecordQuery(() => props.attendance?.preset)
+const attendanceRecords = useAttendanceRecordQuery(
+  () => props.attendance?.preset,
+  () => props.attendance?.projectId,
+)
 const commits = useGithubListRepoCommitsQuery(
   () => props.github?.owner,
   () => props.github?.repo,
@@ -126,19 +129,28 @@ function attendnaceRecord2Events(r: (typeof attendanceRecords)['data']['value'])
   ] as const
 
   return (
-    r?.map((item) => {
-      return {
-        timestamp: new Date(item.time).getTime(),
-        icon: attendanceModuleIconMap[item.type],
-        lineDashed: !(item.type === 'IN'),
-        header: recordType2Name[item.type],
-        timelineType: recordType2TimelineType[item.type],
-        dropDownOptions: dropdownOptions,
-        dropDownCallback: () => {
-          attendanceRecordDelete.mutate(item.id)
+    r
+      ?.filter((item) => {
+        const projectId = props.attendance?.projectId
+        if (!projectId) {
+          return true
+        } else {
+          return item.projectId === projectId
         }
-      }
-    }) ?? []
+      }) // filter those not in specified project
+      .map((item) => {
+        return {
+          timestamp: new Date(item.time).getTime(),
+          icon: attendanceModuleIconMap[item.type],
+          lineDashed: !(item.type === 'IN'),
+          header: recordType2Name[item.type] + ' @ ' + item.projectId,
+          timelineType: recordType2TimelineType[item.type],
+          dropDownOptions: dropdownOptions,
+          dropDownCallback: () => {
+            attendanceRecordDelete.mutate(item.id)
+          },
+        }
+      }) ?? []
   )
 }
 
