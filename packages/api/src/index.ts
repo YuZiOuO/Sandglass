@@ -1,5 +1,5 @@
 import { attendanceRecordRoutes } from "./attendance-record";
-import { factory } from "./shared";
+import { factory } from "./factory";
 
 import * as middleware from "./middleware";
 import { attendanceTargetRoutes } from "./attendance-target";

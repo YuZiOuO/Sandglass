@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { factory } from "./shared";
+import { factory } from "./factory";
 
 export const attendanceRoutes = factory
   .createApp()

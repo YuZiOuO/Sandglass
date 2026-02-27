@@ -1,5 +1,5 @@
 import { logger } from "hono/logger";
-import { factory } from "./shared";
+import { factory } from "./factory";
 import { auth } from "./auth";
 
 export const loggerMiddleware = factory.createMiddleware(logger());

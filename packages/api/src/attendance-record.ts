@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { db, schema } from "./db";
-import { factory } from "./shared";
+import { factory } from "./factory";
 import { z } from "zod";
 
 /**

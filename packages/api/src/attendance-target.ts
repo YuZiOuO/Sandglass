@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { factory } from "./shared";
+import { factory } from "./factory";
 import {
   AttendanceLeaveRecordCreateInputObjectZodSchema,
   AttendanceTargetCreateInputObjectZodSchema,
