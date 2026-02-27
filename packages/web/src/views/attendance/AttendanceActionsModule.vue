@@ -12,71 +12,45 @@
       <NButton
         size="large"
         type="primary"
-        :ghost="['IN', undefined].includes(attendanceStatus.data.value)"
-        :disabled="['IN', undefined].includes(attendanceStatus.data.value)"
-        :loading="attendanceRecordIsCreating === 'IN'"
-        @click="
-          async () => {
-            attendanceRecordCreateRef.json.time = new Date()
-            attendanceRecordCreateRef.json.type = 'IN'
-            attendanceRecordCreate.mutate(attendanceRecordCreateRef)
-          }
-        "
+        :ghost="cannotCheckIn"
+        :disabled="cannotCheckIn"
+        :loading="whichTypeIsBeingCreated === 'IN'"
+        @click="handleRecordCreate('IN')"
       >
         <template #icon>
-          <component
-            :is="
-              attendanceStatus.data.value === 'PAUSE'
-                ? attendanceModuleIconMap.RESUME
-                : attendanceModuleIconMap.IN
-            "
-          />
+          <component :is="displayResume ? iconMap.RESUME : iconMap.IN" />
         </template>
-        {{ attendanceStatus.data.value === 'PAUSE' ? '恢复' : '打上班卡' }}
+        {{ displayResume ? '恢复' : '打上班卡' }}
       </NButton>
       <NButton
         size="large"
         type="warning"
-        :ghost="attendanceStatus.data.value !== 'IN'"
-        :disabled="attendanceStatus.data.value !== 'IN'"
-        :loading="attendanceRecordIsCreating === 'PAUSE'"
-        @click="
-          async () => {
-            attendanceRecordCreateRef.json.time = new Date()
-            attendanceRecordCreateRef.json.type = 'PAUSE'
-            attendanceRecordCreate.mutate(attendanceRecordCreateRef)
-          }
-        "
+        :ghost="cannotPause"
+        :disabled="cannotPause"
+        :loading="whichTypeIsBeingCreated === 'PAUSE'"
+        @click="handleRecordCreate('PAUSE')"
       >
         <template #icon>
-          <component :is="attendanceModuleIconMap.PAUSE"></component>
+          <component :is="iconMap.PAUSE"></component>
         </template>
         暂停
       </NButton>
-      <NPopconfirm
-        @positive-click="
-          async () => {
-            attendanceRecordCreateRef.json.time = new Date()
-            attendanceRecordCreateRef.json.type = 'OUT'
-            attendanceRecordCreate.mutate(attendanceRecordCreateRef)
-          }
-        "
-      >
+      <NPopconfirm @positive-click="handleRecordCreate('OUT')">
         <template #trigger>
           <NButton
             size="large"
             type="error"
-            :ghost="['OUT', undefined].includes(attendanceStatus.data.value)"
-            :disabled="['OUT', undefined].includes(attendanceStatus.data.value)"
-            :loading="attendanceRecordIsCreating === 'OUT'"
+            :ghost="cannotCheckOut"
+            :disabled="cannotCheckOut"
+            :loading="whichTypeIsBeingCreated === 'OUT'"
           >
             <template #icon>
-              <component :is="attendanceModuleIconMap.OUT"></component>
+              <component :is="iconMap.OUT"></component>
             </template>
             打下班卡
           </NButton>
         </template>
-        您将签出。当前时间:{{ useNow() }}
+        您将签出。当前时间:{{ now.toLocaleTimeString() }}
       </NPopconfirm>
     </NSpace>
 
@@ -89,7 +63,7 @@
           <template #trigger>
             <NButton secondary circle>
               <template #icon>
-                <component :is="attendanceModuleIconMap.FIX"></component>
+                <component :is="iconMap.FIX"></component>
               </template>
             </NButton>
           </template>
@@ -101,7 +75,7 @@
           <template #trigger>
             <NButton secondary circle>
               <template #icon>
-                <component :is="attendanceModuleIconMap.LEAVE"></component>
+                <component :is="iconMap.LEAVE"></component>
               </template>
             </NButton>
           </template>
@@ -110,20 +84,20 @@
 
         <!-- 修改目标按钮 -->
         <NPopconfirm
-          :show="attendanceTargetUpdate.isPending.value || undefined"
+          :show="targetUpdateHook.isPending.value || undefined"
           @positive-click="
             async () => {
-              attendanceTargetUpdate.mutate(attendanceTargetUpdateRef)
+              targetUpdateHook.mutate(targetUpdateForm)
             }
           "
-          :positive-button-props="{ loading: attendanceTargetUpdate.isPending.value }"
+          :positive-button-props="{ loading: targetUpdateHook.isPending.value }"
         >
           <template #trigger>
             <NPopover :delay="200">
               <template #trigger>
                 <NButton secondary circle>
                   <template #icon>
-                    <component :is="attendanceModuleIconMap.TARGET"></component>
+                    <component :is="iconMap.TARGET"></component>
                   </template>
                 </NButton>
               </template>
@@ -131,10 +105,7 @@
             </NPopover>
           </template>
           修改目标
-          <NInputNumber
-            placeholder="新目标值"
-            v-model:value="attendanceTargetUpdateRef.json.timeMs"
-          />
+          <NInputNumber placeholder="新目标值" v-model:value="targetUpdateForm.json.timeMs" />
         </NPopconfirm>
       </NSpace>
     </NFlex>
@@ -145,7 +116,7 @@
 import {
   useAttendanceRecordCreateMutate,
   useAttendanceLatestStatus,
-  type AttendanceRecordCreateDTO,
+  type AttendanceRecordType,
 } from '@/services-composable/attendance-record'
 import {
   useAttendanceTargetUpdateMutate,
@@ -164,26 +135,33 @@ import {
   NInputNumber,
 } from 'naive-ui'
 import { useNow } from '@vueuse/core'
-import { attendanceModuleIconMap } from './icon'
+import { attendanceModuleIconMap as iconMap } from './icon'
+
+const props = defineProps<{ projectId?: string }>()
 
 const now = useNow()
 
 const attendanceStatus = useAttendanceLatestStatus()
 
-const attendanceRecordCreate = useAttendanceRecordCreateMutate()
-const attendanceRecordCreateRef = ref<AttendanceRecordCreateDTO>({
-  json: {
+const recordCreateHook = useAttendanceRecordCreateMutate()
+function handleRecordCreate(type: AttendanceRecordType) {
+  recordCreateHook.mutate({
     time: new Date(),
-    type: 'IN',
-  },
-})
-const attendanceRecordIsCreating = computed(() => {
-  const recordMutateHook = attendanceRecordCreate
-  return recordMutateHook.isPending.value ? recordMutateHook.variables.value?.json.type : undefined
-})
+    type: type,
+    projectId: props.projectId,
+  })
+}
 
-const attendanceTargetUpdate = useAttendanceTargetUpdateMutate()
-const attendanceTargetUpdateRef = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })
+const targetUpdateHook = useAttendanceTargetUpdateMutate()
+const targetUpdateForm = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })
+
+// UI display Login
+const whichTypeIsBeingCreated = computed(() => {
+  const recordMutateHook = recordCreateHook
+  return recordMutateHook.isPending.value ? recordMutateHook.variables.value?.type : undefined
+})
+const cannotCheckIn = computed(() => ['IN', undefined].includes(attendanceStatus.data.value))
+const cannotPause = computed(() => attendanceStatus.data.value !== 'IN')
+const cannotCheckOut = computed(() => ['OUT', undefined].includes(attendanceStatus.data.value))
+const displayResume = computed(() => attendanceStatus.data.value === 'PAUSE')
 </script>
-
-<style scoped></style>
