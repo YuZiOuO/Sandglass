@@ -1,7 +1,6 @@
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
 import { db } from "./db";
-import { factory } from "./shared";
 import { env } from "./env";
 
 export const authBasePath = "/auth";

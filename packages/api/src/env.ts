@@ -8,7 +8,6 @@ export const env = createEnv({
     DATABASE_URL: z.string(),
     ALLOWED_ORIGINS: z
       .string()
-      .default("http://localhost:5173")
       .transform((s) => s.split(",").map((url) => url.trim())),
 
     GApis_OAuth2CliId: z.string(),
