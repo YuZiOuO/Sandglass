@@ -1,6 +1,6 @@
 <template>
   <NPopconfirm
-    :show="show || undefined"
+    :show="loading || undefined"
     @positive-click="$emit('positive-click')"
     :positive-button-props="{ loading: loading }"
   >
@@ -27,7 +27,6 @@ defineEmits<{
 }>()
 
 defineProps<{
-  show?: boolean
   loading?: boolean
 }>()
 </script>

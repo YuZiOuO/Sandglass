@@ -1,7 +1,6 @@
 <template>
   <NPopConfirmWithHook 
   :loading="targetUpdateHook.isPending.value"
-  :show="targetUpdateHook.isPending.value"
   @positive-click="() => targetUpdateHook.mutate(targetUpdateForm)">
     <template #icon>
       <component :is="attendanceModuleIconMap.TARGET"></component>

@@ -32,7 +32,12 @@ export function useAttendanceLatestStatus() {
   })
 }
 
-export type AttendanceRecordCreateDTO = InferRequestType<typeof cli.attendanceRecord.$post>['json']
+export type AttendanceRecordCreateDTO = Omit<
+  InferRequestType<typeof cli.attendanceRecord.$post>['json'],
+  'time'
+> & {
+  time: number | string | Date
+}
 export function useAttendanceRecordCreateMutate() {
   return useMutation({
     mutationKey: ['attendance'],

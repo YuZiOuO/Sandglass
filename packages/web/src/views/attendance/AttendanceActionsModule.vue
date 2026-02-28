@@ -59,7 +59,7 @@
       <NInput placeholder="事由(选填)" style="flex: 1"> </NInput>
       <NSpace size="small" :wrap="false">
         <!-- 补卡按钮 -->
-        <FixActionButton />
+        <FixActionButton :project-id="projectId"/>
 
         <!-- 请假按钮 -->
         <LeaveActionButton />
