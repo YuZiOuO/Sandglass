@@ -10,6 +10,7 @@ import ProjectResourcesModule from './ProjectResourcesModule.vue'
 import ProjectEditorModule from './ProjectEditorModule.vue'
 import ProjectFlowModule from './ProjectFlowModule.vue'
 import ProjectHeatmapModule from './ProjectHeatmapModule.vue'
+import ProjectWeeklyFocusChart from './ProjectWeeklyFocusChart.vue'
 import AttendanceActionsModule from '../attendance/AttendanceActionsModule.vue'
 
 const route = useRoute()
@@ -38,7 +39,7 @@ const project = useProjectQuery(projectId)
                 :owner="project.data.value?.repoOwner"
                 :repo="project.data.value?.repoName"
               />
-              and Others...
+              <ProjectWeeklyFocusChart :project-id="projectId" />
             </n-tab-pane>
             <n-tab-pane name="editor" tab="工作区">
               <ProjectEditorModule />
