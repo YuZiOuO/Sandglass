@@ -1,13 +1,23 @@
 <template>
-  <n-h3> TODO:在这里放脚注，可以放备案号或链接之类的东西。 </n-h3>
+  <n-text depth="3" class="footer-text">
+    Sandglass · Time flows, wisdom unfolds.
+  </n-text>
 </template>
 
 <script lang="ts">
-import { NH3 } from 'naive-ui'
+import { NText } from 'naive-ui'
 
 export default {
   components: {
-    NH3,
+    NText,
   },
 }
 </script>
+
+<style scoped>
+.footer-text {
+  display: block;
+  padding: 12px 0;
+  text-align: center;
+}
+</style>
