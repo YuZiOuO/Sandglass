@@ -2,7 +2,6 @@
 import {
   NCard,
   NCheckbox,
-  NCheckboxGroup,
   NEmpty,
   NPopconfirm,
   NInput,
@@ -23,12 +22,19 @@ const props = defineProps<{
 }>()
 
 const tasks = useGoogleTasksQuery(() => props.tasklistId)
-const resolvedTasks = computed(() => tasks.data.value)
+const resolvedTasks = computed(() => tasks.data.value?.items)
 
 const taskCreateModel = ref<googleTask>({})
 const taskCreate = useGoogleTasksCreateMutation()
 
 const taskPatch = useGoogleTasksPatchMutation()
+
+const isChanging = (id: string | undefined, status: string | undefined) =>
+  computed(
+    () =>
+      taskPatch.variables.value?.data.id === id &&
+      taskPatch.variables.value?.data.status !== status,
+  )
 </script>
 
 <template>
@@ -58,24 +64,28 @@ const taskPatch = useGoogleTasksPatchMutation()
       </n-popconfirm>
     </template>
 
-    <div v-if="tasklistId && resolvedTasks?.items">
-      <n-checkbox-group>
-        <div v-for="t in resolvedTasks.items" :key="t.id">
-          <n-checkbox
-            :checked="t.status === 'completed'"
-            :label="t.title"
-            @update:checked="
-              (checked: boolean) => {
-                const patchedTask: googleTask = {
-                  id: t.id,
-                  status: checked ? 'completed' : 'needsAction',
-                }
-                taskPatch.mutate({ data: patchedTask, tasklistId: tasklistId! })
+    <div v-if="tasklistId && resolvedTasks">
+      <div v-for="t in resolvedTasks" :key="t.id">
+        <n-checkbox
+          :checked="
+            isChanging(t.id, t.status).value
+              ? !(t.status === 'completed')
+              : t.status === 'completed'
+          "
+          :label="t.title"
+          :indeterminate="isChanging(t.id, t.status).value"
+          :disabled="isChanging(t.id, t.status).value"
+          @update:checked="
+            (checked: boolean) => {
+              const patchedTask: googleTask = {
+                id: t.id,
+                status: checked ? 'completed' : 'needsAction',
               }
-            "
-          />
-        </div>
-      </n-checkbox-group>
+              taskPatch.mutate({ data: patchedTask, tasklistId: tasklistId! })
+            }
+          "
+        ></n-checkbox>
+      </div>
     </div>
     <n-empty v-else> </n-empty>
   </n-card>

@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { defaultEnabled, patchGoogle, postGoogle, queryGoogle } from './common-google'
 import { toValue, type MaybeRefOrGetter } from 'vue'
+import { globalQueryClient } from './common'
 
 const baseURL = 'https://tasks.googleapis.com'
 
@@ -59,6 +60,9 @@ export function useGoogleTasksPatchMutation() {
           `/tasks/v1/lists/${encodeURIComponent(toValue(dto.tasklistId))}/tasks/${encodeURIComponent(toValue(dto.data.id))}`,
         dto.data,
       )
+    },
+    onSuccess: async (_data, variable) => {
+      globalQueryClient.invalidateQueries({ queryKey: ['google', 'tasks', variable.tasklistId] })
     },
   })
 }
