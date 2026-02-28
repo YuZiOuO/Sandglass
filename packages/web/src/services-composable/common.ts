@@ -41,3 +41,7 @@ export const globalQueryClient = new QueryClient({
     onError: notifyError,
   }),
 })
+
+export type FixUnknownDate<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]: number | string | Date;
+};

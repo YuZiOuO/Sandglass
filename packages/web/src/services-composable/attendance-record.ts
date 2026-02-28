@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { cli, globalQueryClient, processHonoResponse } from './common'
+import { cli, globalQueryClient, processHonoResponse, type FixUnknownDate } from './common'
 import type { InferRequestType, InferResponseType } from 'hono'
 import { toValue, type MaybeRefOrGetter } from 'vue'
 
@@ -32,12 +32,10 @@ export function useAttendanceLatestStatus() {
   })
 }
 
-export type AttendanceRecordCreateDTO = Omit<
+export type AttendanceRecordCreateDTO = FixUnknownDate<
   InferRequestType<typeof cli.attendanceRecord.$post>['json'],
   'time'
-> & {
-  time: number | string | Date
-}
+>
 export function useAttendanceRecordCreateMutate() {
   return useMutation({
     mutationKey: ['attendance'],
