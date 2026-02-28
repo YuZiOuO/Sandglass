@@ -59,54 +59,13 @@
       <NInput placeholder="事由(选填)" style="flex: 1"> </NInput>
       <NSpace size="small" :wrap="false">
         <!-- 补卡按钮 -->
-        <NPopover :delay="200">
-          <template #trigger>
-            <NButton secondary circle>
-              <template #icon>
-                <component :is="iconMap.FIX"></component>
-              </template>
-            </NButton>
-          </template>
-          补卡
-        </NPopover>
+        <FixActionButton :project-id="projectId"/>
 
         <!-- 请假按钮 -->
-        <NPopover :delay="200">
-          <template #trigger>
-            <NButton secondary circle>
-              <template #icon>
-                <component :is="iconMap.LEAVE"></component>
-              </template>
-            </NButton>
-          </template>
-          请假
-        </NPopover>
+        <LeaveActionButton />
 
         <!-- 修改目标按钮 -->
-        <NPopconfirm
-          :show="targetUpdateHook.isPending.value || undefined"
-          @positive-click="
-            async () => {
-              targetUpdateHook.mutate(targetUpdateForm)
-            }
-          "
-          :positive-button-props="{ loading: targetUpdateHook.isPending.value }"
-        >
-          <template #trigger>
-            <NPopover :delay="200">
-              <template #trigger>
-                <NButton secondary circle>
-                  <template #icon>
-                    <component :is="iconMap.TARGET"></component>
-                  </template>
-                </NButton>
-              </template>
-              修改目标
-            </NPopover>
-          </template>
-          修改目标
-          <NInputNumber placeholder="新目标值" v-model:value="targetUpdateForm.json.timeMs" />
-        </NPopconfirm>
+        <TargetUpdateActionButton />
       </NSpace>
     </NFlex>
   </NSpace>
@@ -118,24 +77,13 @@ import {
   useAttendanceLatestStatus,
   type AttendanceRecordType,
 } from '@/services-composable/attendance-record'
-import {
-  useAttendanceTargetUpdateMutate,
-  type AttendanceTargetUpdateDTO,
-} from '@/services-composable/attendance-target'
-import { computed, ref } from 'vue'
-import {
-  NButton,
-  NInput,
-  NPopconfirm,
-  NSpace,
-  NFlex,
-  NPopover,
-  NH1,
-  NTime,
-  NInputNumber,
-} from 'naive-ui'
+import { computed } from 'vue'
+import { NButton, NInput, NPopconfirm, NSpace, NFlex, NH1, NTime } from 'naive-ui'
 import { useNow } from '@vueuse/core'
 import { attendanceModuleIconMap as iconMap } from './icon'
+import TargetUpdateActionButton from './action-buttons/TargetActionButton.vue'
+import FixActionButton from './action-buttons/FixActionButton.vue'
+import LeaveActionButton from './action-buttons/LeaveActionButton.vue'
 
 const props = defineProps<{ projectId?: string }>()
 
@@ -152,14 +100,12 @@ function handleRecordCreate(type: AttendanceRecordType) {
   })
 }
 
-const targetUpdateHook = useAttendanceTargetUpdateMutate()
-const targetUpdateForm = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })
-
 // UI display Login
 const whichTypeIsBeingCreated = computed(() => {
   const recordMutateHook = recordCreateHook
   return recordMutateHook.isPending.value ? recordMutateHook.variables.value?.type : undefined
 })
+
 const cannotCheckIn = computed(() => ['IN', undefined].includes(attendanceStatus.data.value))
 const cannotPause = computed(() => attendanceStatus.data.value !== 'IN')
 const cannotCheckOut = computed(() => ['OUT', undefined].includes(attendanceStatus.data.value))
