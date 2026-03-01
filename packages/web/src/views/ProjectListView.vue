@@ -7,74 +7,131 @@
     </NSpin>
   </NCard>
 
-  <NCard>
-    {{ projectModel }}
-    <NInput v-model:value="projectModel.name" placeholder="name"></NInput>
-    <NSelect
-      v-model:value="projectModel.calendarId"
-      :options="
-        calendars.data.value?.items?.map((item) => {
-          return {
-            label: item.summary,
-            key: item.id,
-            value: item.id,
-          }
-        })
-      "
-      :loading="calendars.isPending.value"
-    />
-    <NSelect
-      v-model:value="projectModel.tasklistId"
-      :options="
-        tasklists.data.value?.items?.map((item) => {
-          return {
-            label: item.title,
-            key: item.id,
-            value: item.id,
-          }
-        })
-      "
-      :loading="tasklists.isPending.value"
-    />
-    <NSelect
-      v-model:value="projectModel.repoOwner"
-      :options="
-        [...new Set(repos.data.value?.map((item) => item.owner.login))].map((owner) => {
-          return {
-            label: owner,
-            key: owner,
-            value: owner,
-          }
-        })
-      "
-      :loading="repos.isPending.value"
-    />
-    <NSelect
-      v-model:value="projectModel.repoName"
-      :options="
-        repos.data.value
-          ?.filter((item) => item.owner.login === projectModel.repoOwner)
-          .map((item) => {
-            return {
-              key: item.name,
-              label: item.name,
-              value: item.name,
-            }
-          })
-      "
-      :loading="repos.isPending.value"
-    />
-    <NButton
-      @click="async () => projectCreate.mutate(projectModel)"
-      :loading="projectCreate.isPending.value"
-    >
-      提交
-    </NButton>
+  <NCard :title="'创建'">
+    <NFlex>
+      <!-- preview -->
+      {{ projectModel }}
+
+      <!-- name input -->
+      <NInput v-model:value="projectModel.name" placeholder="name"></NInput>
+
+      <!-- google bio binding -->
+      <NCard :title="'Google'" embedded>
+        <template #header-extra>
+          <NButton
+            @click="
+              () => {
+                message.loading('正在跳转到Google...')
+                authCli.linkSocial({
+                  provider: 'google',
+                })
+              }
+            "
+            >无数据？点击绑定</NButton
+          >
+        </template>
+        <NFlex>
+          <NSelect
+            v-model:value="projectModel.calendarId"
+            :options="
+              calendars.data.value?.items?.map((item) => {
+                return {
+                  label: item.summary,
+                  key: item.id,
+                  value: item.id,
+                }
+              })
+            "
+            :loading="calendars.isPending.value"
+          />
+          <NSelect
+            v-model:value="projectModel.tasklistId"
+            :options="
+              tasklists.data.value?.items?.map((item) => {
+                return {
+                  label: item.title,
+                  key: item.id,
+                  value: item.id,
+                }
+              })
+            "
+            :loading="tasklists.isPending.value"
+          /> </NFlex
+      ></NCard>
+
+      <!-- github bio binding -->
+      <NCard :title="'Github'" embedded>
+        <template #header-extra>
+          <NButton
+            @click="
+              () => {
+                message.loading('正在跳转到Github...')
+                authCli.linkSocial({
+                  provider: 'github'
+                })
+              }
+            "
+            >无数据？点击绑定</NButton
+          >
+        </template>
+        <NFlex>
+          <NSelect
+            v-model:value="projectModel.repoOwner"
+            :options="
+              [...new Set(repos.data.value?.map((item) => item.owner.login))].map((owner) => {
+                return {
+                  label: owner,
+                  key: owner,
+                  value: owner,
+                }
+              })
+            "
+            :loading="repos.isPending.value"
+          />
+          <NSelect
+            v-model:value="projectModel.repoName"
+            :options="
+              repos.data.value
+                ?.filter((item) => item.owner.login === projectModel.repoOwner)
+                .map((item) => {
+                  return {
+                    key: item.name,
+                    label: item.name,
+                    value: item.name,
+                  }
+                })
+            "
+            :loading="repos.isPending.value"
+          />
+        </NFlex>
+      </NCard>
+    </NFlex>
+
+    <!-- submit -->
+    <template #footer>
+      <NButton
+        @click="async () => projectCreate.mutate(projectModel)"
+        :loading="projectCreate.isPending.value"
+      >
+        提交
+      </NButton>
+    </template>
   </NCard>
 </template>
 
 <script setup lang="ts">
-import { NCard, NInput, NButton, NMenu, NEmpty, type MenuOption, NSpin, NSelect } from 'naive-ui'
+import {
+  NCard,
+  NInput,
+  NButton,
+  NMenu,
+  NEmpty,
+  type MenuOption,
+  NSpin,
+  NSelect,
+  NFlex,
+  useMessage,
+} from 'naive-ui'
 import {
   useProjectCreateMutation,
   useProjectsQuery,
@@ -86,6 +143,7 @@ import { useGoogleTaskListsQuery } from '@/services-composable/google-tasks'
 import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/github'
 import { RouterLink } from 'vue-router'
 import ModuleLoadingErrorResult from '@/common/ModuleLoadingErrorResult.vue'
+import { authCli } from '@/services-composable/common'
 
 const projectList = useProjectsQuery()
 
@@ -115,4 +173,6 @@ const projectCreate = useProjectCreateMutation()
 const calendars = useGoogleCalendarListQuery()
 const tasklists = useGoogleTaskListsQuery()
 const repos = useGithubReposOfAuthenticatedUserQuery()
+
+const message = useMessage()
 </script>
