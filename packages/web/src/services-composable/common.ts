@@ -29,7 +29,7 @@ export const authCli = createAuthClient({
 })
 
 const UIApi = createDiscreteApi(['notification'])
-const notifyError = (err: Error) => {
+export const notifyError = (err: Error) => {
   UIApi.notification.error({ title: err.name, description: err.message })
 }
 
