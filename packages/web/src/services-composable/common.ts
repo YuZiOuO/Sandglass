@@ -5,6 +5,7 @@ import { MutationCache, QueryCache, QueryClient } from '@tanstack/vue-query'
 import type { ClientResponse } from 'hono/client'
 import { createDiscreteApi } from 'naive-ui'
 import { computed } from 'vue'
+import { passkeyClient } from '@better-auth/passkey/client'
 
 /**
  * Hono RPC Client
@@ -33,6 +34,7 @@ export async function processHonoResponse<T, U extends number, F extends string>
 export const authCli = createAuthClient({
   baseURL: import.meta.env.SG_WEB_API_BASEURL,
   basePath: '/auth',
+  plugins: [passkeyClient()],
 })
 
 export function useAuthStatus() {

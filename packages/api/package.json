@@ -3,15 +3,16 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "better-auth:gen": "bun x @better-auth/cli@latest generate"
+    "better-auth:gen": "bunx auth generate"
   },
   "dependencies": {
+    "@better-auth/passkey": "^1.5.1",
     "@better-auth/prisma-adapter": "^1.5.0-beta.9",
     "@hono/zod-validator": "^0.7.6",
     "@prisma/adapter-pg": "^7.3.0",
     "@sandglass/schema": "workspace:*",
     "@t3-oss/env-core": "^0.13.10",
-    "better-auth": "^1.4.18",
+    "better-auth": "^1.5.1",
     "hono": "^4.11.7",
     "zod": "^4.3.6"
   },

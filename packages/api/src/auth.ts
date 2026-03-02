@@ -2,9 +2,11 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
 import { db } from "./db";
 import { env } from "./env";
+import { passkey } from "@better-auth/passkey";
 
 export const authBasePath = "/auth";
 export const auth = betterAuth({
+  plugins: [passkey()],
   database: prismaAdapter(db, { provider: "postgresql" }),
   trustedOrigins: env.ALLOWED_ORIGINS,
   baseURL: env.BETTER_AUTH_BASE_URL,
