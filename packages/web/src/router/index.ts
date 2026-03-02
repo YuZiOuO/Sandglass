@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import { authCli, notifyError } from '@/services-composable/common'
+import { notifyError, useAuthStatus } from '@/services-composable/common'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,19 +40,30 @@ const router = createRouter({
 })
 
 // auth guard
-router.beforeEach(async (to, from, next) => {
-  const session = authCli.useSession()
-  const isLoggedIn = !!session.value.data?.user
+router.beforeEach(async (to, _from, next) => {
+  const isLoggedIn = useAuthStatus().value
 
-  const whiteList = ['/', '/login']
+  const loginPath = '/login'
+  const whiteList = ['/', loginPath]
 
-  if (isLoggedIn || whiteList.includes(to.path)) {
-    next()
+  const err = new Error();
+  err.name = '路径不合法'
+
+  if (!isLoggedIn) {
+    if (whiteList.includes(to.path)) {
+      next()
+    } else {
+      err.message = '您尚未登录'
+      notifyError(err)
+      next('/login')
+    }
   } else {
-    const err = new Error('您尚未登录')
-    err.name = '路径不合法'
-    notifyError(err)
-    next('/login')
+    if (to.path === loginPath) {
+      err.message = '无效操作: 请先注销'
+      notifyError(err)
+    } else {
+      next()
+    }
   }
 })
 
