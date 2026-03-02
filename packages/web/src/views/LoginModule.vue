@@ -16,12 +16,7 @@
             @click="
               async () => {
                 const res = await signIn.mutateAsync({ ...form })
-                if (!res.error) {
-                  message.success('登录成功，正在跳转...')
-                  router.push('/')
-                } else {
-                  message.error('登录失败: ' + res.error.message)
-                }
+                handleLogin(res.error?.message)
               }
             "
             :loading="signIn.isPending.value"
@@ -46,19 +41,39 @@
         </n-flex>
         <n-divider dashed> 第三方OAuth </n-divider>
         <n-flex justify="center">
-          <n-button type="primary" round> Github </n-button>
+          <n-button
+            type="primary"
+            round
+            @click="
+              async () => {
+                const res = await githubSignIn.mutateAsync()
+                handleLogin(res.error?.message)
+              }
+            "
+            :loading="githubSignIn.isPending.value"
+          >
+            Github
+          </n-button>
+          <n-button
+            type="primary"
+            round
+            @click="
+              async () => {
+                const res = await googleSignIn.mutateAsync()
+                handleLogin(res.error?.message)
+              }
+            "
+            :loading="googleSignIn.isPending.value"
+          >
+            Google
+          </n-button>
           <n-button
             type="primary"
             round
             @click="
               async () => {
                 const res = await passkeySignIn.mutateAsync()
-                if (!res.error) {
-                  message.success('登录成功，正在跳转...')
-                  router.push('/')
-                } else {
-                  message.error('登录失败: ' + res.error.message)
-                }
+                handleLogin(res.error?.message)
               }
             "
             :loading="passkeySignIn.isPending.value"
@@ -76,6 +91,7 @@ import {
   usePasskeySignInMutate,
   useSignInMutate,
   useSignUpMutate,
+  useSocialSignInMutate,
 } from '@/services-composable/user'
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui'
 import { ref } from 'vue'
@@ -90,8 +106,19 @@ const router = useRouter()
 const message = useMessage()
 
 const signIn = useSignInMutate()
-const signUp = useSignUpMutate()
 const passkeySignIn = usePasskeySignInMutate()
+const githubSignIn = useSocialSignInMutate('github')
+const googleSignIn = useSocialSignInMutate('google')
+const signUp = useSignUpMutate()
+
+function handleLogin(err?: string) {
+  if (!err) {
+    message.success('登录成功，正在跳转...')
+    router.push('/')
+  } else {
+    message.error('登录失败: ' + err)
+  }
+}
 </script>
 
 <style scoped>
