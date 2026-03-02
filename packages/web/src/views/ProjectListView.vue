@@ -43,7 +43,8 @@
               })
             "
             :loading="calendars.isPending.value"
-          />
+            ><template #arrow> <IconGoogleCalendar /> </template
+          ></NSelect>
           <NSelect
             v-model:value="projectModel.tasklistId"
             :options="
@@ -56,7 +57,8 @@
               })
             "
             :loading="tasklists.isPending.value"
-          /> </NFlex
+            ><template #arrow> <IconGoogleTasks /> </template
+          ></NSelect> </NFlex
       ></NCard>
 
       <!-- github bio binding -->
@@ -67,7 +69,7 @@
               () => {
                 message.loading('正在跳转到Github...')
                 authCli.linkSocial({
-                  provider: 'github'
+                  provider: 'github',
                 })
               }
             "
@@ -87,7 +89,9 @@
               })
             "
             :loading="repos.isPending.value"
-          />
+          >
+            <template #arrow> <PersonOutline /></template
+          ></NSelect>
           <NSelect
             v-model:value="projectModel.repoName"
             :options="
@@ -102,7 +106,8 @@
                 })
             "
             :loading="repos.isPending.value"
-          />
+            ><template #arrow> <LogoGithub /> </template
+          ></NSelect>
         </NFlex>
       </NCard>
     </NFlex>
@@ -144,6 +149,8 @@ import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/th
 import { RouterLink } from 'vue-router'
 import ModuleLoadingErrorResult from '@/common/ModuleLoadingErrorResult.vue'
 import { authCli } from '@/services-composable/common'
+import { LogoGithub, PersonOutline } from '@vicons/ionicons5'
+import { IconGoogleCalendar, IconGoogleTasks } from '@/assets'
 
 const projectList = useProjectListQuery()
 

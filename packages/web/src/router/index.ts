@@ -41,7 +41,7 @@ const router = createRouter({
 
 // auth guard
 router.beforeEach(async (to, _from, next) => {
-  const isLoggedIn = useAuthStatus().value
+  const isLoggedIn = useAuthStatus()
 
   const loginPath = '/login'
   const whiteList = ['/', loginPath]
@@ -49,7 +49,7 @@ router.beforeEach(async (to, _from, next) => {
   const err = new Error();
   err.name = '路径不合法'
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn.value) {
     if (whiteList.includes(to.path)) {
       next()
     } else {
