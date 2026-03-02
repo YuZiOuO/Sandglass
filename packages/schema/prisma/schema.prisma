@@ -104,7 +104,7 @@ model User {
   sessions               Session[]
   accounts               Account[]
   projects               Project[]
-  passkeys      Passkey[]
+  passkeys               Passkey[]
   attendanceRecords      AttendanceRecord[]
   attendanceTarget       AttendanceTarget?
   attendanceLeaveRecords AttendanceLeaveRecord[]
@@ -151,13 +151,13 @@ model Account {
 
 model Verification {
   id         String   @id
-  identifier String
+  identifier String   @unique // FIX: passkey plugin deletes rows by identifier, and default schema here without @unique causes a warning
   value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@index([identifier])
+  // @@index([identifier]) // as explained above,this index is coverd by @unique
   @@map("verification")
 }
 

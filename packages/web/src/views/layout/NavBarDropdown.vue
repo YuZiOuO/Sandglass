@@ -13,6 +13,7 @@ import { renderIcon } from '@/util'
 import { NButton, NDropdown, useMessage, type MessageReactive } from 'naive-ui'
 import {
   Pencil as EditIcon,
+  LockClosedOutline,
   LogOutOutline as LogoutIcon,
   PersonCircleOutline as UserIcon,
 } from '@vicons/ionicons5'
@@ -25,18 +26,25 @@ const message = useMessage()
 let logoutMessage: MessageReactive | null = null
 
 async function handleDropdownSelect(key: string) {
-  if (key === 'logout') {
-    logoutMessage = message.create('正在注销...', { type: 'loading' })
-    try {
-      await authCli.signOut()
-      logoutMessage.content = '注销成功，跳转到首页...'
-      logoutMessage.type = 'success'
-      router.push('/')
-    } catch (e) {
-      console.log(e)
-      logoutMessage.content = '注销失败,请参阅控制台'
-      logoutMessage.type = 'error'
-    }
+  switch (key) {
+    case 'logout':
+      logoutMessage = message.create('正在注销...', { type: 'loading' })
+      try {
+        await authCli.signOut()
+        logoutMessage.content = '注销成功，跳转到首页...'
+        logoutMessage.type = 'success'
+        router.push('/')
+      } catch (e) {
+        console.log(e)
+        logoutMessage.content = '注销失败,请参阅控制台'
+        logoutMessage.type = 'error'
+      }
+      break
+    case 'addPasskey':
+      await authCli.passkey.addPasskey({
+        authenticatorAttachment: 'cross-platform',
+      })
+      break
   }
 }
 
@@ -52,6 +60,11 @@ const dropdownOptions = [
     key: 'editProfile',
     icon: renderIcon(EditIcon),
     disabled: true,
+  },
+  {
+    label: '绑定Passkey',
+    key: 'addPasskey',
+    icon: renderIcon(LockClosedOutline),
   },
   {
     label: '注销',
