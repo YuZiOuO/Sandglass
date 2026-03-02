@@ -43,7 +43,7 @@
               })
             "
             :loading="calendars.isPending.value"
-            ><template #arrow> <IconGoogleCalendar /> </template
+            ><template #arrow> <IconGoogleCalendarOutline /> </template
           ></NSelect>
           <NSelect
             v-model:value="projectModel.tasklistId"
@@ -57,7 +57,7 @@
               })
             "
             :loading="tasklists.isPending.value"
-            ><template #arrow> <IconGoogleTasks /> </template
+            ><template #arrow> <IconGoogleTasksOutline /> </template
           ></NSelect> </NFlex
       ></NCard>
 
@@ -150,7 +150,7 @@ import { RouterLink } from 'vue-router'
 import ModuleLoadingErrorResult from '@/common/ModuleLoadingErrorResult.vue'
 import { authCli } from '@/services-composable/common'
 import { LogoGithub, PersonOutline } from '@vicons/ionicons5'
-import { IconGoogleCalendar, IconGoogleTasks } from '@/assets'
+import { IconGoogleCalendarOutline, IconGoogleTasksOutline } from '@/assets'
 
 const projectList = useProjectListQuery()
 
