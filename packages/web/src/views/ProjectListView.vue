@@ -134,18 +134,18 @@ import {
 } from 'naive-ui'
 import {
   useProjectCreateMutation,
-  useProjectsQuery,
+  useProjectListQuery,
   type ProjectCreateDTO,
 } from '@/services-composable/project'
 import { computed, h, ref } from 'vue'
-import { useGoogleCalendarListQuery } from '@/services-composable/google-calendar'
-import { useGoogleTaskListsQuery } from '@/services-composable/google-tasks'
-import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/github'
+import { useGoogleCalendarListQuery } from '@/services-composable/third-party/google-calendar'
+import { useGoogleTaskListsQuery } from '@/services-composable/third-party/google-tasks'
+import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/third-party/github'
 import { RouterLink } from 'vue-router'
 import ModuleLoadingErrorResult from '@/common/ModuleLoadingErrorResult.vue'
 import { authCli } from '@/services-composable/common'
 
-const projectList = useProjectsQuery()
+const projectList = useProjectListQuery()
 
 const projectListMenuOptions = computed<MenuOption[] | undefined>(() => {
   return projectList.data.value?.map((item) => {

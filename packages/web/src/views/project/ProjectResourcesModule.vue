@@ -17,13 +17,10 @@ import {
 } from 'naive-ui'
 import {
   useProjectQuery,
-  useProjectResourcesQuery,
-  useResourcesCreateMutation,
-  useResourcesDeleteMutation,
-  type ResourcesCreateDTO,
 } from '@/services-composable/project'
 import { LogoGithub } from '@vicons/ionicons5'
 import { IconGoogleCalendar } from '@/assets'
+import { useProjectResourcesQuery, useResourcesCreateMutation, useResourcesDeleteMutation, type ResourcesCreateDTO } from '@/services-composable/resources'
 
 const props = defineProps<{
   projectId: string

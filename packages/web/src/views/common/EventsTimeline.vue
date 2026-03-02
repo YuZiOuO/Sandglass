@@ -53,7 +53,7 @@ import {
 } from 'naive-ui'
 import { attendanceModuleIconMap } from '../attendance/icon'
 import { computed, type Component } from 'vue'
-import { useGithubListRepoCommitsQuery } from '@/services-composable/github'
+import { useGithubListRepoCommitsQuery } from '@/services-composable/third-party/github'
 import { CodeOutline } from '@vicons/ionicons5'
 
 /**

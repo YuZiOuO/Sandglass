@@ -14,7 +14,7 @@ import {
   useGoogleTasksPatchMutation,
   useGoogleTasksQuery,
   type googleTask,
-} from '@/services-composable/google-tasks'
+} from '@/services-composable/third-party/google-tasks'
 import { computed, ref } from 'vue'
 
 const props = defineProps<{
