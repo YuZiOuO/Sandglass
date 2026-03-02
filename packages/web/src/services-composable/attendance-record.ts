@@ -3,6 +3,10 @@ import { cli, globalQueryClient, processHonoResponse, type FixUnknownDate } from
 import type { InferRequestType, InferResponseType } from 'hono'
 import { toValue, type MaybeRefOrGetter } from 'vue'
 
+export const attendanceKeys = {
+  namesapce: ['attendance'] as const
+}
+
 export type AttendanceRecordQueryType = NonNullable<
   InferRequestType<typeof cli.attendanceRecord.$get>['query']['preset']
 >

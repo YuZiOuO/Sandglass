@@ -1,6 +1,8 @@
-import { authCli } from './common'
+import { computed } from 'vue'
+import { authCli } from '../common'
 
-export const defaultEnabled = () => !!authCli.useSession().value.data?.user.id
+export const isGoogleTokenAvailable = computed(() => !!authCli.useSession().value.data?.user)
+
 async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Partial<T>) {
   const token = await authCli.getAccessToken({ providerId: 'google' })
 

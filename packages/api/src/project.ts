@@ -6,6 +6,7 @@ import {
   ProjectCreateInputObjectZodSchema,
   ResourcesCreateInputObjectZodSchema,
 } from "@sandglass/schema/generated/schemas";
+import { HTTPException } from "hono/http-exception";
 
 export const projectRoutes = factory
   .createApp()
@@ -85,7 +86,7 @@ export const ResourcesRoutes = factory
       // Validate if project is affliated to user
       const project = await db.project.findUnique({ where: { id: projectId } });
       if (!project || project.uid != uid) {
-        return c.notFound();
+        throw new HTTPException(404);
       }
 
       const resource = c.req.valid("json");
@@ -110,15 +111,29 @@ export const ResourcesRoutes = factory
       const uid = c.var.user.id;
       const resourceId = c.req.valid("query").resourceId;
 
-      const affectefRow = await db.resources.deleteMany({
-        where: {
-          id: resourceId,
-          project: {
-            uid: uid,
+      const deletedResource = await db.$transaction(async (tx) => {
+        const resource = await tx.resources.findFirst({
+          where: {
+            id: resourceId,
+            project: {
+              uid: uid,
+            },
           },
-        },
+        });
+
+        if (!resource) {
+          throw new HTTPException(404);
+        }
+
+        const deletedResource = await tx.resources.delete({
+          where: {
+            id: resourceId,
+          },
+        });
+
+        return deletedResource;
       });
 
-      return c.json(affectefRow.count);
+      return c.json(deletedResource);
     },
   );

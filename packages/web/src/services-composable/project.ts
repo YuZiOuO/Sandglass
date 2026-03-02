@@ -1,35 +1,34 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { toValue, type MaybeRefOrGetter } from 'vue'
-import { cli, processHonoResponse } from './common'
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { cli, globalQueryClient, processHonoResponse, useAuthStatus } from './common'
 import type { InferRequestType } from 'hono'
+import { resourcesKeys } from './resources'
 
-export function useProjectsQuery() {
+const projectKeys = {
+  namespace: ['project'] as const,
+  project: (projectId: string) => [...projectKeys.namespace, projectId] as const,
+}
+
+export function useProjectListQuery() {
   return useQuery({
-    queryKey: ['project'],
+    queryKey: projectKeys.namespace,
     queryFn: async () => {
       const res = await cli.project.my.$get()
       return await processHonoResponse(res)
     },
+    enabled: () => useAuthStatus().value,
   })
 }
 
 export function useProjectQuery(projectId: MaybeRefOrGetter<string>) {
+  const id = computed(() => toValue(projectId))
   return useQuery({
-    queryKey: ['project', projectId],
+    queryKey: computed(() => projectKeys.project(id.value)),
     queryFn: async () => {
-      const res = await cli.project.$get({ query: { id: toValue(projectId) } })
+      const res = await cli.project.$get({ query: { id: id.value } })
       return await processHonoResponse(res)
     },
-  })
-}
-
-export function useProjectResourcesQuery(projectId: MaybeRefOrGetter<string>) {
-  return useQuery({
-    queryKey: ['project', projectId, 'resource'],
-    queryFn: async () => {
-      const resources = await cli.resource.$get({ query: { projectId: toValue(projectId) } })
-      return await processHonoResponse(resources)
-    },
+    enabled: () => useAuthStatus().value && !!id.value,
   })
 }
 
@@ -40,24 +39,13 @@ export function useProjectCreateMutation() {
       const createdProject = await cli.project.$post({ json: { ...dto } })
       return await processHonoResponse(createdProject)
     },
-  })
-}
-
-export type ResourcesCreateDTO = InferRequestType<typeof cli.resource.$post>
-export function useResourcesCreateMutation() {
-  return useMutation({
-    mutationFn: async (dto: ResourcesCreateDTO) => {
-      const createdResource = await cli.resource.$post(dto)
-      return await processHonoResponse(createdResource)
-    },
-  })
-}
-
-export function useResourcesDeleteMutation() {
-  return useMutation({
-    mutationFn: async (resourceId: string) => {
-      const deletedResource = await cli.resource.$delete({ query: { resourceId: resourceId } })
-      return await processHonoResponse(deletedResource)
+    onSuccess: async () => {
+      await globalQueryClient.invalidateQueries({
+        queryKey: projectKeys.namespace,
+      })
+      await globalQueryClient.invalidateQueries({
+        queryKey: resourcesKeys.namespace
+      })
     },
   })
 }
