@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator";
 import { db, schema } from "./db";
 import { factory } from "./factory";
 import { z } from "zod";
+import { HTTPException } from "hono/http-exception";
 
 /**
  * Get day boundaries (00:00:00) for the given date
@@ -29,22 +30,29 @@ export const attendanceRecordRoutes = factory
       }),
     ),
     async (c) => {
-      
       const uid = c.var.user.id;
       const data = c.req.valid("json");
-      const res = await db.attendanceRecord.create({
-        data: {
-          ...data,
-          uid: uid,
 
-          // validate project Id
-          projectId: undefined,
-          project: data.projectId
-            ? { connect: { id: data.projectId } }
-            : undefined,
-        },
-      });
-      return c.json(res);
+      // Validate ProjectId
+      if (data.projectId) {
+        const associatedProject = await db.project.findFirst({
+          where: {
+            uid: uid,
+            id: data.projectId,
+          },
+          select: { id: true }
+        });
+
+        if (!associatedProject) {
+          throw new HTTPException(404);
+        }
+      }
+
+      const createdRecord = await db.attendanceRecord.create({
+          data: { ...data, uid: uid },
+        });
+
+        return c.json(createdRecord);
     },
   )
   .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {

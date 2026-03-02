@@ -68,6 +68,7 @@ model AttendanceRecord {
   type    AttendanceType
 
   @@index([uid, time])
+  @@index([projectId, time])
 }
 
 model AttendanceTarget {

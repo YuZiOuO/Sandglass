@@ -37,7 +37,7 @@ export const projectRoutes = factory
       "json",
       ProjectCreateInputObjectZodSchema.omit({
         id: true,
-        uid: true,
+        user: true,
         resources: true,
         attendanceRecords: true,
       }),

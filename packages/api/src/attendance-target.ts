@@ -13,7 +13,7 @@ export const attendanceTargetRoutes = factory
     "/",
     zValidator(
       "json",
-      AttendanceTargetCreateInputObjectZodSchema.omit({ uid: true }),
+      AttendanceTargetCreateInputObjectZodSchema.omit({ user: true }),
     ),
     async (c) => {
       const uid = c.var.user.id;
@@ -43,7 +43,7 @@ export const attendanceTargetRoutes = factory
       "json",
       AttendanceLeaveRecordCreateInputObjectZodSchema.omit({
         id: true,
-        uid: true,
+        user: true,
       }),
     ),
     async (c) => {
