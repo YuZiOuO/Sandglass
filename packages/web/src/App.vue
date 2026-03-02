@@ -21,5 +21,4 @@ import {
 } from 'naive-ui'
 import LoadingBarController from './common/LoadingBarController.vue';
 import RootLayout from './views/layout/RootLayout.vue';
-import { process } from 'better-auth';
 </script>

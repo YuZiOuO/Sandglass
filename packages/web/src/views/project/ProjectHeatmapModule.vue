@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGithubListRepoCommitsQuery } from '@/services-composable/github'
+import { useGithubListRepoCommitsQuery } from '@/services-composable/third-party/github'
 import { NHeatmap, type HeatmapData } from 'naive-ui'
 import { computed } from 'vue'
 
@@ -9,6 +9,7 @@ const props = defineProps<{
 }>()
 
 const lastYearToday = new Date()
+lastYearToday.setHours(0, 0, 0, 0) // 防止query key抖动
 lastYearToday.setFullYear(lastYearToday.getFullYear() - 1)
 
 const commits = useGithubListRepoCommitsQuery(

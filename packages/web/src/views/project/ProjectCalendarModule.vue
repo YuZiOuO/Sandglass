@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGoogleCalendarEventsQuery } from '@/services-composable/google-calendar'
+import { useGoogleCalendarEventsQuery } from '@/services-composable/third-party/google-calendar'
 import { NCalendar, NEmpty, NTag } from 'naive-ui'
 
 const props = defineProps<{
