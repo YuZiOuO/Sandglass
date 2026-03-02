@@ -14,15 +14,22 @@ export const env = createEnv({
     GApis_OAuth2CliSecret: z.string(),
     GH_clientId: z.string(),
     GH_clientSecret: z.string(),
-    TZ: z.string()
-      .refine((val) => {
+    TZ: z.string().refine(
+      (val) => {
         try {
           Intl.DateTimeFormat(undefined, { timeZone: val });
           return true;
         } catch {
           return false;
         }
-      }, { message: "无效的时区字符串，请使用 Asia/Shanghai 或 UTC 等标准格式" }),
+      },
+      { message: "无效的时区字符串，请使用 Asia/Shanghai 或 UTC 等标准格式" },
+    ),
   },
   runtimeEnv: process.env,
+  onValidationError: (issue) => {
+    console.error("❌ Enviroment Validation Error:");
+    console.error(issue);
+    process.exit(-1)
+  },
 });
