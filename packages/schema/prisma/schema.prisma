@@ -50,7 +50,7 @@ enum AttendanceType {
 model AttendanceRecord {
   id      String         @id @default(uuid())
   uid     String
-  time    DateTime
+  time    DateTime       @db.Timestamptz()
   summary String?
   type    AttendanceType
 
