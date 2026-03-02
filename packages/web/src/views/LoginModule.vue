@@ -47,7 +47,24 @@
         <n-divider dashed> 第三方OAuth </n-divider>
         <n-flex justify="center">
           <n-button type="primary" round> Github </n-button>
-          <n-button type="primary" round> Passkey </n-button>
+          <n-button
+            type="primary"
+            round
+            @click="
+              async () => {
+                const res = await passkeySignIn.mutateAsync()
+                if (!res.error) {
+                  message.success('登录成功，正在跳转...')
+                  router.push('/')
+                } else {
+                  message.error('登录失败: ' + res.error.message)
+                }
+              }
+            "
+            :loading="passkeySignIn.isPending.value"
+          >
+            Passkey
+          </n-button>
         </n-flex>
       </n-flex>
     </n-card>
@@ -55,7 +72,11 @@
 </template>
 
 <script setup lang="ts">
-import { useSignInMutate, useSignUpMutate } from '@/services-composable/user'
+import {
+  usePasskeySignInMutate,
+  useSignInMutate,
+  useSignUpMutate,
+} from '@/services-composable/user'
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -70,6 +91,7 @@ const message = useMessage()
 
 const signIn = useSignInMutate()
 const signUp = useSignUpMutate()
+const passkeySignIn = usePasskeySignInMutate()
 </script>
 
 <style scoped>

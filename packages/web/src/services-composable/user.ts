@@ -34,3 +34,12 @@ export function useSignInMutate() {
     },
   })
 }
+
+export function usePasskeySignInMutate() {
+  return useMutation({
+    mutationFn: async () => {
+      const createdSession = await authCli.signIn.passkey()
+      return createdSession
+    },
+  })
+}
