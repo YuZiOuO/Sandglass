@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane, NSplit, NDivider } from 'naive-ui'
+import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane, NSplit } from 'naive-ui'
 import { useProjectQuery } from '@/services-composable/project'
 
 import ProjectTasksModule from './ProjectTasksModule.vue'
