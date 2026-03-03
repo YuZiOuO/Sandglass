@@ -15,12 +15,15 @@ import {
   NIcon,
   type SelectOption,
 } from 'naive-ui'
-import {
-  useProjectQuery,
-} from '@/services-composable/project'
+import { useProjectQuery } from '@/services-composable/project'
 import { LogoGithub } from '@vicons/ionicons5'
 import { IconGoogleCalendar } from '@/assets'
-import { useProjectResourcesQuery, useResourcesCreateMutation, useResourcesDeleteMutation, type ResourcesCreateDTO } from '@/services-composable/resources'
+import {
+  useProjectResourcesQuery,
+  useResourcesCreateMutation,
+  useResourcesDeleteMutation,
+  type ResourcesCreateDTO,
+} from '@/services-composable/resources'
 
 const props = defineProps<{
   projectId: string
@@ -41,7 +44,7 @@ const project = useProjectQuery(() => props.projectId)
 </script>
 
 <template>
-  <n-card size="small" title="Resources">
+  <n-card size="small" title="Resources" :bordered="false">
     <!-- action -->
     <template #header-extra>
       <n-popconfirm
@@ -69,7 +72,7 @@ const project = useProjectQuery(() => props.projectId)
     </template>
 
     <!-- repo and calendar entry  -->
-    <n-space :wrap="false">
+    <NFlex>
       <n-button
         text
         tag="a"
@@ -97,7 +100,7 @@ const project = useProjectQuery(() => props.projectId)
           </template>
         </n-tag>
       </n-button>
-    </n-space>
+    </NFlex>
 
     <!-- display -->
     <n-list hoverable map clickable v-if="resources.data.value">

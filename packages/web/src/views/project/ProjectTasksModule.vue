@@ -38,7 +38,7 @@ const isChanging = (id: string | undefined, status: string | undefined) =>
 </script>
 
 <template>
-  <n-card size="small" title="Tasks">
+  <n-card size="small" title="Tasks" :bordered="false">
     <template #header-extra>
       <n-popconfirm
         @positive-click="

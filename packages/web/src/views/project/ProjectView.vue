@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane } from 'naive-ui'
+import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane, NSplit, NDivider } from 'naive-ui'
 import { useProjectQuery } from '@/services-composable/project'
 
 import ProjectTasksModule from './ProjectTasksModule.vue'
@@ -18,18 +18,16 @@ const project = useProjectQuery(projectId)
 </script>
 
 <template>
-  <div class="project-view p-4 h-full">
-    <n-grid x-gap="12" :cols="24" class="h-full">
-      <n-grid-item span="4" class="flex flex-col gap-4">
-        <NFlex>
+  <n-grid x-gap="12" :cols="24" >
+    <n-grid-item span="16">
+      <NSplit>
+        <template #1>
           <ProjectTasksModule :tasklist-id="project.data.value?.tasklistId" />
-          <ProjectResourcesModule :project-id="projectId" />
-        </NFlex>
-      </n-grid-item>
-
-      <n-grid-item span="12" class="h-full">
-        <NCard>
-          <n-tabs type="line" animated>
+          <NDivider />
+          <ProjectResourcesModule :project-id="projectId"
+        /></template>
+        <template #2>
+          <n-tabs type="line" animated style="padding: 10px">
             <n-tab-pane name="stat" tab="统计">
               <ProjectHeatmapModule
                 :owner="project.data.value?.repoOwner"
@@ -44,20 +42,17 @@ const project = useProjectQuery(projectId)
               <ProjectCalendarModule :calendar-id="project.data.value?.calendarId" />
             </n-tab-pane>
           </n-tabs>
-        </NCard>
-      </n-grid-item>
+        </template>
+      </NSplit>
+    </n-grid-item>
 
-      <n-grid-item span="8" class="flex flex-col gap-4">
-        <NFlex>
-          <NCard>
-            <AttendanceActionsModule :project-id="projectId" />
-          </NCard>
-          <ProjectFlowModule
-            :calendar-id="project.data.value?.calendarId"
-            :project-id="projectId"
-          />
-        </NFlex>
-      </n-grid-item>
-    </n-grid>
-  </div>
+    <n-grid-item span="8">
+      <NFlex>
+        <NCard>
+          <AttendanceActionsModule :project-id="projectId" />
+        </NCard>
+        <ProjectFlowModule :calendar-id="project.data.value?.calendarId" :project-id="projectId" />
+      </NFlex>
+    </n-grid-item>
+  </n-grid>
 </template>
