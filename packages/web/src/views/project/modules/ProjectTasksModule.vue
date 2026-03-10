@@ -6,7 +6,7 @@ import {
   type googleTask,
 } from '@/services-composable/third-party/google-tasks'
 import { computed, ref } from 'vue'
-import TasksModuleTaskDisplayComponent from './components/TaskDisplayComponent.vue'
+import TasksModuleTaskDisplayComponent from '../components/TaskDisplayComponent.vue'
 
 const props = defineProps<{
   tasklistId?: string

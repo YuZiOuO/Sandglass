@@ -19,6 +19,6 @@ import {
   NLoadingBarProvider,
   NMessageProvider,
 } from 'naive-ui'
-import LoadingBarController from './common/LoadingBarController.vue';
+import LoadingBarController from './views/common/LoadingBarController.vue';
 import RootLayout from './views/layout/RootLayout.vue';
 </script>

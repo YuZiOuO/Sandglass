@@ -4,14 +4,14 @@ import { useRoute } from 'vue-router'
 import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane, NSplit } from 'naive-ui'
 import { useProjectQuery } from '@/services-composable/project'
 
-import ProjectTasksModule from './ProjectTasksModule.vue'
-import ProjectCalendarModule from './ProjectCalendarModule.vue'
-import ProjectResourcesModule from './ProjectResourcesModule.vue'
-import ProjectEditorModule from './ProjectEditorModule.vue'
-import ProjectFlowModule from './ProjectFlowModule.vue'
-import ProjectHeatmapModule from './ProjectHeatmapModule.vue'
-import ProjectWeeklyFocusChart from './ProjectWeeklyFocusChart.vue'
-import AttendanceActionsModule from '../attendance/AttendanceActionsModule.vue'
+import ProjectTasksModule from './modules/ProjectTasksModule.vue'
+import ProjectCalendarModule from './modules/ProjectCalendarModule.vue'
+import ProjectResourcesModule from './modules/ProjectResourcesModule.vue'
+import ProjectEditorModule from './modules/ProjectEditorModule.vue'
+import ProjectFlowModule from './modules/ProjectFlowModule.vue'
+import ProjectHeatmapModule from './modules/ProjectHeatmapModule.vue'
+import ProjectWeeklyFocusChart from './modules/ProjectFocusChartModule.vue'
+import AttendanceActionsModule from '../attendance/modules/AttendanceActionsModule.vue'
 
 const route = useRoute()
 const projectId = computed(() => route.params.id as string)

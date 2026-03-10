@@ -268,7 +268,7 @@ function parseRecordTime(time: string | number | Date) {
 </script>
 
 <template>
-  <NCard title="专注时间轴 Timeline" size="small" class="mt-4">
+  <NCard title="专注时间轴 Timeline" size="small" class="mt-4" :bordered="false">
     <template #header-extra>
       <NRadioGroup v-model:value="rangeType" size="small">
         <NRadioButton value="withIn7days">近7天</NRadioButton>
