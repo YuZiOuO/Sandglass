@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { NCard } from 'naive-ui'
-import EventsTimeline from '../common/EventsTimeline.vue'
+import { NCard} from 'naive-ui'
+import EventsTimeline, { type EventsTimelineDisplayPreset } from '../common/EventsTimeline.vue'
+import EventsTimelineFilterSelecter from '../common/EventsTimelineFilterSelecter.vue';
+import { ref } from 'vue';
 defineProps<{ projectId: string }>()
+const displayPreset = ref<EventsTimelineDisplayPreset>('today')
 </script>
 
 <template>
   <n-card size="small" title="Flow">
+    <template #header-extra>
+      <events-timeline-filter-selecter v-model:value="displayPreset"/>
+    </template>
     <events-timeline
-      :attendance="{ preset: 'today', projectId: projectId }"
+      :attendance="{ preset: 'withIn30days', projectId: projectId }"
       :github="{
         owner: 'YuZiOuO',
         repo: 'Sandglass',
         since: new Date(new Date().setHours(0, 0, 0, 0)), // start of today
       }"
+      :display-preset="displayPreset"
     />
   </n-card>
 </template>

@@ -59,12 +59,13 @@ import { CodeOutline } from '@vicons/ionicons5'
 /**
  * if undefined, events of that type will not be displayed
  */
+export type EventsTimelineDisplayPreset = 'today' | 'withIn7days' | 'withIn30days'
 const props = defineProps<{
   attendance?: { preset: AttendanceRecordQueryType; projectId?: string }
   github?: { owner: string; repo: string; since?: Date; until?: Date }
   googleTask?: { TasklistId: string }
   googleCalendar?: { calendarId: string }
-  displayPreset?: 'today' | 'withIn7days' | 'withIn30days'
+  displayPreset?: EventsTimelineDisplayPreset
 }>()
 
 const presetStartTimestamp = computed(() => {

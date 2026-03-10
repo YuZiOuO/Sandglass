@@ -21,7 +21,13 @@
         </NCard>
 
         <NCard title="今日打卡记录">
-          <EventsTimeline :attendance="{preset:'today'}" />
+          <template #header-extra>
+            <EventsTimelineFilterSelecter v-model:value="displayPreset" />
+          </template>
+          <EventsTimeline
+            :attendance="{ preset: 'withIn30days' }"
+            :display-preset="displayPreset"
+          />
         </NCard>
       </NFlex>
     </n-gi>
@@ -34,4 +40,9 @@ import AttendanceStatisticsModule from './AttendanceStatisticsModule.vue'
 import AttendanceActionsModule from './AttendanceActionsModule.vue'
 import AttendanceStatusModule from './AttendanceStatusModule.vue'
 import EventsTimeline from '../common/EventsTimeline.vue'
+import EventsTimelineFilterSelecter from '../common/EventsTimelineFilterSelecter.vue'
+import type { EventsTimelineDisplayPreset } from '../common/EventsTimeline.vue'
+import { ref } from 'vue'
+
+const displayPreset = ref<EventsTimelineDisplayPreset>('today')
 </script>
