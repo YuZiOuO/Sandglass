@@ -4,7 +4,8 @@ import { createAuthClient } from 'better-auth/vue'
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/vue-query'
 import type { ClientResponse } from 'hono/client'
 import { createDiscreteApi } from 'naive-ui'
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
+import { useStorage } from '@vueuse/core'
 
 /**
  * Hono RPC Client
@@ -38,6 +39,24 @@ export const authCli = createAuthClient({
 export function useAuthStatus() {
   const session = authCli.useSession()
   const isLoggedIn = computed(() => !!session.value.data?.user)
+  return isLoggedIn
+}
+
+const AUTH_CACHE_KEY = 'sandglass_auth_status'
+export function useOptimisticAuthStatus() {
+  const session = authCli.useSession()
+  const hasLocalCache = useStorage(AUTH_CACHE_KEY, false)
+  const isLoggedIn = computed(() => {
+    if (session.value.data?.user) return true
+    if (session.value.isPending && hasLocalCache.value) return true
+    return false
+  })
+
+  watchEffect(() => {
+    if (!session.value.isPending) {
+      hasLocalCache.value = !!session.value.data?.user
+    }
+  })
   return isLoggedIn
 }
 
