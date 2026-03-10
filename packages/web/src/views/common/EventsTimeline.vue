@@ -1,9 +1,9 @@
 <template>
-  <n-empty description="你什么也找不到" v-if="!(mergedEvents.length !== 0)" />
+  <n-empty description="你什么也找不到" v-if="!(filteredMergedEvents.length !== 0)" />
 
   <NTimeline v-else>
     <NTimelineItem
-      v-for="r in mergedEvents"
+      v-for="r in filteredMergedEvents"
       :key="r.timestamp"
       :type="r.timelineType"
       :content="'to be modified'"
@@ -64,7 +64,26 @@ const props = defineProps<{
   github?: { owner: string; repo: string; since?: Date; until?: Date }
   googleTask?: { TasklistId: string }
   googleCalendar?: { calendarId: string }
+  displayPreset?: 'today' | 'withIn7days' | 'withIn30days'
 }>()
+
+const presetStartTimestamp = computed(() => {
+  let relativeDate: Date | undefined = new Date()
+  switch (props.displayPreset) {
+    case 'today':
+      relativeDate.setHours(0, 0, 0, 0)
+      break
+    case 'withIn7days':
+      relativeDate.setDate(relativeDate.getDate() - 7)
+      break
+    case 'withIn30days':
+      relativeDate.setDate(relativeDate.getDate() - 30)
+      break
+    default:
+      relativeDate = undefined
+  }
+  return relativeDate?.getTime()
+})
 
 type Event = {
   // basic
@@ -161,4 +180,10 @@ const mergedEvents = computed(() => {
   const merged = [...attendanceEvents.value, ...commitsEvents.value]
   return merged.sort((a, b) => a.timestamp - b.timestamp)
 })
+
+const filteredMergedEvents = computed(() =>
+  mergedEvents.value.filter(
+    (item) => !presetStartTimestamp.value || item.timestamp > presetStartTimestamp.value,
+  ),
+)
 </script>
