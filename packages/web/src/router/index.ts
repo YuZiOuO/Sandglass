@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import { notifyError, useAuthStatus } from '@/services-composable/common'
+import { notifyError, useOptimisticAuthStatus } from '@/services-composable/common'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,7 +41,7 @@ const router = createRouter({
 
 // auth guard
 router.beforeEach(async (to, _from, next) => {
-  const isLoggedIn = useAuthStatus()
+  const isLoggedIn = useOptimisticAuthStatus()
 
   const loginPath = '/login'
   const whiteList = ['/', loginPath]

@@ -147,7 +147,7 @@ import { useGoogleCalendarListQuery } from '@/services-composable/third-party/go
 import { useGoogleTaskListsQuery } from '@/services-composable/third-party/google-tasks'
 import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/third-party/github'
 import { RouterLink } from 'vue-router'
-import ModuleLoadingErrorResult from '@/common/ModuleLoadingErrorResult.vue'
+import ModuleLoadingErrorResult from './common/ModuleLoadingErrorResult.vue'
 import { authCli } from '@/services-composable/common'
 import { LogoGithub, PersonOutline } from '@vicons/ionicons5'
 import { IconGoogleCalendarOutline, IconGoogleTasksOutline } from '@/assets'

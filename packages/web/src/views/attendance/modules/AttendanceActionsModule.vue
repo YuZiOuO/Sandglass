@@ -80,10 +80,10 @@ import {
 import { computed } from 'vue'
 import { NButton, NInput, NPopconfirm, NSpace, NFlex, NH1, NTime } from 'naive-ui'
 import { useNow } from '@vueuse/core'
-import { attendanceModuleIconMap as iconMap } from './icon'
-import TargetUpdateActionButton from './action-buttons/TargetActionButton.vue'
-import FixActionButton from './action-buttons/FixActionButton.vue'
-import LeaveActionButton from './action-buttons/LeaveActionButton.vue'
+import { attendanceModuleIconMap as iconMap } from '../icon'
+import TargetUpdateActionButton from '../components/action-buttons/TargetActionButton.vue'
+import FixActionButton from '../components/action-buttons/FixActionButton.vue'
+import LeaveActionButton from '../components/action-buttons/LeaveActionButton.vue'
 
 const props = defineProps<{ projectId?: string }>()
 
