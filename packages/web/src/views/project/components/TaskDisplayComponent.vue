@@ -1,35 +1,39 @@
 <template>
   <div v-if="item">
     <NSpin :show="updating">
-      <n-checkbox
-        :checked="updating ? !completed : completed"
-        :indeterminate="false"
-        :disabled="updating"
-        @update:checked="
-          (checked: boolean) => {
-            const patchedTask: googleTask = {
-              id: item?.id,
-              status: checked ? 'completed' : 'needsAction',
-            }
-            patchHook.mutate({ data: patchedTask, tasklistId: tasklistId! })
-          }
-        "
-      >
+      <NCard>
         <n-thing>
           <template #header>
             {{ item.title }}
           </template>
           <template #header-extra>
-            <NButton size="small"> ... </NButton>
+            <n-checkbox
+              :checked="updating ? !completed : completed"
+              :indeterminate="false"
+              :disabled="updating"
+              @update:checked="
+                (checked: boolean) => {
+                  const patchedTask: googleTask = {
+                    id: item?.id,
+                    status: checked ? 'completed' : 'needsAction',
+                  }
+                  patchHook.mutate({ data: patchedTask, tasklistId: tasklistId! })
+                }
+              "
+            >
+            </n-checkbox>
           </template>
           <template #description>
             {{ item.notes }}
           </template>
-          <template #default>
-            {{ item.due ? new Date(item.due).toLocaleDateString() : undefined }}
+          <template #default> </template>
+          <template #footer>
+            <NTag v-if="item.due">
+              {{ new Date(item.due).toLocaleDateString() }}
+            </NTag>
           </template>
         </n-thing>
-      </n-checkbox>
+      </NCard>
     </NSpin>
   </div>
 </template>
@@ -39,7 +43,7 @@ import {
   useGoogleTasksPatchMutation,
   type googleTask,
 } from '@/services-composable/third-party/google-tasks'
-import { NThing, NCheckbox, NSpin, NButton } from 'naive-ui'
+import { NThing, NCheckbox, NSpin, NCard, NTag } from 'naive-ui'
 import { computed } from 'vue'
 
 /**
