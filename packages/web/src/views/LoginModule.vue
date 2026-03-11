@@ -47,7 +47,8 @@
             @click="
               async () => {
                 const res = await githubSignIn.mutateAsync()
-                handleLogin(res.error?.message)
+                console.log(res)
+                handleRedirect(res.error?.message)
               }
             "
             :loading="githubSignIn.isPending.value"
@@ -60,7 +61,7 @@
             @click="
               async () => {
                 const res = await googleSignIn.mutateAsync()
-                handleLogin(res.error?.message)
+                handleRedirect(res.error?.message)
               }
             "
             :loading="googleSignIn.isPending.value"
@@ -73,7 +74,7 @@
             @click="
               async () => {
                 const res = await passkeySignIn.mutateAsync()
-                handleLogin(res.error?.message)
+                handleRedirect(res.error?.message)
               }
             "
             :loading="passkeySignIn.isPending.value"
@@ -117,6 +118,14 @@ function handleLogin(err?: string) {
     router.push('/')
   } else {
     message.error('登录失败: ' + err)
+  }
+}
+
+function handleRedirect(err?: string) {
+  if (!err) {
+    message.loading('跳转到第三方页面...')
+  } else {
+    message.error('获取第三方登录URL登录失败: ' + err)
   }
 }
 </script>
