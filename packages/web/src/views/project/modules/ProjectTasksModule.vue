@@ -1,44 +1,29 @@
 <script setup lang="ts">
-import {
-  NCard,
-  NCheckbox,
-  NEmpty,
-  NPopconfirm,
-  NInput,
-  NButton,
-  NFlex,
-  NDatePicker,
-} from 'naive-ui'
+import { NCard, NEmpty, NPopconfirm, NInput, NButton, NFlex, NDatePicker } from 'naive-ui'
 import {
   useGoogleTasksCreateMutation,
-  useGoogleTasksPatchMutation,
   useGoogleTasksQuery,
   type googleTask,
 } from '@/services-composable/third-party/google-tasks'
 import { computed, ref } from 'vue'
+import TasksModuleTaskDisplayComponent from '../components/TaskDisplayComponent.vue'
 
 const props = defineProps<{
   tasklistId?: string
 }>()
 
 const tasks = useGoogleTasksQuery(() => props.tasklistId)
-const resolvedTasks = computed(() => tasks.data.value?.items)
+const resolvedTasks = computed(() =>
+  [...(tasks.data.value?.items ?? [])].sort((a, b) => a.id!.localeCompare(b.id!)),
+  // clone and sorted by id
+)
 
 const taskCreateModel = ref<googleTask>({})
 const taskCreate = useGoogleTasksCreateMutation()
-
-const taskPatch = useGoogleTasksPatchMutation()
-
-const isChanging = (id: string | undefined, status: string | undefined) =>
-  computed(
-    () =>
-      taskPatch.variables.value?.data.id === id &&
-      taskPatch.variables.value?.data.status !== status,
-  )
 </script>
 
 <template>
-  <n-card size="small" title="Tasks">
+  <n-card title="Tasks" :bordered="false">
     <template #header-extra>
       <n-popconfirm
         @positive-click="
@@ -65,27 +50,10 @@ const isChanging = (id: string | undefined, status: string | undefined) =>
     </template>
 
     <div v-if="tasklistId && resolvedTasks">
-      <div v-for="t in resolvedTasks" :key="t.id">
-        <n-checkbox
-          :checked="
-            isChanging(t.id, t.status).value
-              ? !(t.status === 'completed')
-              : t.status === 'completed'
-          "
-          :label="t.title"
-          :indeterminate="isChanging(t.id, t.status).value"
-          :disabled="isChanging(t.id, t.status).value"
-          @update:checked="
-            (checked: boolean) => {
-              const patchedTask: googleTask = {
-                id: t.id,
-                status: checked ? 'completed' : 'needsAction',
-              }
-              taskPatch.mutate({ data: patchedTask, tasklistId: tasklistId! })
-            }
-          "
-        ></n-checkbox>
-      </div>
+      <n-flex v-for="t in resolvedTasks" :key="t.id">
+        <tasks-module-task-display-component :item="t" :tasklist-id="tasklistId">
+        </tasks-module-task-display-component>
+      </n-flex>
     </div>
     <n-empty v-else> </n-empty>
   </n-card>

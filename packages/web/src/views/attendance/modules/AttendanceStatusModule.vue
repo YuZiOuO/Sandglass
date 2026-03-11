@@ -58,7 +58,7 @@ import {
   NTag,
   NSkeleton,
 } from 'naive-ui'
-import { computeWorkTimeOfToday } from './hooks'
+import { computeWorkTimeOfToday } from '../hooks'
 import { computed } from 'vue'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

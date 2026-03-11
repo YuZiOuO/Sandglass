@@ -21,10 +21,10 @@ import {
   useAttendanceRecordCreateMutate,
   type AttendanceRecordCreateDTO,
 } from '@/services-composable/attendance-record'
-import { attendanceModuleIconMap } from '../icon'
 import NPopConfirmWithHook from './base/ActionButton.vue'
 import { computed, ref } from 'vue'
 import { NSelect, NDatePicker, NFlex, type SelectOption } from 'naive-ui'
+import { attendanceModuleIconMap } from '../../icon';
 
 const props = defineProps<{
   projectId?: string

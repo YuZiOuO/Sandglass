@@ -15,13 +15,13 @@
 </template>
 <script setup lang="ts">
 import { NDatePicker, NInputNumber } from 'naive-ui'
-import { attendanceModuleIconMap } from '../icon'
 import NPopConfirmWithHook from './base/ActionButton.vue'
 import { ref } from 'vue'
 import {
   useLeaveRecordCreateMutate,
   type LeaveRecordCreateDTO,
 } from '@/services-composable/attendance-target'
+import { attendanceModuleIconMap } from '../../icon'
 
 const form = ref<LeaveRecordCreateDTO>({
   date: new Date().getTime(),

@@ -24,27 +24,51 @@ Treat every course as a **Project**. Sandglass provides a unified dashboard to m
 ## ✨ Features
 
 ### 1. ⏱️ Attendance & Tracking
-*   **Check-in System:** Track time spent on courses with a "Clock-in/Clock-out" mechanism.
-*   **Heatmap:** Visualize your effort with GitHub-style contribution graphs.
+
+- **Check-in System:** Track time spent on courses with a "Clock-in/Clock-out" mechanism.
+- **Heatmap:** Visualize your effort with GitHub-style contribution graphs.
 
 ### 2. 📅 Two-way Sync
-*   **Google Ecosystem:** Full bidirectional synchronization with Google Calendar and Google Tasks.
-*   **Unified View:** Manage course schedules, exams, and deadlines in one timeline.
+
+- **Google Ecosystem:** Full bidirectional synchronization with Google Calendar and Google Tasks.
+- **Unified View:** Manage course schedules, exams, and deadlines in one timeline.
 
 ### 3. 💻 Code & Development
-*   **GitHub Integration:** Link course repositories directly to your project.
-*   **Commit Visualization:** Track code activity and growth within the course dashboard.
+
+- **GitHub Integration:** Link course repositories directly to your project.
+- **Commit Visualization:** Track code activity and growth within the course dashboard.
 
 ### 4. 🗂️ Knowledge Management
-*   **Resources:** Centralize slides, PDFs, and reference links.
-*   **Notes:** Built-in Markdown support for course notes.
+
+- **Resources:** Centralize slides, PDFs, and reference links.
+- **Notes:** Built-in Markdown support for course notes.
+
+## 🖥️ Screenshots
+
+<p align="center">
+  <img src="./screenshots/screenshot_1.jpeg"/>
+  <br>
+  <sub>Preview of Attendance module </sub>
+</p>
+
+<p align="center">
+<img src="./screenshots/screenshot_3.jpeg"/>
+  <br>
+  <sub> Heatmap of commits </sub>
+</p>
+
+<p align="center">
+<img src="./screenshots/screenshot_2.jpeg"/>
+  <br>
+  <sub>Integration with github and google </sub>
+</p>
 
 ## 🛠️ Tech Stack
 
-*   **Frontend**: Vue 3, Vite, Naive UI, TanStack Query, ECharts
-*   **Backend**: Bun, Hono, Better Auth, Zod
-*   **Database**: PostgreSQL, Prisma
-*   **Integrations**: Google API, GitHub API
+- **Frontend**: Vue 3, Vite, Naive UI, TanStack Query, ECharts
+- **Backend**: Bun, Hono, Better Auth, Zod
+- **Database**: PostgreSQL, Prisma
+- **Integrations**: Google API, GitHub API
 
 ## 🚀 Quick Start
 
@@ -53,8 +77,8 @@ Treat every course as a **Project**. Sandglass provides a unified dashboard to m
 3.  **Env**: Configure `.env` in `packages/api` and `packages/web`.
 4.  **Migrate**: `cd packages/schema && bunx prisma db push`
 5.  **Run**:
-    *   API: `cd packages/api && bun run dev`
-    *   Web: `cd packages/web && bun run dev`
+    - API: `cd packages/api && bun run dev`
+    - Web: `cd packages/web && bun run dev`
 
 ## 🤝 Contribution
 

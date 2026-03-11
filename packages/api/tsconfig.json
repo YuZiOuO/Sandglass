@@ -5,8 +5,4 @@
     "jsxImportSource": "hono/jsx",
     "moduleResolution": "bundler"
   },
-  "typeAcquisition": {
-    "enable": true,
-    "exclude": ["googleapis"]
-  }
 }

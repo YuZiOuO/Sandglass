@@ -13,13 +13,13 @@
 </template>
 <script setup lang="ts">
 import { NInputNumber } from 'naive-ui'
-import { attendanceModuleIconMap } from '../icon'
 import {
   useAttendanceTargetUpdateMutate,
   type AttendanceTargetUpdateDTO,
 } from '@/services-composable/attendance-target'
 import { ref } from 'vue'
 import NPopConfirmWithHook from './base/ActionButton.vue'
+import { attendanceModuleIconMap } from '../../icon'
 
 const targetUpdateHook = useAttendanceTargetUpdateMutate()
 const targetUpdateForm = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })

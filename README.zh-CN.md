@@ -17,7 +17,7 @@
 
 **Sandglass** 是一款为学生量身定制的**一站式效率工具**。
 
-[**💻 在线演示 (Live Demo)**](https://sandglass.kanata.ink)
+[**💻 在线演示 (Demo)**](https://sandglass.kanata.ink)
 
 我们将每一门课程视为一个 **项目 (Project)**。Sandglass 提供统一的看板，助你集中管理课程的截止日期、日程、笔记和代码仓库。
 
@@ -38,6 +38,26 @@
 ### 4. 🗂️ 知识管理
 *   **资源聚合:** 集中管理课件 PDF、实验文档与参考链接。
 *   **Markdown 笔记:** 随时记录课程重点与灵感。
+
+## 🖥️ 截屏
+
+<p align="center">
+  <img src="./screenshots/screenshot_1.jpeg" />
+  <br>
+  <sub> 考勤模块预览 </sub>
+</p>
+
+<p align="center">
+<img src="./screenshots/screenshot_3.jpeg"/>
+  <br>
+  <sub> Commits热力图 </sub>
+</p>
+
+<p align="center">
+<img src="./screenshots/screenshot_2.jpeg"/>
+  <br>
+  <sub> Google与Github集成 </sub>
+</p>
 
 ## 🛠️ 技术栈
 
