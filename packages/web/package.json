@@ -15,6 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@better-auth/passkey": "^1.5.1",
     "@sandglass/api": "workspace:*",
     "@sandglass/schema": "workspace:*",
     "@tanstack/vue-query": "^5.90.5",

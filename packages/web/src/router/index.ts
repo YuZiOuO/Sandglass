@@ -17,6 +17,11 @@ const router = createRouter({
       component: LoginView,
     },
     {
+      path: '/login/success',
+      name: 'OAuthSuccess',
+      component: () => import('@/views/OAuthSuccessView.vue'),
+    },
+    {
       path: '/project',
       name: 'ProjectList',
       component: () => import('@/views/ProjectListView.vue'),
@@ -44,9 +49,9 @@ router.beforeEach(async (to, _from, next) => {
   const isLoggedIn = useOptimisticAuthStatus()
 
   const loginPath = '/login'
-  const whiteList = ['/', loginPath]
+  const whiteList = ['/', '/login/success', loginPath]
 
-  const err = new Error();
+  const err = new Error()
   err.name = '路径不合法'
 
   if (!isLoggedIn.value) {

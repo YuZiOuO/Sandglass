@@ -2,9 +2,12 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
 import { db } from "./db";
 import { env } from "./env";
+import { passkey } from "@better-auth/passkey";
 
 export const authBasePath = "/auth";
 export const auth = betterAuth({
+  appName: "Sandglass",
+  plugins: [passkey()],
   database: prismaAdapter(db, { provider: "postgresql" }),
   trustedOrigins: env.ALLOWED_ORIGINS,
   baseURL: env.BETTER_AUTH_BASE_URL,
@@ -28,11 +31,13 @@ export const auth = betterAuth({
       ],
       accessType: "offline",
       prompt: "consent",
+      display: "touch",
     },
     github: {
       clientId: env.GH_clientId,
       clientSecret: env.GH_clientSecret,
       scope: ["user", "repo:status"],
+      display: "popup",
     },
   },
 });
