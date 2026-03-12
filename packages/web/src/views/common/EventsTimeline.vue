@@ -54,7 +54,7 @@ import {
 import { attendanceModuleIconMap } from '../attendance/icon'
 import { computed, type Component } from 'vue'
 import { useGithubListRepoCommitsQuery } from '@/services-composable/third-party/github'
-import { CodeOutline } from '@vicons/ionicons5'
+import { GitCommitOutline, GitMergeOutline } from '@vicons/ionicons5'
 
 /**
  * if undefined, events of that type will not be displayed
@@ -117,8 +117,8 @@ function commits2Events(c: (typeof commits)['data']['value']): Event[] {
     c?.map((item) => {
       return {
         timestamp: new Date(item.commit.author?.date ?? 0).getTime(),
-        icon: CodeOutline,
-        lineDashed: true,
+        icon: item.parents.length > 1 ? GitMergeOutline : GitCommitOutline,
+        lineDashed: false,
         header: 'Commit',
         content: item.commit.message + ' @' + item.sha.substring(0, 6),
         timelineType: 'info',
