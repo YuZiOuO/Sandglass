@@ -1,5 +1,5 @@
 <template>
-  <NPopConfirmWithHook
+  <ActionButton
     :loading="mutateHook.isPending.value"
     @positive-click="() => mutateHook.mutate(form)"
   >
@@ -11,11 +11,11 @@
       <NDatePicker type="date" v-model:value="form.date as number" />
       <NInputNumber v-model:value="form.timeMs" />
     </template>
-  </NPopConfirmWithHook>
+  </ActionButton>
 </template>
 <script setup lang="ts">
 import { NDatePicker, NInputNumber } from 'naive-ui'
-import NPopConfirmWithHook from './base/ActionButton.vue'
+import ActionButton from './base/ActionButton.vue'
 import { ref } from 'vue'
 import {
   useLeaveRecordCreateMutate,
