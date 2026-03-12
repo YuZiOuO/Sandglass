@@ -81,8 +81,13 @@ const taskCreate = useGoogleTasksCreateMutation()
     </template>
 
     <div v-if="tasklistId && resolvedTasks">
-      <n-flex v-for="t in resolvedTasks" :key="t.id">
-        <tasks-module-task-display-component :item="t" :tasklist-id="tasklistId" />
+      <n-flex>
+        <tasks-module-task-display-component
+          v-for="t in resolvedTasks"
+          :key="t.id"
+          :item="t"
+          :tasklist-id="tasklistId"
+        />
       </n-flex>
     </div>
     <div v-else>

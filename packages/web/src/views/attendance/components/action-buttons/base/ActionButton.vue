@@ -1,26 +1,23 @@
 <template>
-  <NPopconfirm
-    :show="loading || undefined"
-    @positive-click="$emit('positive-click')"
-    :positive-button-props="{ loading: loading }"
-  >
+  <NPopconfirmWithHook :loading="loading" @positive-click="$emit('positive-click')">
     <template #trigger>
-      <NPopover :delay="200">
-        <template #trigger>
-          <NButton secondary circle>
-            <template #icon>
-              <slot name="icon"> </slot>
-            </template>
-          </NButton>
+      <NButton secondary circle>
+        <template #icon>
+          <slot name="icon"> </slot>
         </template>
-        <slot name="description"></slot>
-      </NPopover>
+      </NButton>
     </template>
-    <slot name="form"></slot>
-  </NPopconfirm>
+    <template #description>
+      <slot name="description"></slot>
+    </template>
+    <template #form>
+      <slot name="form"></slot>
+    </template>
+  </NPopconfirmWithHook>
 </template>
 <script setup lang="ts">
-import { NPopconfirm, NPopover, NButton } from 'naive-ui'
+import { NButton } from 'naive-ui'
+import NPopconfirmWithHook from '@/views/common/NPopconfirmWithHook.vue'
 
 defineEmits<{
   (e: 'positive-click'): void

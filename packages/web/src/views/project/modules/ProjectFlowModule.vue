@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EventsTimeline from '@/views/common/EventsTimeline.vue'
 import type { EventsTimelineDisplayPreset } from '@/views/common/EventsTimeline.vue'
 import EventsTimelineFilterSelecter from '@/views/common/EventsTimelineFilterSelecter.vue'
 import { NCard } from 'naive-ui'

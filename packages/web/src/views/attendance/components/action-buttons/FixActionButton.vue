@@ -1,5 +1,5 @@
 <template>
-  <NPopConfirmWithHook
+  <ActionButton
     :loading="mutateHook.isPending.value"
     @positive-click="() => mutateHook.mutate(mergedForm)"
   >
@@ -9,22 +9,23 @@
     </template>
     <template #form>
       <NFlex>
-        {{ mergedForm}}
+        {{ mergedForm }}
         <NSelect v-model:value="form.type" :options="selectOptions"> </NSelect>
-        <NDatePicker v-model:value="(form.time as number)" :type="'datetime'"></NDatePicker>
+        <NDatePicker v-model:value="form.time as number" :type="'datetime'"></NDatePicker>
       </NFlex>
     </template>
-  </NPopConfirmWithHook>
+  </ActionButton>
 </template>
+
 <script setup lang="ts">
 import {
   useAttendanceRecordCreateMutate,
   type AttendanceRecordCreateDTO,
 } from '@/services-composable/attendance-record'
-import NPopConfirmWithHook from './base/ActionButton.vue'
 import { computed, ref } from 'vue'
 import { NSelect, NDatePicker, NFlex, type SelectOption } from 'naive-ui'
-import { attendanceModuleIconMap } from '../../icon';
+import ActionButton from './base/ActionButton.vue'
+import { attendanceModuleIconMap } from '../../icon'
 
 const props = defineProps<{
   projectId?: string

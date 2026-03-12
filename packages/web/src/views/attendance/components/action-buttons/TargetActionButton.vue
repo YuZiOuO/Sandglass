@@ -1,5 +1,5 @@
 <template>
-  <NPopConfirmWithHook 
+  <ActionButton
   :loading="targetUpdateHook.isPending.value"
   @positive-click="() => targetUpdateHook.mutate(targetUpdateForm)">
     <template #icon>
@@ -9,7 +9,7 @@
     <template #form>
       <NInputNumber placeholder="新目标值" v-model:value="targetUpdateForm.json.timeMs" />
     </template>
-  </NPopConfirmWithHook>
+  </ActionButton>
 </template>
 <script setup lang="ts">
 import { NInputNumber } from 'naive-ui'
@@ -18,7 +18,7 @@ import {
   type AttendanceTargetUpdateDTO,
 } from '@/services-composable/attendance-target'
 import { ref } from 'vue'
-import NPopConfirmWithHook from './base/ActionButton.vue'
+import ActionButton from './base/ActionButton.vue'
 import { attendanceModuleIconMap } from '../../icon'
 
 const targetUpdateHook = useAttendanceTargetUpdateMutate()
