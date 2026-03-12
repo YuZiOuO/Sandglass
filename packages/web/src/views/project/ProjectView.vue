@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane, NSplit } from 'naive-ui'
+import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane, NSplit, NScrollbar } from 'naive-ui'
 import { useProjectQuery } from '@/services-composable/project'
 
 import ProjectTasksModule from './modules/ProjectTasksModule.vue'
@@ -21,14 +21,18 @@ const project = useProjectQuery(projectId)
 <template>
   <n-grid x-gap="12" :cols="24">
     <n-grid-item span="16">
-      <NSplit>
+      <NSplit :default-size="0.35">
         <template #1>
-          <NSplit direction="vertical">
+          <NSplit direction="vertical" :default-size="0.5">
             <template #1>
-              <ProjectTasksModule :tasklist-id="project.data.value?.tasklistId" />
+              <NScrollbar>
+                <ProjectTasksModule :tasklist-id="project.data.value?.tasklistId" />
+              </NScrollbar>
             </template>
             <template #2>
-              <ProjectResourcesModule :project-id="projectId" />
+              <NScrollbar>
+                <ProjectResourcesModule :project-id="projectId" />
+              </NScrollbar>
             </template>
           </NSplit>
         </template>
@@ -57,7 +61,12 @@ const project = useProjectQuery(projectId)
         <NCard>
           <AttendanceActionsModule :project-id="projectId" />
         </NCard>
-        <ProjectFlowModule :calendar-id="project.data.value?.calendarId" :project-id="projectId" />
+        <NScrollbar>
+          <ProjectFlowModule
+            :calendar-id="project.data.value?.calendarId"
+            :project-id="projectId"
+          />
+        </NScrollbar>
       </NFlex>
     </n-grid-item>
   </n-grid>
