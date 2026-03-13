@@ -65,6 +65,7 @@ const project = useProjectQuery(projectId)
           <ProjectFlowModule
             :calendar-id="project.data.value?.calendarId"
             :project-id="projectId"
+            :tasklist-id="project.data.value?.tasklistId"
           />
         </NScrollbar>
       </NFlex>

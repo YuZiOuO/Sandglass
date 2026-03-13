@@ -10,7 +10,8 @@ const googleTasksKeys = {
   namespace: ['google', 'tasks'] as const,
   tasklists: () => [...googleTasksKeys.namespace, 'tasklists'] as const,
   tasklist: (tasklistId: string) => [...googleTasksKeys.tasklists(), tasklistId] as const,
-  tasks: (tasklistId: string) => [...googleTasksKeys.namespace, 'tasks', tasklistId] as const,
+  tasks: (tasklistId: string, showAll?: boolean) =>
+    [...googleTasksKeys.namespace, 'tasks', tasklistId, { showAll: showAll }] as const,
 }
 
 export function useGoogleTaskListsQuery() {
@@ -34,15 +35,24 @@ export function useGoogleTaskListQuery(tasklistId: MaybeRefOrGetter<string | und
   })
 }
 
-export function useGoogleTasksQuery(tasklistId: MaybeRefOrGetter<string | undefined>) {
+// showAll defaults to false
+export function useGoogleTasksQuery(
+  tasklistId: MaybeRefOrGetter<string | undefined>,
+  showAll?: MaybeRefOrGetter<boolean | undefined>,
+) {
   const id = computed(() => toValue(tasklistId))
-
+  const showAllItems = computed(() => toValue(showAll))
   return useQuery({
-    queryKey: googleTasksKeys.tasks(id.value!),
-    queryFn: async () =>
-      queryGoogle<gapi.client.tasks.Tasks>(
-        baseURL + `/tasks/v1/lists/${encodeURIComponent(id.value!)}/tasks`,
-      ),
+    queryKey: computed(() => googleTasksKeys.tasks(id.value!, showAllItems.value)),
+    queryFn: async () => {
+      const endpoint = baseURL + `/tasks/v1/lists/${encodeURIComponent(id.value!)}/tasks?`
+      const params = new URLSearchParams({
+        maxResult: '100',
+        showHidden: String(showAllItems.value ?? false),
+        showCompleted: 'true',
+      })
+      return queryGoogle<gapi.client.tasks.Tasks>(endpoint + params.toString())
+    },
     enabled: () => !!toValue(tasklistId),
   })
 }

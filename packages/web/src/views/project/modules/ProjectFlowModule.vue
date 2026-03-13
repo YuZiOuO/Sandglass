@@ -4,7 +4,7 @@ import type { EventsTimelineDisplayPreset } from '@/views/common/EventsTimeline.
 import EventsTimelineFilterSelecter from '@/views/common/EventsTimelineFilterSelecter.vue'
 import { NCard } from 'naive-ui'
 import { ref } from 'vue'
-defineProps<{ projectId: string }>()
+defineProps<{ projectId: string; tasklistId?: string }>()
 const displayPreset = ref<EventsTimelineDisplayPreset>('today')
 </script>
 
@@ -20,6 +20,13 @@ const displayPreset = ref<EventsTimelineDisplayPreset>('today')
         repo: 'Sandglass',
         since: new Date(new Date().setHours(0, 0, 0, 0)), // start of today
       }"
+      :googleTask="
+        tasklistId
+          ? {
+              TasklistId: tasklistId,
+            }
+          : undefined
+      "
       :display-preset="displayPreset"
     />
   </n-card>

@@ -23,6 +23,12 @@
             <a v-if="r.url" :href="r.url"> </a>
           </NText>
         </NDropdown>
+        <div v-else>
+          <NText style="cursor: pointer">
+            {{ r.header }}
+            <a v-if="r.url" :href="r.url"> </a>
+          </NText>
+        </div>
       </template>
       {{ r.content }}
       <template #icon>
@@ -36,25 +42,14 @@
 
 <script setup lang="ts">
 import {
-  useAttendanceRecordDeleteMutate,
   useAttendanceRecordQuery,
   type AttendanceRecordQueryType,
-  type AttendanceRecordType,
 } from '@/services-composable/attendance-record'
-import {
-  NTimeline,
-  NTimelineItem,
-  NEmpty,
-  type TimelineItemProps,
-  NDropdown,
-  type DropdownOption,
-  NText,
-  NIcon,
-} from 'naive-ui'
-import { attendanceModuleIconMap } from '../attendance/icon'
-import { computed, type Component } from 'vue'
 import { useGithubListRepoCommitsQuery } from '@/services-composable/third-party/github'
-import { GitCommitOutline, GitMergeOutline } from '@vicons/ionicons5'
+import { NTimeline, NTimelineItem, NEmpty, NDropdown, NText, NIcon } from 'naive-ui'
+import { computed } from 'vue'
+import { attendanceRecord2Events, commits2Events, tasks2Events } from './EventsTimeline'
+import { useGoogleTasksQuery } from '@/services-composable/third-party/google-tasks'
 
 /**
  * if undefined, events of that type will not be displayed
@@ -86,21 +81,6 @@ const presetStartTimestamp = computed(() => {
   return relativeDate?.getTime()
 })
 
-type Event = {
-  // basic
-  header: string
-  timestamp: number
-  content?: string
-  url?: string
-
-  // styles
-  icon: Component
-  timelineType: TimelineItemProps['type']
-  lineDashed: boolean
-  dropDownOptions?: DropdownOption[]
-  dropDownCallback?: (key: string, options: DropdownOption) => void
-}
-
 const attendanceRecords = useAttendanceRecordQuery(
   () => props.attendance?.preset,
   () => props.attendance?.projectId,
@@ -111,74 +91,14 @@ const commits = useGithubListRepoCommitsQuery(
   () => props.github?.since,
   () => props.github?.until,
 )
+const tasks = useGoogleTasksQuery(() => props.googleTask?.TasklistId, true)
 
-function commits2Events(c: (typeof commits)['data']['value']): Event[] {
-  return (
-    c?.map((item) => {
-      return {
-        timestamp: new Date(item.commit.author?.date ?? 0).getTime(),
-        icon: item.parents.length > 1 ? GitMergeOutline : GitCommitOutline,
-        lineDashed: false,
-        header: 'Commit',
-        content: item.commit.message + ' @' + item.sha.substring(0, 6),
-        timelineType: 'info',
-      }
-    }) ?? []
-  )
-}
-
-const attendanceRecordDelete = useAttendanceRecordDeleteMutate()
-function attendnaceRecord2Events(r: (typeof attendanceRecords)['data']['value']): Event[] {
-  const recordType2Name: Record<AttendanceRecordType, string> = {
-    IN: '签到',
-    OUT: '签退',
-    PAUSE: '暂停',
-  } as const
-
-  const recordType2TimelineType: Record<AttendanceRecordType, TimelineItemProps['type']> = {
-    IN: 'success',
-    OUT: 'error',
-    PAUSE: 'warning',
-  } as const
-
-  const dropdownOptions: DropdownOption[] = [
-    {
-      label: '删除',
-      key: 'delete',
-    },
-  ] as const
-
-  return (
-    r
-      ?.filter((item) => {
-        const projectId = props.attendance?.projectId
-        if (!projectId) {
-          return true
-        } else {
-          return item.projectId === projectId
-        }
-      }) // filter those not in specified project
-      .map((item) => {
-        return {
-          timestamp: new Date(item.time).getTime(),
-          icon: attendanceModuleIconMap[item.type],
-          lineDashed: !(item.type === 'IN'),
-          header: recordType2Name[item.type] + ' @ ' + item.projectId,
-          timelineType: recordType2TimelineType[item.type],
-          dropDownOptions: dropdownOptions,
-          dropDownCallback: () => {
-            attendanceRecordDelete.mutate(item.id)
-          },
-        }
-      }) ?? []
-  )
-}
-
-const attendanceEvents = computed(() => attendnaceRecord2Events(attendanceRecords.data.value))
+const attendanceEvents = computed(() => attendanceRecord2Events(attendanceRecords.data.value))
 const commitsEvents = computed(() => commits2Events(commits.data.value))
+const tasksEvents = computed(() => tasks2Events(tasks.data.value?.items))
 
 const mergedEvents = computed(() => {
-  const merged = [...attendanceEvents.value, ...commitsEvents.value]
+  const merged = [...attendanceEvents.value, ...commitsEvents.value, ...tasksEvents.value]
   return merged.sort((a, b) => a.timestamp - b.timestamp)
 })
 
