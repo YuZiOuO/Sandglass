@@ -1,5 +1,4 @@
 import {
-  useAttendanceRecordDeleteMutate,
   useAttendanceRecordQuery,
   type AttendanceRecordType,
 } from '@/services-composable/attendance-record'
@@ -21,8 +20,10 @@ export type Event = {
   icon: Component
   timelineType: TimelineItemProps['type']
   lineDashed: boolean
-  dropDownOptions?: DropdownOption[]
-  dropDownCallback?: (key: string, options: DropdownOption) => void
+  dropdown?: {
+    options: DropdownOption[]
+    callback: (key: string, options: DropdownOption) => void
+  }
 }
 
 type Commits = ReturnType<typeof useGithubListRepoCommitsQuery>['data']['value']
@@ -42,9 +43,7 @@ export function commits2Events(c: Commits): Event[] {
 }
 
 type AttendanceRecords = ReturnType<typeof useAttendanceRecordQuery>['data']['value']
-export function attendanceRecord2Events(r: AttendanceRecords, projectId?: string): Event[] {
-  const attendanceRecordDelete = useAttendanceRecordDeleteMutate()
-
+export function attendanceRecord2Events(r: AttendanceRecords): Event[] {
   const recordType2Name: Record<AttendanceRecordType, string> = {
     IN: '签到',
     OUT: '签退',
@@ -65,27 +64,19 @@ export function attendanceRecord2Events(r: AttendanceRecords, projectId?: string
   ] as const
 
   return (
-    r
-      ?.filter((item) => {
-        if (!projectId) {
-          return true
-        } else {
-          return item.projectId === projectId
-        }
-      }) // filter those not in specified project // TODO: filter should not be done here
-      .map((item) => {
-        return {
-          timestamp: new Date(item.time).getTime(),
-          icon: attendanceModuleIconMap[item.type],
-          lineDashed: !(item.type === 'IN'),
-          header: recordType2Name[item.type] + ' @ ' + item.projectId,
-          timelineType: recordType2TimelineType[item.type],
-          dropDownOptions: dropdownOptions,
-          dropDownCallback: () => {
-            attendanceRecordDelete.mutate(item.id)
-          },
-        }
-      }) ?? []
+    r?.map((item) => {
+      return {
+        timestamp: new Date(item.time).getTime(),
+        icon: attendanceModuleIconMap[item.type],
+        lineDashed: !(item.type === 'IN'),
+        header: recordType2Name[item.type] + ' @ ' + item.projectId,
+        timelineType: recordType2TimelineType[item.type],
+        dropdown: {
+          options: dropdownOptions,
+          callback: () => {},
+        },
+      }
+    }) ?? []
   )
 }
 

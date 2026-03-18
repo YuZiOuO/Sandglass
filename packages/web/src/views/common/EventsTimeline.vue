@@ -11,24 +11,24 @@
       :line-type="r.lineDashed ? 'dashed' : 'default'"
     >
       <template #header>
-        <NDropdown
-          v-if="r.dropDownOptions"
-          trigger="hover"
-          placement="right"
-          :options="r.dropDownOptions"
-          @select="r.dropDownCallback"
+        <component
+          :is="r.dropdown ? NDropdown : 'div'"
+          v-bind="
+            r.dropdown
+              ? {
+                  trigger: 'hover',
+                  placement: 'right',
+                  options: r.dropdown.options,
+                  onSelect: r.dropdown.callback,
+                }
+              : {}
+          "
         >
           <NText style="cursor: pointer">
             {{ r.header }}
-            <a v-if="r.url" :href="r.url"> </a>
+            <a v-if="r.url" :href="r.url" target="_blank">🔗</a>
           </NText>
-        </NDropdown>
-        <div v-else>
-          <NText style="cursor: pointer">
-            {{ r.header }}
-            <a v-if="r.url" :href="r.url"> </a>
-          </NText>
-        </div>
+        </component>
       </template>
       {{ r.content }}
       <template #icon>
@@ -41,10 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  useAttendanceRecordQuery,
-  type AttendanceRecordQueryType,
-} from '@/services-composable/attendance-record'
+import { useAttendanceRecordQuery } from '@/services-composable/attendance-record'
 import { useGithubListRepoCommitsQuery } from '@/services-composable/third-party/github'
 import { NTimeline, NTimelineItem, NEmpty, NDropdown, NText, NIcon } from 'naive-ui'
 import { computed } from 'vue'
@@ -55,11 +52,19 @@ import { useGoogleTasksQuery } from '@/services-composable/third-party/google-ta
  * if undefined, events of that type will not be displayed
  */
 export type EventsTimelineDisplayPreset = 'today' | 'withIn7days' | 'withIn30days'
+export type EventsTimelineConfig = {
+  attendance: { projectId?: string }
+  github: { owner?: string; repo?: string }
+  googleTask: { TasklistId?: string }
+  googleCalendar: { calendarId?: string }
+}
+
+/**
+ * 该组件通过传入的Config调用Hook获取数据。
+ * 频繁改变参数可能会导致性能问题。
+ */
 const props = defineProps<{
-  attendance?: { preset: AttendanceRecordQueryType; projectId?: string }
-  github?: { owner: string; repo: string; since?: Date; until?: Date }
-  googleTask?: { TasklistId: string }
-  googleCalendar?: { calendarId: string }
+  config: EventsTimelineConfig
   displayPreset?: EventsTimelineDisplayPreset
 }>()
 
@@ -82,19 +87,25 @@ const presetStartTimestamp = computed(() => {
 })
 
 const attendanceRecords = useAttendanceRecordQuery(
-  () => props.attendance?.preset,
-  () => props.attendance?.projectId,
+  () => props.displayPreset,
+  () => props.config.attendance.projectId,
 )
 const commits = useGithubListRepoCommitsQuery(
-  () => props.github?.owner,
-  () => props.github?.repo,
-  () => props.github?.since,
-  () => props.github?.until,
+  () => props.config.github.owner,
+  () => props.config.github.repo,
 )
-const tasks = useGoogleTasksQuery(() => props.googleTask?.TasklistId, true)
+const tasks = useGoogleTasksQuery(() => props.config.googleTask?.TasklistId, true)
 
 const attendanceEvents = computed(() => attendanceRecord2Events(attendanceRecords.data.value))
-const commitsEvents = computed(() => commits2Events(commits.data.value))
+const commitsEvents = computed(() =>
+  commits2Events(
+    commits.data.value?.filter((item) =>
+      presetStartTimestamp.value
+        ? new Date(item.commit.author!.date!).getTime() > presetStartTimestamp.value
+        : true,
+    ),
+  ),
+)
 const tasksEvents = computed(() => tasks2Events(tasks.data.value?.items))
 
 const mergedEvents = computed(() => {

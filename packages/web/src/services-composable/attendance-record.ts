@@ -4,7 +4,7 @@ import type { InferRequestType, InferResponseType } from 'hono'
 import { toValue, type MaybeRefOrGetter } from 'vue'
 
 export const attendanceKeys = {
-  namesapce: ['attendance'] as const
+  namesapce: ['attendance'] as const,
 }
 
 export type AttendanceRecordQueryType = NonNullable<
