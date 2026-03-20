@@ -5,7 +5,7 @@
       {{ projectModel }}
 
       <!-- name input -->
-      <NInput v-model:value="projectModel.name" placeholder="name"></NInput>
+      <NInput v-model:value="projectModel.name" placeholder="项目名称"></NInput>
 
       <!-- google bio binding -->
       <NGrid cols="1 m:2" responsive="screen" :x-gap="12" :y-gap="12">
@@ -26,7 +26,6 @@
               </NButton>
             </template>
             <NFlex>
-
               <!-- google calendar -->
               <NSelect
                 v-model:value="projectModel.calendarId"
@@ -45,6 +44,7 @@
                 <template #action>
                   <NFlex :wrap="false">
                     <NInput v-model:value="calendarModel.summary" :placeholder="'日历名称'" />
+                    <NButton @click="calendarModel.summary = projectModel.name">使用项目名</NButton>
                     <NButton
                       @click="
                         () => {
@@ -79,6 +79,7 @@
                 <template #action>
                   <NFlex :wrap="false">
                     <NInput v-model:value="tasklistModel.title" :placeholder="'任务列表名称'" />
+                    <NButton @click="tasklistModel.title = projectModel.name">使用项目名</NButton>
                     <NButton
                       @click="
                         () => {
@@ -155,7 +156,7 @@
     </NFlex>
 
     <!-- submit -->
-    <template #footer>
+    <template #header-extra>
       <NButton
         @click="async () => projectCreate.mutate(projectModel)"
         :loading="projectCreate.isPending.value"
