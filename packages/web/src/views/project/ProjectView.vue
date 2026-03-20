@@ -63,8 +63,21 @@ const project = useProjectQuery(projectId)
         </NCard>
         <NScrollbar>
           <ProjectFlowModule
-            :calendar-id="project.data.value?.calendarId"
-            :project-id="projectId"
+            :config="{
+              attendance: {
+                projectId: projectId,
+              },
+              github: {
+                owner: project.data.value?.repoOwner,
+                repo: project.data.value?.repoName,
+              },
+              googleCalendar: {
+                calendarId: project.data.value?.calendarId,
+              },
+              googleTask: {
+                TasklistId: project.data.value?.tasklistId,
+              },
+            }"
           />
         </NScrollbar>
       </NFlex>

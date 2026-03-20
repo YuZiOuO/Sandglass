@@ -5,7 +5,7 @@
     :description="`${countdown.remaining.value}秒后自动跳转...`"
   >
     <template #footer>
-      <NButton @click="() => router.push('/')"> 跳转 </NButton>
+      <NButton @click="() => router.push('/')">跳转</NButton>
     </template>
   </NResult>
 </template>

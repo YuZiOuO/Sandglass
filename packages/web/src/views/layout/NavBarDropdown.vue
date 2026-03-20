@@ -1,8 +1,8 @@
 <template>
   <n-dropdown :disabled="!session.data" :options="dropdownOptions" @select="handleDropdownSelect">
-    <n-button v-if="!!session.data" tertiary type="primary"> 我的 </n-button>
+    <n-button v-if="!!session.data" tertiary type="primary">我的</n-button>
     <RouterLink v-else to="/login">
-      <n-button tertiary type="primary"> 登录 </n-button>
+      <n-button tertiary type="primary">登录</n-button>
     </RouterLink>
   </n-dropdown>
 </template>

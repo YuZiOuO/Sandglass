@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import EventsTimeline from '@/views/common/EventsTimeline.vue'
-import type { EventsTimelineDisplayPreset } from '@/views/common/EventsTimeline.vue'
+import type {
+  EventsTimelineConfig,
+  EventsTimelineDisplayPreset,
+} from '@/views/common/EventsTimeline.vue'
 import EventsTimelineFilterSelecter from '@/views/common/EventsTimelineFilterSelecter.vue'
 import { NCard } from 'naive-ui'
 import { ref } from 'vue'
-defineProps<{ projectId: string }>()
+defineProps<{ config: EventsTimelineConfig }>()
 const displayPreset = ref<EventsTimelineDisplayPreset>('today')
 </script>
 
@@ -14,11 +17,8 @@ const displayPreset = ref<EventsTimelineDisplayPreset>('today')
       <events-timeline-filter-selecter v-model:value="displayPreset" />
     </template>
     <events-timeline
-      :attendance="{ preset: 'withIn30days', projectId: projectId }"
-      :github="{
-        owner: 'YuZiOuO',
-        repo: 'Sandglass',
-        since: new Date(new Date().setHours(0, 0, 0, 0)), // start of today
+      :config="{
+        ...config,
       }"
       :display-preset="displayPreset"
     />

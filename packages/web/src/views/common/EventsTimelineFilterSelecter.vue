@@ -23,5 +23,5 @@ const dropdownOptions: DropdownOption[] = [
 </script>
 
 <template>
-  <n-select trigger="hover" :options="dropdownOptions" v-model:value="model"> </n-select>
+  <n-select trigger="hover" :options="dropdownOptions" v-model:value="model"></n-select>
 </template>

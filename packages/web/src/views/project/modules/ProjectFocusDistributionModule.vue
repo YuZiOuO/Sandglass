@@ -139,9 +139,7 @@ const chartOption = computed(() => {
         silent: true,
         data: [0],
         renderItem: (_params: any, api: any) => {
-          const curvePoints = rows.map((row) =>
-            api.coord([row.normalized, row.hour + 0.5]),
-          )
+          const curvePoints = rows.map((row) => api.coord([row.normalized, row.hour + 0.5]))
           const baselinePoints = rows
             .slice()
             .reverse()

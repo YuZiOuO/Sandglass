@@ -10,7 +10,7 @@ import {
   TitleComponent,
   TooltipComponent,
   GridComponent,
-  DataZoomComponent
+  DataZoomComponent,
 } from 'echarts/components'
 import { NCard, NSpin, NEmpty, NRadioGroup, NRadioButton } from 'naive-ui'
 import type { ComposeOption } from 'echarts/core'
@@ -23,7 +23,7 @@ use([
   TitleComponent,
   TooltipComponent,
   GridComponent,
-  DataZoomComponent
+  DataZoomComponent,
 ])
 
 const props = defineProps<{
@@ -31,7 +31,7 @@ const props = defineProps<{
 }>()
 
 const rangeType = ref<'withIn7days' | 'withIn30days'>('withIn7days')
-const daysCount = computed(() => rangeType.value === 'withIn7days' ? 7 : 30)
+const daysCount = computed(() => (rangeType.value === 'withIn7days' ? 7 : 30))
 const dayMs = 24 * 60 * 60 * 1000
 
 const today = new Date()
@@ -55,13 +55,11 @@ const dateLabels = computed(() => {
   const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
   const count = daysCount.value
   const start = startDate.value
-  
+
   for (let i = 0; i < count; i++) {
     const d = new Date(start)
     d.setDate(d.getDate() + i)
-    labels.push(
-      `${d.getMonth() + 1}/${d.getDate()} (${weekdays[d.getDay()]})`
-    )
+    labels.push(`${d.getMonth() + 1}/${d.getDate()} (${weekdays[d.getDay()]})`)
   }
   return labels
 })
@@ -134,17 +132,17 @@ const chartData = computed(() => {
   return ranges
 })
 
-
 const option = computed<ComposeOption<CustomSeriesOption>>(() => {
   const data = chartData.value
-  
-  if (data.length === 0) return {
-    title: {
-      text: '暂无数据',
-      left: 'center',
-      top: 'center'
+
+  if (data.length === 0)
+    return {
+      title: {
+        text: '暂无数据',
+        left: 'center',
+        top: 'center',
+      },
     }
-  }
 
   return {
     tooltip: {
@@ -152,28 +150,28 @@ const option = computed<ComposeOption<CustomSeriesOption>>(() => {
         const itemIndex = params.value[3]
         const item = data[itemIndex]
         if (!item) return ''
-        
+
         const formatTime = (ms: number) => {
           const h = Math.floor(ms / 3600000)
           const m = Math.floor((ms % 3600000) / 60000)
           return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
         }
-        
+
         const durationMin = Math.round(item.duration / 60000)
-        
+
         return `
           <div style="font-weight:bold">${dateLabels.value[item.dayIndex]}</div>
           <div>${formatTime(item.startTime)} - ${formatTime(item.endTime)}</div>
           <div>时长: ${durationMin} 分钟</div>
           ${item.summary ? `<div>备注: ${item.summary}</div>` : ''}
         `
-      }
+      },
     },
     grid: {
       top: 30,
       bottom: 30,
       left: 60,
-      right: 20
+      right: 20,
     },
     xAxis: {
       type: 'category',
@@ -181,8 +179,8 @@ const option = computed<ComposeOption<CustomSeriesOption>>(() => {
       boundaryGap: true,
       splitLine: {
         show: true,
-        lineStyle: { type: 'dashed' }
-      }
+        lineStyle: { type: 'dashed' },
+      },
     },
     yAxis: {
       type: 'value',
@@ -193,8 +191,8 @@ const option = computed<ComposeOption<CustomSeriesOption>>(() => {
         formatter: (val: number) => {
           const h = Math.floor(val / 3600000)
           return `${h.toString().padStart(2, '0')}:00`
-        }
-      }
+        },
+      },
     },
     dataZoom: [
       {
@@ -202,14 +200,14 @@ const option = computed<ComposeOption<CustomSeriesOption>>(() => {
         show: daysCount.value > 10,
         xAxisIndex: [0],
         start: daysCount.value > 10 ? 50 : 0,
-        end: 100
+        end: 100,
       },
       {
         type: 'inside',
         xAxisIndex: [0],
         zoomOnMouseWheel: false,
-        moveOnMouseWheel: true 
-      }
+        moveOnMouseWheel: true,
+      },
     ],
     series: [
       {
@@ -235,27 +233,27 @@ const option = computed<ComposeOption<CustomSeriesOption>>(() => {
               x: x,
               y: y,
               width: width,
-              height: height
+              height: height,
             },
             style: {
               fill: '#5470c6',
-              opacity: 0.8
-            }
+              opacity: 0.8,
+            },
           }
         },
         itemStyle: {
-          opacity: 0.8
+          opacity: 0.8,
         },
         encode: {
           x: 0,
           y: [1, 2],
-          tooltip: [1, 2]
+          tooltip: [1, 2],
         },
         data: data.map((item, index) => ({
-             value: [item.dayIndex, item.startTime, item.endTime, index]
-        }))
-      }
-    ]
+          value: [item.dayIndex, item.startTime, item.endTime, index],
+        })),
+      },
+    ],
   }
 })
 
@@ -275,7 +273,7 @@ function parseRecordTime(time: string | number | Date) {
         <NRadioButton value="withIn30days">近30天</NRadioButton>
       </NRadioGroup>
     </template>
-    
+
     <div class="chart-layout">
       <div class="timeline-pane chart-container">
         <div v-if="isLoading" class="loading-state">

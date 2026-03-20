@@ -12,8 +12,9 @@
         leaveRecordCreate.mutate(leaveRecordCreateRef)
       }
     "
-    >请假</NButton
   >
+    请假
+  </NButton>
 </template>
 
 <script setup lang="ts">

@@ -3,7 +3,7 @@
     :loading="mutateHook.isPending.value"
     @positive-click="() => mutateHook.mutate(form)"
   >
-    <template #description> 请假 </template>
+    <template #description>请假</template>
     <template #icon>
       <component :is="attendanceModuleIconMap.LEAVE"></component>
     </template>

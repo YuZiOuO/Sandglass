@@ -56,14 +56,14 @@ const taskCreate = useGoogleTasksCreateMutation()
           </template>
           <n-flex>
             新增一个
-            <n-input v-model:value="taskCreateModel.title" placeholder="标题"> </n-input>
+            <n-input v-model:value="taskCreateModel.title" placeholder="标题"></n-input>
             <!-- v-model provides a number, and we need string here. -->
             <n-date-picker
               v-model:formatted-value="taskCreateModel.due"
               value-format="yyyy-MM-dd'T00:00:00.000Z'"
               placeholder="截止日期"
             />
-            <n-input v-model:value="taskCreateModel.notes" placeholder="备注"> </n-input>
+            <n-input v-model:value="taskCreateModel.notes" placeholder="备注"></n-input>
           </n-flex>
         </n-popconfirm>
         <NButton

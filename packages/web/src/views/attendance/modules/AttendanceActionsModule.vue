@@ -4,7 +4,7 @@
     <NH1
       style="width: 100%; margin: 0; display: flex; align-items: center; justify-content: center"
     >
-      <NTime :time="now.getTime()" format="HH:mm:ss"> </NTime>
+      <NTime :time="now.getTime()" format="HH:mm:ss"></NTime>
     </NH1>
 
     <!-- Main Button Area -->
@@ -56,10 +56,10 @@
 
     <!-- Sub Button Area -->
     <NFlex :align="'center'" :wrap="false">
-      <NInput placeholder="事由(选填)" style="flex: 1"> </NInput>
+      <NInput placeholder="事由(选填)" style="flex: 1"></NInput>
       <NSpace size="small" :wrap="false">
         <!-- 补卡按钮 -->
-        <FixActionButton :project-id="projectId"/>
+        <FixActionButton :project-id="projectId" />
 
         <!-- 请假按钮 -->
         <LeaveActionButton />

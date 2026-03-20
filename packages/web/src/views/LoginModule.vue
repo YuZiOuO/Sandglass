@@ -3,7 +3,7 @@
     <n-card>
       <n-flex vertical>
         <n-flex justify="center">
-          <n-h1> 登录 </n-h1>
+          <n-h1>登录</n-h1>
           <n-auto-complete v-model:value="form.email" placeholder="邮箱" clearable />
           <n-input
             v-model:value="form.password"
@@ -21,8 +21,9 @@
             "
             :loading="signIn.isPending.value"
             :disabled="signIn.isPending.value"
-            >登录</n-button
           >
+            登录
+          </n-button>
           <n-button
             @click="
               async () => {
@@ -36,10 +37,11 @@
             "
             :loading="signUp.isPending.value"
             :disabled="signUp.isPending.value"
-            >注册</n-button
           >
+            注册
+          </n-button>
         </n-flex>
-        <n-divider dashed> 第三方OAuth </n-divider>
+        <n-divider dashed>第三方OAuth</n-divider>
         <n-flex justify="center">
           <n-button
             type="primary"

@@ -1,7 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { computed, toValue, type MaybeRefOrGetter } from 'vue'
-import { cli, globalQueryClient, processHonoResponse, useAuthStatus } from './common'
-import type { InferRequestType } from 'hono'
+import {
+  cli,
+  globalQueryClient,
+  processHonoResponse,
+  useAuthStatus,
+  type InferBody,
+} from './common'
 import { resourcesKeys } from './resources'
 
 const projectKeys = {
@@ -32,7 +37,7 @@ export function useProjectQuery(projectId: MaybeRefOrGetter<string>) {
   })
 }
 
-export type ProjectCreateDTO = InferRequestType<typeof cli.project.$post>['json']
+export type ProjectCreateDTO = InferBody<typeof cli.project.$post>
 export function useProjectCreateMutation() {
   return useMutation({
     mutationFn: async (dto: ProjectCreateDTO) => {
@@ -44,8 +49,9 @@ export function useProjectCreateMutation() {
         queryKey: projectKeys.namespace,
       })
       await globalQueryClient.invalidateQueries({
-        queryKey: resourcesKeys.namespace
+        queryKey: resourcesKeys.namespace,
       })
     },
   })
 }
+
