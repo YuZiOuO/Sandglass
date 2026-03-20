@@ -148,6 +148,22 @@
                 :loading="repos.isPending.value"
               >
                 <template #arrow><LogoGithub /></template>
+                <template #action>
+                  <NFlex :wrap="false">
+                    <NInput v-model:value="repoCreateModel.name" :placeholder="'仓库名称'" />
+                    <NButton @click="repoCreateModel.name = projectModel.name">使用项目名</NButton>
+                    <NButton
+                      @click="
+                        () => {
+                          repoCreate.mutate(repoCreateModel)
+                        }
+                      "
+                      :loading="repoCreate.isPending.value"
+                    >
+                      创建
+                    </NButton>
+                  </NFlex>
+                </template>
               </NSelect>
             </NFlex>
           </NCard>
@@ -170,7 +186,7 @@
 <script setup lang="ts">
 import { NCard, NInput, NButton, NSelect, NFlex, useMessage, NGrid, NGi } from 'naive-ui'
 import { useProjectCreateMutation, type ProjectCreateDTO } from '@/services-composable/project'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import {
   type googleCalendar,
   useGoogleCalendarCreateMutation,
@@ -181,7 +197,11 @@ import {
   useGoogleTaskListsCreateMutation,
   useGoogleTaskListsQuery,
 } from '@/services-composable/third-party/google-tasks'
-import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/third-party/github'
+import {
+  type CreateRepositoryDTO,
+  useGithubReposOfAuthenticatedUserQuery,
+  useGithubRepositoryCreateMutation,
+} from '@/services-composable/third-party/github'
 import { authCli } from '@/services-composable/common'
 import { LogoGithub, PersonOutline } from '@vicons/ionicons5'
 import { IconGoogleCalendarOutline, IconGoogleTasksOutline } from '@/assets'
@@ -204,6 +224,24 @@ const calendarCreate = useGoogleCalendarCreateMutation()
 
 const tasklistModel = ref<googleTasklist>({})
 const tasklistCreate = useGoogleTaskListsCreateMutation()
+
+const repoCreate = useGithubRepositoryCreateMutation()
+const repoCreateModel = ref<CreateRepositoryDTO>({
+  name: '',
+  description: '',
+
+  // TODO: user shoule select these
+  private: true, 
+  auto_init: true,
+})
+
+watch(
+  () => projectModel.value.name,
+  (name) => {
+    repoCreateModel.value.description = `Auto Created For Sandglass Project ${name}`
+  },
+  { immediate: true },
+)
 
 const message = useMessage()
 </script>

@@ -1,0 +1,2 @@
+Project View should include a management module
+User can delete project (and cascadely delete repo & google bios), and change bindings

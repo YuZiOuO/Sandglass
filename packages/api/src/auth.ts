@@ -36,8 +36,8 @@ export const auth = betterAuth({
     github: {
       clientId: env.GH_clientId,
       clientSecret: env.GH_clientSecret,
-      scope: ["user", "repo:status"],
-      display: "popup",
+      scope: ['user', 'repo'],
+      display: 'popup',
     },
   },
 });
