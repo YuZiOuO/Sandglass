@@ -24,6 +24,8 @@
           </NButton>
         </template>
         <NFlex>
+
+          <!-- google calendar -->
           <NSelect
             v-model:value="projectModel.calendarId"
             :options="
@@ -38,7 +40,26 @@
             :loading="calendars.isPending.value"
           >
             <template #arrow><IconGoogleCalendarOutline /></template>
+            <template #action>
+              <NFlex :wrap="false">
+                <NInput v-model:value="calendarModel.summary" :placeholder="'日历名称'" />
+                <NButton
+                  @click="
+                    () => {
+                      calendarCreate.mutate({
+                        data: calendarModel,
+                      })
+                    }
+                  "
+                  :loading="calendarCreate.isPending.value"
+                >
+                  创建
+                </NButton>
+              </NFlex>
+            </template>
           </NSelect>
+
+          <!-- google tasks -->
           <NSelect
             v-model:value="projectModel.tasklistId"
             :options="
@@ -143,7 +164,11 @@
 import { NCard, NInput, NButton, NSelect, NFlex, useMessage } from 'naive-ui'
 import { useProjectCreateMutation, type ProjectCreateDTO } from '@/services-composable/project'
 import { ref } from 'vue'
-import { useGoogleCalendarListQuery } from '@/services-composable/third-party/google-calendar'
+import {
+  type googleCalendar,
+  useGoogleCalendarCreateMutation,
+  useGoogleCalendarListQuery,
+} from '@/services-composable/third-party/google-calendar'
 import {
   type googleTasklist,
   useGoogleTaskListsCreateMutation,
@@ -166,6 +191,9 @@ const projectCreate = useProjectCreateMutation()
 const calendars = useGoogleCalendarListQuery()
 const tasklists = useGoogleTaskListsQuery()
 const repos = useGithubReposOfAuthenticatedUserQuery()
+
+const calendarModel = ref<googleCalendar>({})
+const calendarCreate = useGoogleCalendarCreateMutation()
 
 const tasklistModel = ref<googleTasklist>({})
 const tasklistCreate = useGoogleTaskListsCreateMutation()

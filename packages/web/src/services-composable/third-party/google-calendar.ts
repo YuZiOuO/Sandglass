@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/vue-query'
-import { queryGoogle } from './google'
+import { useMutation, useQuery } from '@tanstack/vue-query'
+import { postGoogle, queryGoogle } from './google'
 import { computed, toValue, type MaybeRefOrGetter } from 'vue'
 import { isGoogleTokenAvailable } from './google'
+import { globalQueryClient } from '../common'
 
 const baseURL = 'https://www.googleapis.com/calendar/v3'
 
@@ -17,6 +18,19 @@ export function useGoogleCalendarListQuery() {
     queryFn: async () =>
       queryGoogle<gapi.client.calendar.CalendarList>(baseURL + '/users/me/calendarList'),
     enabled: computed(() => isGoogleTokenAvailable.value),
+  })
+}
+
+export type googleCalendar = gapi.client.calendar.Calendar
+
+export function useGoogleCalendarCreateMutation() {
+  return useMutation({
+    mutationFn: async (dto: { data: googleCalendar }) =>
+      postGoogle<googleCalendar>(baseURL + '/calendars', dto.data),
+    onSuccess: async () =>
+      globalQueryClient.invalidateQueries({
+        queryKey: googleCalendarKeys.calendarLists(),
+      }),
   })
 }
 
