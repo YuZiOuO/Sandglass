@@ -3,7 +3,7 @@
     <template #trigger>
       <NButton secondary circle>
         <template #icon>
-          <slot name="icon"> </slot>
+          <slot name="icon"></slot>
         </template>
       </NButton>
     </template>

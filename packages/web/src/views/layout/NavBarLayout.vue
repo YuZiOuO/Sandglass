@@ -1,7 +1,7 @@
 <template>
   <n-grid :cols="10">
     <n-gi>
-      <n-icon> </n-icon>
+      <n-icon></n-icon>
     </n-gi>
     <n-gi :offset="1" :span="6">
       <NavBarMenu />

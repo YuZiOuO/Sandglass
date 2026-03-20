@@ -1,11 +1,12 @@
 <template>
   <ActionButton
-  :loading="targetUpdateHook.isPending.value"
-  @positive-click="() => targetUpdateHook.mutate(targetUpdateForm)">
+    :loading="targetUpdateHook.isPending.value"
+    @positive-click="() => targetUpdateHook.mutate(targetUpdateForm)"
+  >
     <template #icon>
       <component :is="attendanceModuleIconMap.TARGET"></component>
     </template>
-    <template #description> 修改目标 </template>
+    <template #description>修改目标</template>
     <template #form>
       <NInputNumber placeholder="新目标值" v-model:value="targetUpdateForm.json.timeMs" />
     </template>

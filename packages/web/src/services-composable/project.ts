@@ -44,7 +44,7 @@ export function useProjectCreateMutation() {
         queryKey: projectKeys.namespace,
       })
       await globalQueryClient.invalidateQueries({
-        queryKey: resourcesKeys.namespace
+        queryKey: resourcesKeys.namespace,
       })
     },
   })

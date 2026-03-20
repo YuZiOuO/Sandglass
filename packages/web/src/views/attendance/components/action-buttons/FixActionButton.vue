@@ -3,14 +3,14 @@
     :loading="mutateHook.isPending.value"
     @positive-click="() => mutateHook.mutate(mergedForm)"
   >
-    <template #description> 补卡 </template>
+    <template #description>补卡</template>
     <template #icon>
       <component :is="attendanceModuleIconMap.FIX"></component>
     </template>
     <template #form>
       <NFlex>
         {{ mergedForm }}
-        <NSelect v-model:value="form.type" :options="selectOptions"> </NSelect>
+        <NSelect v-model:value="form.type" :options="selectOptions"></NSelect>
         <NDatePicker v-model:value="form.time as number" :type="'datetime'"></NDatePicker>
       </NFlex>
     </template>

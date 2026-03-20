@@ -59,7 +59,6 @@ export function useGoogleTasksQuery(
   })
 }
 
-
 export function useGoogleTasksCreateMutation() {
   return useMutation({
     mutationFn: async (dto: { data: googleTask; tasklistId: string }) =>
@@ -97,10 +96,7 @@ export function useGoogleTasksPatchMutation() {
 export function useGoogleTaskListsCreateMutation() {
   return useMutation({
     mutationFn: async (dto: { data: googleTasklist }) =>
-      postGoogle<googleTasklist>(
-        baseURL + '/tasks/v1/users/@me/lists',
-        dto.data,
-      ),
+      postGoogle<googleTasklist>(baseURL + '/tasks/v1/users/@me/lists', dto.data),
     onSuccess: async () =>
       globalQueryClient.invalidateQueries({
         queryKey: googleTasksKeys.tasklists(),
@@ -111,9 +107,7 @@ export function useGoogleTaskListsCreateMutation() {
 export function useGoogleTaskListsDeleteMutation() {
   return useMutation({
     mutationFn: async (tasklistId: string) =>
-      deleteGoogle<void>(
-        baseURL + `/tasks/v1/users/@me/lists/${encodeURIComponent(tasklistId)}`,
-      ),
+      deleteGoogle<void>(baseURL + `/tasks/v1/users/@me/lists/${encodeURIComponent(tasklistId)}`),
     onSuccess: async () =>
       globalQueryClient.invalidateQueries({
         queryKey: googleTasksKeys.tasklists(),

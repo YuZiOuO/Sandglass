@@ -30,8 +30,7 @@
                       patchHook.mutate({ data: patchedTask, tasklistId: tasklistId! })
                     }
                   "
-                >
-                </n-checkbox>
+                ></n-checkbox>
               </NSpace>
             </template>
             <template #description v-if="item.notes">
@@ -55,7 +54,7 @@
                   }
                 "
               >
-                <template #description> 修改截止日期 </template>
+                <template #description>修改截止日期</template>
                 <template #trigger>
                   <NTag :bordered="false" @click.stop>
                     <template #icon>
@@ -149,7 +148,7 @@ const handleDropdownSelect = (key: DropdownKey) => {
       }
       break
     default:
-      throw new Error(`Assertion Error: ${key as never}`);
+      throw new Error(`Assertion Error: ${key as never}`)
   }
 }
 </script>

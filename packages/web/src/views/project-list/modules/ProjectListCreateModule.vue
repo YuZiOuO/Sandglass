@@ -19,8 +19,9 @@
                 })
               }
             "
-            >无数据？点击绑定</NButton
           >
+            无数据？点击绑定
+          </NButton>
         </template>
         <NFlex>
           <NSelect
@@ -35,8 +36,9 @@
               })
             "
             :loading="calendars.isPending.value"
-            ><template #arrow> <IconGoogleCalendarOutline /> </template
-          ></NSelect>
+          >
+            <template #arrow><IconGoogleCalendarOutline /></template>
+          </NSelect>
           <NSelect
             v-model:value="projectModel.tasklistId"
             :options="
@@ -49,13 +51,12 @@
               })
             "
             :loading="tasklists.isPending.value"
-            ><template #arrow> <IconGoogleTasksOutline /> </template>
+          >
+            <template #arrow><IconGoogleTasksOutline /></template>
             <template #action>
-              <NFlex :wrap="false"
-                ><NInput
-                  v-model:value="tasklistModel.title"
-                  :placeholder="'任务列表名称'"
-                /><NButton
+              <NFlex :wrap="false">
+                <NInput v-model:value="tasklistModel.title" :placeholder="'任务列表名称'" />
+                <NButton
                   @click="
                     () => {
                       tasklistCreate.mutate({
@@ -67,11 +68,11 @@
                 >
                   创建
                 </NButton>
-              </NFlex></template
-            >
+              </NFlex>
+            </template>
           </NSelect>
-        </NFlex></NCard
-      >
+        </NFlex>
+      </NCard>
 
       <!-- github bio binding -->
       <NCard :title="'Github'" embedded>
@@ -85,8 +86,9 @@
                 })
               }
             "
-            >无数据？点击绑定</NButton
           >
+            无数据？点击绑定
+          </NButton>
         </template>
         <NFlex>
           <NSelect
@@ -102,8 +104,8 @@
             "
             :loading="repos.isPending.value"
           >
-            <template #arrow> <PersonOutline /></template
-          ></NSelect>
+            <template #arrow><PersonOutline /></template>
+          </NSelect>
           <NSelect
             v-model:value="projectModel.repoName"
             :options="
@@ -118,8 +120,9 @@
                 })
             "
             :loading="repos.isPending.value"
-            ><template #arrow> <LogoGithub /> </template
-          ></NSelect>
+          >
+            <template #arrow><LogoGithub /></template>
+          </NSelect>
         </NFlex>
       </NCard>
     </NFlex>
@@ -137,18 +140,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-  NCard,
-  NInput,
-  NButton,
-  NSelect,
-  NFlex,
-  useMessage,
-} from 'naive-ui'
-import {
-  useProjectCreateMutation,
-  type ProjectCreateDTO,
-} from '@/services-composable/project'
+import { NCard, NInput, NButton, NSelect, NFlex, useMessage } from 'naive-ui'
+import { useProjectCreateMutation, type ProjectCreateDTO } from '@/services-composable/project'
 import { ref } from 'vue'
 import { useGoogleCalendarListQuery } from '@/services-composable/third-party/google-calendar'
 import {
