@@ -1,9 +1,18 @@
+import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@sandglass/schema/generated/prisma/client";
 import { env } from "./env";
 
 const connectionString = env.DATABASE_URL;
-const adapter = new PrismaPg({ connectionString });
+
+const pool = new Pool({
+  connectionString,
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+const adapter = new PrismaPg(pool);
 
 const createPrismaClient = () => {
   if (env.DB_TRACE) {

@@ -16,9 +16,11 @@
     "@t3-oss/env-core": "^0.13.10",
     "better-auth": "^1.5.1",
     "hono": "^4.11.7",
+    "pg": "^8.20.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/pg": "8.16.0"
   }
 }
