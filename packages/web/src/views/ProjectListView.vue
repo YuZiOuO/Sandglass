@@ -57,9 +57,29 @@
               })
             "
             :loading="tasklists.isPending.value"
-            ><template #arrow> <IconGoogleTasksOutline /> </template
-          ></NSelect> </NFlex
-      ></NCard>
+            ><template #arrow> <IconGoogleTasksOutline /> </template>
+            <template #action>
+              <NFlex :wrap="false"
+                ><NInput
+                  v-model:value="tasklistModel.title"
+                  :placeholder="'任务列表名称'"
+                /><NButton
+                  @click="
+                    () => {
+                      tasklistCreate.mutate({
+                        data: tasklistModel,
+                      })
+                    }
+                  "
+                  :loading="tasklistCreate.isPending.value"
+                >
+                  创建
+                </NButton>
+              </NFlex></template
+            >
+          </NSelect>
+        </NFlex></NCard
+      >
 
       <!-- github bio binding -->
       <NCard :title="'Github'" embedded>
@@ -144,7 +164,11 @@ import {
 } from '@/services-composable/project'
 import { computed, h, ref } from 'vue'
 import { useGoogleCalendarListQuery } from '@/services-composable/third-party/google-calendar'
-import { useGoogleTaskListsQuery } from '@/services-composable/third-party/google-tasks'
+import {
+  type googleTasklist,
+  useGoogleTaskListsCreateMutation,
+  useGoogleTaskListsQuery,
+} from '@/services-composable/third-party/google-tasks'
 import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/third-party/github'
 import { RouterLink } from 'vue-router'
 import ModuleLoadingErrorResult from './common/ModuleLoadingErrorResult.vue'
@@ -180,6 +204,9 @@ const projectCreate = useProjectCreateMutation()
 const calendars = useGoogleCalendarListQuery()
 const tasklists = useGoogleTaskListsQuery()
 const repos = useGithubReposOfAuthenticatedUserQuery()
+
+const tasklistModel = ref<googleTasklist>({})
+const tasklistCreate = useGoogleTaskListsCreateMutation()
 
 const message = useMessage()
 </script>

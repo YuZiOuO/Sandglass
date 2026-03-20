@@ -5,6 +5,8 @@ import { globalQueryClient } from '../common'
 import { isGoogleTokenAvailable } from './google'
 
 const baseURL = 'https://tasks.googleapis.com'
+export type googleTask = gapi.client.tasks.Task
+export type googleTasklist = gapi.client.tasks.TaskList
 
 const googleTasksKeys = {
   namespace: ['google', 'tasks'] as const,
@@ -57,7 +59,7 @@ export function useGoogleTasksQuery(
   })
 }
 
-export type googleTask = gapi.client.tasks.Task
+
 export function useGoogleTasksCreateMutation() {
   return useMutation({
     mutationFn: async (dto: { data: googleTask; tasklistId: string }) =>
@@ -94,8 +96,8 @@ export function useGoogleTasksPatchMutation() {
 
 export function useGoogleTaskListsCreateMutation() {
   return useMutation({
-    mutationFn: async (dto: { data: gapi.client.tasks.TaskList }) =>
-      postGoogle<gapi.client.tasks.TaskList>(
+    mutationFn: async (dto: { data: googleTasklist }) =>
+      postGoogle<googleTasklist>(
         baseURL + '/tasks/v1/users/@me/lists',
         dto.data,
       ),
