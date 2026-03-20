@@ -7,9 +7,9 @@ const connectionString = env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString,
-  max: 10,
+  min: 5,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 5000, // increase timeout for high latency networks
 });
 
 const adapter = new PrismaPg(pool);

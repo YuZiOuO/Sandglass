@@ -1,10 +1,11 @@
 import { computed } from 'vue'
 import { authCli } from '../common'
+import { getCachedAccessToken, invalidateAccessToken } from '../auth-cache'
 
 export const isGoogleTokenAvailable = computed(() => !!authCli.useSession().value.data?.user)
 
 async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Partial<T>) {
-  const token = await authCli.getAccessToken({ providerId: 'google' })
+  const token = await getCachedAccessToken({ providerId: 'google' })
 
   if (token.error || !token.data.accessToken) {
     const err = new Error('failed to retrive access token.')
@@ -28,6 +29,11 @@ async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Pa
     }
     return (await res.json()) as T
   } else {
+    // Invalidate token cache on 401
+    if (res.status === 401) {
+      invalidateAccessToken('google')
+    }
+
     const err = new Error(res.status + ' ' + res.statusText)
     err.name = 'Google API Error'
     throw err

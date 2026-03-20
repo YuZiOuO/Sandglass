@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { computed, type MaybeRefOrGetter, toValue } from 'vue'
-import { authCli, globalQueryClient } from '../common'
+import { globalQueryClient } from '../common'
+import { getCachedAccessToken, invalidateAccessToken } from '../auth-cache'
 import { Octokit } from 'octokit'
 
 const useAuthOctokit = async () => {
-  const token = await authCli.getAccessToken({
+  const token = await getCachedAccessToken({
     providerId: 'github',
   })
 
@@ -17,6 +18,14 @@ const useAuthOctokit = async () => {
   const octokit = new Octokit({
     auth: token.data.accessToken,
   })
+
+  octokit.hook.error('request', async (error) => {
+    if (error && typeof error === 'object' && 'status' in error && error.status === 401) {
+      invalidateAccessToken('github')
+    }
+    throw error
+  })
+
   return octokit
 }
 
