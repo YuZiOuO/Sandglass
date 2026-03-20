@@ -1,12 +1,4 @@
 <template>
-  <NCard title="Project List">
-    <NSpin :show="projectList.isFetching.value">
-      <NMenu v-if="projectListMenuOptions" :options="projectListMenuOptions" />
-      <NEmpty v-if="projectList.isSuccess.value && projectListMenuOptions?.length === 0" />
-      <ModuleLoadingErrorResult :query-hook="projectList" />
-    </NSpin>
-  </NCard>
-
   <NCard :title="'创建'">
     <NFlex>
       <!-- preview -->
@@ -149,20 +141,15 @@ import {
   NCard,
   NInput,
   NButton,
-  NMenu,
-  NEmpty,
-  type MenuOption,
-  NSpin,
   NSelect,
   NFlex,
   useMessage,
 } from 'naive-ui'
 import {
   useProjectCreateMutation,
-  useProjectListQuery,
   type ProjectCreateDTO,
 } from '@/services-composable/project'
-import { computed, h, ref } from 'vue'
+import { ref } from 'vue'
 import { useGoogleCalendarListQuery } from '@/services-composable/third-party/google-calendar'
 import {
   type googleTasklist,
@@ -170,27 +157,9 @@ import {
   useGoogleTaskListsQuery,
 } from '@/services-composable/third-party/google-tasks'
 import { useGithubReposOfAuthenticatedUserQuery } from '@/services-composable/third-party/github'
-import { RouterLink } from 'vue-router'
-import ModuleLoadingErrorResult from './common/ModuleLoadingErrorResult.vue'
 import { authCli } from '@/services-composable/common'
 import { LogoGithub, PersonOutline } from '@vicons/ionicons5'
 import { IconGoogleCalendarOutline, IconGoogleTasksOutline } from '@/assets'
-
-const projectList = useProjectListQuery()
-
-const projectListMenuOptions = computed<MenuOption[] | undefined>(() => {
-  return projectList.data.value?.map((item) => {
-    return {
-      label: () =>
-        h(
-          RouterLink,
-          { to: { name: 'Project', params: { id: item.id } } },
-          { default: () => item.name + ' # ' + item.id },
-        ),
-      key: item.id,
-    }
-  })
-})
 
 const projectModel = ref<ProjectCreateDTO>({
   calendarId: '',
