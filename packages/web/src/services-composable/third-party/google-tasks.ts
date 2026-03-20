@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { patchGoogle, postGoogle, queryGoogle } from './google'
+import { deleteGoogle, patchGoogle, postGoogle, queryGoogle } from './google'
 import { computed, toValue, type MaybeRefOrGetter } from 'vue'
 import { globalQueryClient } from '../common'
 import { isGoogleTokenAvailable } from './google'
@@ -88,6 +88,33 @@ export function useGoogleTasksPatchMutation() {
     onSuccess: async (_data, variables) =>
       globalQueryClient.invalidateQueries({
         queryKey: googleTasksKeys.tasks(variables.tasklistId),
+      }),
+  })
+}
+
+export function useGoogleTaskListsCreateMutation() {
+  return useMutation({
+    mutationFn: async (dto: { data: gapi.client.tasks.TaskList }) =>
+      postGoogle<gapi.client.tasks.TaskList>(
+        baseURL + '/tasks/v1/users/@me/lists',
+        dto.data,
+      ),
+    onSuccess: async () =>
+      globalQueryClient.invalidateQueries({
+        queryKey: googleTasksKeys.tasklists(),
+      }),
+  })
+}
+
+export function useGoogleTaskListsDeleteMutation() {
+  return useMutation({
+    mutationFn: async (tasklistId: string) =>
+      deleteGoogle<void>(
+        baseURL + `/tasks/v1/users/@me/lists/${encodeURIComponent(tasklistId)}`,
+      ),
+    onSuccess: async () =>
+      globalQueryClient.invalidateQueries({
+        queryKey: googleTasksKeys.tasklists(),
       }),
   })
 }

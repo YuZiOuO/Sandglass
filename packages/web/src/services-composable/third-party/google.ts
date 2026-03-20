@@ -22,6 +22,10 @@ async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Pa
   })
 
   if (res.ok) {
+    if (res.status === 204) {
+      // 204 No Content has no body. Calling .json() on it will throw a SyntaxError.
+      return {} as T
+    }
     return (await res.json()) as T
   } else {
     const err = new Error(res.status + ' ' + res.statusText)
@@ -40,4 +44,8 @@ export async function postGoogle<T>(endpoint: string, body: T) {
 
 export async function patchGoogle<T>(endpoint: string, body: Partial<T>) {
   return await fetchGoogleApiRaw<T>(endpoint, 'PATCH', body)
+}
+
+export async function deleteGoogle<T>(endpoint: string) {
+  return await fetchGoogleApiRaw<T>(endpoint, 'DELETE')
 }
