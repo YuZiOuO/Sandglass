@@ -28,13 +28,15 @@ const props = defineProps<{
   projectId: string
 }>()
 
-const resources = useProjectResourcesQuery(computed(() => props.projectId).value)
+const resources = useProjectResourcesQuery(computed(() => props.projectId))
 
-const resourceCreateModel = ref<ResourcesCreateDTO['json']>({
+const resourceCreateModel = ref<Omit<ResourcesCreateDTO, 'projectId'>>({
   title: '',
   url: '',
 })
 const resourceCreate = useResourcesCreateMutation()
+
+
 const resourceDelete = useResourcesDeleteMutation()
 
 const selectOption: SelectOption[] = [{ label: '删除', value: 'delete' }]
@@ -50,10 +52,8 @@ const project = useProjectQuery(() => props.projectId)
         @positive-click="
           () =>
             resourceCreate.mutate({
-              query: { projectId: projectId },
-              json: {
-                ...resourceCreateModel,
-              },
+              ...resourceCreateModel,
+              projectId: props.projectId,
             })
         "
         :positive-button-props="{ loading: resourceCreate.isPending.value }"

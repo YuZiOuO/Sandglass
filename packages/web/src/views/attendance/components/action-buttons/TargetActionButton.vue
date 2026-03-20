@@ -8,7 +8,7 @@
     </template>
     <template #description>修改目标</template>
     <template #form>
-      <NInputNumber placeholder="新目标值" v-model:value="targetUpdateForm.json.timeMs" />
+      <NInputNumber placeholder="新目标值" v-model:value="targetUpdateForm.timeMs" />
     </template>
   </ActionButton>
 </template>
@@ -23,5 +23,5 @@ import ActionButton from './base/ActionButton.vue'
 import { attendanceModuleIconMap } from '../../icon'
 
 const targetUpdateHook = useAttendanceTargetUpdateMutate()
-const targetUpdateForm = ref<AttendanceTargetUpdateDTO>({ json: { timeMs: 0 } })
+const targetUpdateForm = ref<AttendanceTargetUpdateDTO>({ timeMs: 0 })
 </script>
