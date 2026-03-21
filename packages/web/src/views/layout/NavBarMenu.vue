@@ -1,30 +1,39 @@
 <template>
-  <n-menu
-    :value="null"
-    mode="horizontal"
-    :options="menuOptions"
-    style="width: 100%; height: 100%"
-  />
+  <n-menu :options="menuOptions" mode="horizontal" :value="activeKey" />
 </template>
 
 <script setup lang="ts">
 import type { MenuOption } from 'naive-ui'
-import { h } from 'vue'
-import { RouterLink } from 'vue-router'
+import { computed, h } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 import { NMenu } from 'naive-ui'
+
+const route = useRoute()
+
+// Map routes to menu keys for highlighting
+const activeKey = computed(() => {
+  if (route.path === '/') return 'home'
+  if (route.path.startsWith('/project')) return 'project'
+  if (route.path.startsWith('/attendance')) return 'attendance'
+  return null
+})
+
+const renderLabel = (label: string, to: string) => {
+  return () => h(RouterLink, { to }, { default: () => label })
+}
 
 const menuOptions: MenuOption[] = [
   {
-    label: () => h(RouterLink, { to: { path: '/' } }, { default: () => '主页' }),
-    key: '主页', // fixme:要有key才能被点击,原因未知
+    label: renderLabel('主页', '/'),
+    key: 'home',
   },
   {
-    label: () => h(RouterLink, { to: { path: '/project' } }, { default: () => '项目' }),
-    key: '项目',
+    label: renderLabel('项目', '/project'),
+    key: 'project',
   },
   {
-    label: () => h(RouterLink, { to: { path: '/attendance' } }, { default: () => '考勤' }),
-    key: '考勤',
+    label: renderLabel('考勤', '/attendance'),
+    key: 'attendance',
   },
 ]
 </script>
