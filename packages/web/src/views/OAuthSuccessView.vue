@@ -1,13 +1,15 @@
 <template>
-  <NResult
-    status="success"
-    :title="'认证成功'"
-    :description="`${countdown.remaining.value}秒后自动跳转...`"
-  >
-    <template #footer>
-      <NButton @click="() => router.push('/')">跳转</NButton>
-    </template>
-  </NResult>
+  <div class="center-container">
+    <NResult
+      status="success"
+      :title="'认证成功'"
+      :description="`${countdown.remaining.value}秒后自动跳转...`"
+    >
+      <template #footer>
+        <NButton @click="() => router.push('/')">跳转</NButton>
+      </template>
+    </NResult>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -25,3 +27,12 @@ const countdown = useCountdown(10, {
 
 onMounted(() => countdown.start())
 </script>
+
+<style scoped>
+.center-container {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+</style>

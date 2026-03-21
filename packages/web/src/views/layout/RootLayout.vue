@@ -6,7 +6,7 @@
       </n-layout-header>
       <n-layout-content
         class="root-content"
-        content-style="padding: 1% 2.5%; display: flex; flex-direction: column;"
+        content-style="padding: 1% 2.5%; display: flex; flex-direction: column; flex: 1;"
       >
         <RouterView />
       </n-layout-content>
@@ -34,5 +34,7 @@ import FooterLayout from './FooterLayout.vue'
 
 .root-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 </style>
