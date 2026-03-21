@@ -1,57 +1,62 @@
 <!-- AI 生成模块（主要代码由 AI 生成） -->
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAttendanceRecordQuery } from '@/services-composable/attendance-record'
 import VChart from 'vue-echarts'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { CustomChart, LineChart } from 'echarts/charts'
 import { TooltipComponent, GridComponent } from 'echarts/components'
 import { NSpin, NEmpty } from 'naive-ui'
-import type { AttendanceRecordQueryType } from '@/services-composable/attendance-record'
+import type {
+  CallbackDataParams,
+  CustomSeriesRenderItem,
+} from 'echarts/types/dist/shared'
+import type { TimeRange } from './ProjectFocusChartModule.vue'
 
 use([CanvasRenderer, CustomChart, LineChart, TooltipComponent, GridComponent])
 
 const props = defineProps<{
-  projectId: string
-  rangeType: AttendanceRecordQueryType
+  ranges: TimeRange[]
+  loading?: boolean
 }>()
-const dayMs = 24 * 60 * 60 * 1000
-const smoothKernel = [1, 4, 6, 4, 1]
-const smoothKernelWeight = smoothKernel.reduce((acc, n) => acc + n, 0)
 
-const { data: records, isLoading } = useAttendanceRecordQuery(
-  computed(() => props.rangeType),
-  computed(() => props.projectId),
-)
+const ONE_MINUTE_MS = 60 * 1000
+const ONE_HOUR_MS = 60 * 60 * 1000
+const HOURS_PER_DAY = 24
+
+// Gaussian-like kernel for smoothing hourly data
+// Weights: Center=6, Neighbors=4, Far-neighbors=1
+const SMOOTH_KERNEL = [1, 4, 6, 4, 1]
+const SMOOTH_KERNEL_WEIGHT = SMOOTH_KERNEL.reduce((acc, n) => acc + n, 0)
 
 const hourlyDurations = computed(() => {
-  if (!records.value?.length) return []
+  // 1. Initialize 24 buckets for each hour of the day
+  const buckets = Array.from({ length: HOURS_PER_DAY }, (_, hour) => ({
+    hour,
+    duration: 0,
+  }))
 
-  const buckets = Array.from({ length: 24 }, (_, hour) => ({ hour, duration: 0 }))
-  const sortedRecords = [...records.value].sort(
-    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime(),
-  )
-  let currentStart: Date | null = null
+  // 2. Distribute duration of each time range into hour buckets
+  for (const range of props.ranges) {
+    let currentHour = Math.floor(range.startTime / ONE_HOUR_MS)
+    let currentMs = range.startTime
 
-  const addToBucket = (hour: number, ms: number) => {
-    if (hour >= 0 && hour < 24) buckets[hour].duration += ms
-  }
+    // Iterate through hours until we cover the entire range duration
+    while (currentMs < range.endTime) {
+      const nextHourStart = (currentHour + 1) * ONE_HOUR_MS
+      
+      // Determine the end of this segment: either the range end or the hour boundary
+      const segmentEndMs = Math.min(range.endTime, nextHourStart)
+      const duration = segmentEndMs - currentMs
 
-  for (const record of sortedRecords) {
-    const recordTime = parseRecordTime(record.time)
-    if (record.type === 'IN') {
-      currentStart = recordTime
-    } else if (['OUT', 'PAUSE'].includes(record.type) && currentStart) {
-      processDuration(currentStart, recordTime, addToBucket)
-      currentStart = null
-    }
-  }
+      // Accumulate duration if valid hour index (0-23)
+      if (currentHour >= 0 && currentHour < HOURS_PER_DAY) {
+        buckets[currentHour].duration += duration
+      }
 
-  if (currentStart) {
-    const now = new Date()
-    if (now.getTime() - currentStart.getTime() < dayMs) {
-      processDuration(currentStart, now, addToBucket)
+      // Move to next segment
+      currentMs = segmentEndMs
+      currentHour++
     }
   }
 
@@ -62,22 +67,26 @@ const smoothedHours = computed(() => {
   const raw = hourlyDurations.value
   if (!raw.length) return []
 
+  // 1. Apply Convolution Kernel for smoothing
   const smoothed = raw.map((bucket, index) => {
     let weighted = 0
+    // Kernel window: [-2, -1, 0, 1, 2]
     for (let k = -2; k <= 2; k += 1) {
       const target = index + k
+      // Only consider valid indices (no wrapping/padding logic for simplicity)
       if (target >= 0 && target < raw.length) {
-        weighted += raw[target].duration * smoothKernel[k + 2]
+        weighted += raw[target].duration * SMOOTH_KERNEL[k + 2]
       }
     }
 
     return {
       hour: bucket.hour,
       duration: bucket.duration,
-      smooth: weighted / smoothKernelWeight,
+      smooth: weighted / SMOOTH_KERNEL_WEIGHT,
     }
   })
 
+  // 2. Normalize values to 0-1 range for plotting
   const maxSmooth = Math.max(...smoothed.map((item) => item.smooth), 1)
   return smoothed.map((item) => ({
     ...item,
@@ -85,119 +94,111 @@ const smoothedHours = computed(() => {
   }))
 })
 
+// Chart Configuration Constants
+const CONFIG = {
+  COLOR: '#5470c6',
+  FILL_COLOR: 'rgba(84, 112, 198, 0.20)',
+  LINE_WIDTH: 2,
+  SYMBOL_SIZE: 6,
+  SMOOTH_RATIO: 0.45,
+  GRID: { TOP: 30, BOTTOM: 30, LEFT: 6, RIGHT: 10 },
+  // Offset to center point within the hour slot (e.g. 12:30 for hour 12)
+  OFFSET_CENTER: 0.5,
+  X_AXIS_MAX: 1.1, // Slight padding for visualization
+}
+
+// Helper to format time range (e.g. "09:00 - 10:00")
+const formatTimeRange = (hour: number) => {
+  const next = (hour + 1) % HOURS_PER_DAY
+  const fmt = (h: number) => h.toString().padStart(2, '0') + ':00'
+  return `${fmt(hour)} - ${fmt(next)}`
+}
+
 const chartOption = computed(() => {
   const rows = smoothedHours.value
   if (!rows.length) return null
 
+  // Custom renderer for the filled area background
+  const renderArea: CustomSeriesRenderItem = (_params, api) => {
+    // Top curve points
+    const curvePoints = rows.map((row) =>
+      api.coord([row.normalized, row.hour + CONFIG.OFFSET_CENTER]),
+    )
+    // Bottom baseline points (at x=0)
+    const baselinePoints = rows
+      .map((row) => api.coord([0, row.hour + CONFIG.OFFSET_CENTER]))
+      .reverse()
+
+    return {
+      type: 'polygon',
+      shape: { points: [...curvePoints, ...baselinePoints] },
+      style: { fill: CONFIG.FILL_COLOR },
+    }
+  }
+
   return {
     tooltip: {
       trigger: 'item',
-      formatter: (params: any) => {
+      formatter: (params: CallbackDataParams) => {
         const index = params.dataIndex ?? 0
         const row = rows[index]
         if (!row) return ''
 
-        const mins = Math.round(row.duration / 60000)
-        const score = Math.round(row.normalized * 100)
-        const nextHour = (row.hour + 1) % 24
-
-        return `
-          <div style="font-weight:bold">${row.hour.toString().padStart(2, '0')}:00 - ${nextHour.toString().padStart(2, '0')}:00</div>
-          <div>累计专注: ${mins} 分钟</div>
-          <div>热点强度: ${score}%</div>
-        `
+        return [
+          `<div style="font-weight:bold">${formatTimeRange(row.hour)}</div>`,
+          `<div>累计专注: ${Math.round(row.duration / ONE_MINUTE_MS)} 分钟</div>`,
+          `<div>热点强度: ${Math.round(row.normalized * 100)}%</div>`,
+        ].join('')
       },
     },
     grid: {
-      top: 30,
-      bottom: 30,
-      left: 6,
-      right: 10,
+      top: CONFIG.GRID.TOP,
+      bottom: CONFIG.GRID.BOTTOM,
+      left: CONFIG.GRID.LEFT,
+      right: CONFIG.GRID.RIGHT,
     },
+    // X-axis: Normalized intensity (0-1.1), hidden
     xAxis: {
       type: 'value',
       min: 0,
-      max: 1.1,
-      splitLine: { show: false },
-      axisLabel: { show: false },
-      axisTick: { show: false },
-      axisLine: { show: false },
+      max: CONFIG.X_AXIS_MAX,
+      show: false,
     },
+    // Y-axis: Hours (0-24), hidden but inverted (0 at top)
     yAxis: {
       type: 'value',
       min: 0,
-      max: 24,
+      max: HOURS_PER_DAY,
       inverse: true,
-      splitLine: { show: false },
-      axisLabel: { show: false },
-      axisTick: { show: false },
-      axisLine: { show: false },
+      show: false,
     },
     series: [
+      // Layer 1: Filled Area (Custom Shape)
       {
         type: 'custom',
         silent: true,
-        data: [0],
-        renderItem: (_params: any, api: any) => {
-          const curvePoints = rows.map((row) => api.coord([row.normalized, row.hour + 0.5]))
-          const baselinePoints = rows
-            .slice()
-            .reverse()
-            .map((row) => api.coord([0, row.hour + 0.5]))
-
-          return {
-            type: 'polygon',
-            shape: {
-              points: [...curvePoints, ...baselinePoints],
-            },
-            style: {
-              fill: 'rgba(84, 112, 198, 0.20)',
-            },
-          }
-        },
+        data: [0], // Dummy data to trigger renderItem once
+        renderItem: renderArea,
       },
+      // Layer 2: Line Chart
       {
         type: 'line',
-        smooth: 0.45,
+        smooth: CONFIG.SMOOTH_RATIO,
         showSymbol: true,
-        symbolSize: 6,
-        lineStyle: {
-          width: 2,
-          color: '#5470c6',
-        },
-        itemStyle: {
-          color: '#5470c6',
-        },
-        data: rows.map((row) => [row.normalized, row.hour + 0.5]),
+        symbolSize: CONFIG.SYMBOL_SIZE,
+        itemStyle: { color: CONFIG.COLOR },
+        lineStyle: { width: CONFIG.LINE_WIDTH },
+        data: rows.map((row) => [row.normalized, row.hour + CONFIG.OFFSET_CENTER]),
       },
     ],
   }
 })
 
-function processDuration(start: Date, end: Date, addFn: (hour: number, ms: number) => void) {
-  let current = new Date(start)
-  while (current < end) {
-    const currentHour = current.getHours()
-    const nextHour = new Date(current)
-    nextHour.setHours(currentHour + 1, 0, 0, 0)
-
-    const segmentEnd = nextHour < end ? nextHour : end
-    addFn(currentHour, segmentEnd.getTime() - current.getTime())
-    current = segmentEnd
-  }
-}
-
-function parseRecordTime(time: string | number | Date) {
-  if (typeof time === 'string' && time.endsWith('Z')) {
-    return new Date(time.slice(0, -1))
-  }
-  return new Date(time)
-}
 </script>
 
 <template>
   <div class="distribution-container">
-    <div v-if="isLoading" class="loading-state">
+    <div v-if="loading" class="loading-state">
       <NSpin size="small" />
     </div>
     <div v-else-if="!chartOption" class="empty-state">
