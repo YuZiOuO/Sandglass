@@ -34,7 +34,7 @@ const isSameDay = (e: gapi.client.calendar.Event, y: number, m: number, d: numbe
       v-for="e in events.data.value.items.filter((item) => isSameDay(item, year, month, date))"
       :key="e.id"
     >
-      <NTag>{{ e.summary }} </NTag>
+      <NTag>{{ e.summary }}</NTag>
     </div>
   </n-calendar>
   <n-empty></n-empty>

@@ -21,6 +21,12 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false,
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes
+    },
+  },
   socialProviders: {
     google: {
       clientId: env.GApis_OAuth2CliId,
@@ -36,8 +42,8 @@ export const auth = betterAuth({
     github: {
       clientId: env.GH_clientId,
       clientSecret: env.GH_clientSecret,
-      scope: ["user", "repo:status"],
-      display: "popup",
+      scope: ['user', 'repo'],
+      display: 'popup',
     },
   },
 });

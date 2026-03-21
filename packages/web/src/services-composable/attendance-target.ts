@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import type { InferRequestType } from 'hono'
 import {
   cli,
   globalQueryClient,
   processHonoResponse,
   useAuthStatus,
   type FixUnknownDate,
+  type InferBody,
 } from './common'
 import { attendanceKeys } from './attendance-record'
 
@@ -36,11 +36,11 @@ export function useLeaveRecordTodayQuery() {
   })
 }
 
-export type AttendanceTargetUpdateDTO = InferRequestType<typeof cli.attendanceTarget.$put>
+export type AttendanceTargetUpdateDTO = InferBody<typeof cli.attendanceTarget.$put>
 export function useAttendanceTargetUpdateMutate() {
   return useMutation({
     mutationFn: async (dto: AttendanceTargetUpdateDTO) => {
-      const res = await cli.attendanceTarget.$put(dto)
+      const res = await cli.attendanceTarget.$put({ json: dto })
       return await processHonoResponse(res)
     },
     onSuccess: async () => globalQueryClient.invalidateQueries({ queryKey: targetKeys.namespace }),
@@ -48,7 +48,7 @@ export function useAttendanceTargetUpdateMutate() {
 }
 
 export type LeaveRecordCreateDTO = FixUnknownDate<
-  InferRequestType<typeof cli.attendanceTarget.leave.$put>['json'],
+  InferBody<typeof cli.attendanceTarget.leave.$put>,
   'date'
 >
 export function useLeaveRecordCreateMutate() {

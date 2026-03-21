@@ -14,6 +14,10 @@ export const env = createEnv({
     GApis_OAuth2CliSecret: z.string(),
     GH_clientId: z.string(),
     GH_clientSecret: z.string(),
+    DB_TRACE: z
+      .string()
+      .optional()
+      .transform((v) => v === "true" || v === "1"),
     TZ: z.string().refine(
       (val) => {
         try {

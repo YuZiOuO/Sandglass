@@ -1,10 +1,11 @@
 import { computed } from 'vue'
 import { authCli } from '../common'
+import { getCachedAccessToken, invalidateAccessToken } from '../auth-cache'
 
 export const isGoogleTokenAvailable = computed(() => !!authCli.useSession().value.data?.user)
 
 async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Partial<T>) {
-  const token = await authCli.getAccessToken({ providerId: 'google' })
+  const token = await getCachedAccessToken({ providerId: 'google' })
 
   if (token.error || !token.data.accessToken) {
     const err = new Error('failed to retrive access token.')
@@ -22,8 +23,17 @@ async function fetchGoogleApiRaw<T>(endpoint: string, method?: string, body?: Pa
   })
 
   if (res.ok) {
+    if (res.status === 204) {
+      // 204 No Content has no body. Calling .json() on it will throw a SyntaxError.
+      return {} as T
+    }
     return (await res.json()) as T
   } else {
+    // Invalidate token cache on 401
+    if (res.status === 401) {
+      invalidateAccessToken('google')
+    }
+
     const err = new Error(res.status + ' ' + res.statusText)
     err.name = 'Google API Error'
     throw err
@@ -40,4 +50,8 @@ export async function postGoogle<T>(endpoint: string, body: T) {
 
 export async function patchGoogle<T>(endpoint: string, body: Partial<T>) {
   return await fetchGoogleApiRaw<T>(endpoint, 'PATCH', body)
+}
+
+export async function deleteGoogle<T>(endpoint: string) {
+  return await fetchGoogleApiRaw<T>(endpoint, 'DELETE')
 }

@@ -1,10 +1,11 @@
-import { useQuery } from '@tanstack/vue-query'
+import { useMutation, useQuery } from '@tanstack/vue-query'
 import { computed, type MaybeRefOrGetter, toValue } from 'vue'
-import { authCli } from '../common'
+import { globalQueryClient } from '../common'
+import { getCachedAccessToken, invalidateAccessToken } from '../auth-cache'
 import { Octokit } from 'octokit'
 
 const useAuthOctokit = async () => {
-  const token = await authCli.getAccessToken({
+  const token = await getCachedAccessToken({
     providerId: 'github',
   })
 
@@ -17,6 +18,14 @@ const useAuthOctokit = async () => {
   const octokit = new Octokit({
     auth: token.data.accessToken,
   })
+
+  octokit.hook.error('request', async (error) => {
+    if (error && typeof error === 'object' && 'status' in error && error.status === 401) {
+      invalidateAccessToken('github')
+    }
+    throw error
+  })
+
   return octokit
 }
 
@@ -59,6 +68,28 @@ export function useGithubReposOfAuthenticatedUserQuery() {
       const octokit = await useAuthOctokit()
       const repos = await octokit.paginate(octokit.rest.repos.listForAuthenticatedUser)
       return repos.flat()
+    },
+  })
+}
+
+export type CreateRepositoryDTO = NonNullable<
+  Parameters<Octokit['rest']['repos']['createForAuthenticatedUser']>[0]
+>
+
+export function useGithubRepositoryCreateMutation() {
+  return useMutation({
+    mutationFn: async (params: CreateRepositoryDTO) => {
+      const octokit = await useAuthOctokit()
+      if (!params || !params.name) throw new Error('Repository name is required')
+
+      const { data } = await octokit.rest.repos.createForAuthenticatedUser({
+        ...params,
+        name: params.name!,
+      })
+      return data
+    },
+    onSuccess: () => {
+      globalQueryClient.invalidateQueries({ queryKey: ['github', 'repos', 'me'] })
     },
   })
 }

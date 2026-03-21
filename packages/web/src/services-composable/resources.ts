@@ -1,7 +1,13 @@
 import { useQuery, useMutation } from '@tanstack/vue-query'
-import type { InferRequestType } from 'hono'
 import { computed, toValue, type MaybeRefOrGetter } from 'vue'
-import { cli, globalQueryClient, processHonoResponse, useAuthStatus } from './common'
+import {
+  cli,
+  globalQueryClient,
+  processHonoResponse,
+  useAuthStatus,
+  type InferBody,
+  type InferQuery,
+} from './common'
 
 export const resourcesKeys = {
   namespace: ['resources'] as const,
@@ -21,11 +27,15 @@ export function useProjectResourcesQuery(projectId: MaybeRefOrGetter<string>) {
   })
 }
 
-export type ResourcesCreateDTO = InferRequestType<typeof cli.resource.$post>
+export type ResourcesCreateDTO = InferBody<typeof cli.resource.$post> &
+  InferQuery<typeof cli.resource.$post>
 export function useResourcesCreateMutation() {
   return useMutation({
     mutationFn: async (dto: ResourcesCreateDTO) => {
-      const createdResource = await cli.resource.$post(dto)
+      const createdResource = await cli.resource.$post({
+        json: { url: dto.url, title: dto.title },
+        query: { projectId: dto.projectId },
+      })
       return await processHonoResponse(createdResource)
     },
     onSuccess: async (data) =>
