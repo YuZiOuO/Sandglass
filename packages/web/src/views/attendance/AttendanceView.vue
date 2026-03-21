@@ -1,8 +1,5 @@
 <template>
-  <!-- 大致布局: 左侧66%为内容 右侧33%为操作 
-   左侧从上到下：基础状态、统计、时间线 
-   右侧为按钮组、请假 -->
-  <n-grid :cols="3" x-gap="12">
+  <n-grid cols="s:1 m:3" x-gap="12" y-gap="12" responsive="screen">
     <n-gi :span="2">
       <NFlex vertical>
         <NCard>
@@ -14,7 +11,7 @@
         </NCard>
       </NFlex>
     </n-gi>
-    <n-gi>
+    <n-gi :span="1">
       <NFlex vertical>
         <NCard>
           <AttendanceActionsModule />
@@ -25,8 +22,13 @@
             <EventsTimelineFilterSelecter v-model:value="displayPreset" />
           </template>
           <EventsTimeline
-            :attendance="{ preset: 'withIn30days' }"
             :display-preset="displayPreset"
+            :config="{
+              attendance: {},
+              github: {},
+              googleCalendar: {},
+              googleTask: {},
+            }"
           />
         </NCard>
       </NFlex>
