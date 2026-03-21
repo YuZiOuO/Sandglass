@@ -76,7 +76,7 @@
             @click="
               async () => {
                 const res = await passkeySignIn.mutateAsync()
-                handleRedirect(res.error?.message)
+                handleLogin(res.error?.message)
               }
             "
             :loading="passkeySignIn.isPending.value"
