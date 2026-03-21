@@ -61,7 +61,7 @@
         "vue-router": "^4.6.3",
       },
       "devDependencies": {
-        "@tanstack/vue-query-devtools": "^6.1.5",
+        "@tanstack/vue-query-devtools": "^6.1.7",
         "@tsconfig/node22": "^22.0.2",
         "@types/gapi.client.calendar": "^3.0.12",
         "@types/gapi.client.tasks": "^1.0.6",
@@ -526,11 +526,11 @@
 
     "@tanstack/query-core": ["@tanstack/query-core@5.91.2", "", {}, "sha512-Uz2pTgPC1mhqrrSGg18RKCWT/pkduAYtxbcyIyKBhw7dTWjXZIzqmpzO2lBkyWr4hlImQgpu1m1pei3UnkFRWw=="],
 
-    "@tanstack/query-devtools": ["@tanstack/query-devtools@5.93.0", "", {}, "sha512-+kpsx1NQnOFTZsw6HAFCW3HkKg0+2cepGtAWXjiiSOJJ1CtQpt72EE2nyZb+AjAbLRPoeRmPJ8MtQd8r8gsPdg=="],
+    "@tanstack/query-devtools": ["@tanstack/query-devtools@5.94.5", "", {}, "sha512-rjn7mdo9wdB9AhthaOkwT3uLn15DrkDOI9Nyg6vU8BXi8/VsQSUvv1g0L0AdAaFH/4VDaBDe7SQSxqlTwMu1Mw=="],
 
     "@tanstack/vue-query": ["@tanstack/vue-query@5.92.12", "", { "dependencies": { "@tanstack/match-sorter-utils": "^8.19.4", "@tanstack/query-core": "5.91.2", "@vue/devtools-api": "^6.6.3", "vue-demi": "^0.14.10" }, "peerDependencies": { "@vue/composition-api": "^1.1.2", "vue": "^2.6.0 || ^3.3.0" }, "optionalPeers": ["@vue/composition-api"] }, "sha512-WDYqVh3IWkhQu/PFP5Gg3o6kpjDoWfl/TkkCBQZ0RWK6T9nbC0xXpJ9Knx6bovehr9KOgQ2RCyJp/GvQshryMg=="],
 
-    "@tanstack/vue-query-devtools": ["@tanstack/vue-query-devtools@6.1.5", "", { "dependencies": { "@tanstack/query-devtools": "5.93.0" }, "peerDependencies": { "@tanstack/vue-query": "^5.92.9", "vue": "^3.3.0" } }, "sha512-5tQf/4GKfDyvu+Jqv/Fq1im93nXQyge0yWphCmwNHz6Y6+kqA9swJY2G/kLU2TaT2s1CE+elt5EfYNGE1tsDqQ=="],
+    "@tanstack/vue-query-devtools": ["@tanstack/vue-query-devtools@6.1.7", "", { "dependencies": { "@tanstack/query-devtools": "5.94.5" }, "peerDependencies": { "@tanstack/vue-query": "^5.94.5", "vue": "^3.3.0" } }, "sha512-LqY6OEzCyx6JWuShuhJV1JO97uZh9Vr6CtLpj1ZGqTCNQMS35Z6WeXgsx6+L0VtRXrwycmHza0SHnHrDbI+IAg=="],
 
     "@tsconfig/node22": ["@tsconfig/node22@22.0.5", "", {}, "sha512-hLf2ld+sYN/BtOJjHUWOk568dvjFQkHnLNa6zce25GIH+vxKfvTgm3qpaH6ToF5tu/NN0IH66s+Bb5wElHrLcw=="],
 
