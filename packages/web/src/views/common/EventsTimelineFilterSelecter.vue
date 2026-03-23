@@ -1,27 +1,49 @@
 <script setup lang="ts">
-import { type DropdownOption, NSelect } from 'naive-ui'
-import type { EventsTimelineDisplayPreset } from './EventsTimeline.vue'
+import { NButton, NDatePicker, NPopconfirm } from 'naive-ui'
+import dayjs from 'dayjs'
+import { FilterCircle, FilterCircleOutline } from '@vicons/ionicons5'
 
-const model = defineModel<EventsTimelineDisplayPreset>('value', {
-  default: () => 'today',
-})
+const model = defineModel<[number, number]>('value')
 
-const dropdownOptions: DropdownOption[] = [
-  {
-    label: '今日',
-    value: 'today',
-  },
-  {
-    label: '7天内',
-    value: 'withIn7days',
-  },
-  {
-    label: '30天内',
-    value: 'withIn30days',
-  },
-] as const
+const shortcuts = ():Record<string,() => [number,number]> =>
+  ({
+    today: () => [dayjs().startOf('day').valueOf(), dayjs().valueOf()],
+    withIn7days: () => [dayjs().subtract(7, 'day').startOf('day').valueOf(), dayjs().valueOf()],
+    withIn30days: () => [dayjs().subtract(30, 'day').startOf('day').valueOf(), dayjs().valueOf()],
+  }) as const
+
 </script>
 
 <template>
-  <n-select trigger="hover" :options="dropdownOptions" v-model:value="model"></n-select>
+  <n-popconfirm
+    :positive-text="'今天'"
+    @positive-click="model = shortcuts()['today']()"
+    :negative-text="'清除'"
+    @negative-click="model = undefined"
+  >
+    <template #trigger>
+      <n-button
+        circle
+        :quaternary="!model"
+        :secondary="!!model"
+        :type="model ? 'success' : 'default'"
+      >
+        <template #icon>
+          <filter-circle v-if="model" />
+          <filter-circle-outline v-else />
+        </template>
+      </n-button>
+    </template>
+
+    <template #icon>
+      {{ undefined }}
+    </template>
+    <n-date-picker
+      size="small"
+      v-model:value="model"
+      type="daterange"
+      :shortcuts="shortcuts()"
+      :update-value-on-close="true"
+    />
+  </n-popconfirm>
 </template>

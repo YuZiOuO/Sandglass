@@ -64,8 +64,8 @@ const startDate = computed(() => {
 })
 
 const { data: records, isLoading } = useAttendanceRecordQuery(
-  rangeType,
   computed(() => props.projectId),
+  rangeType,
 )
 
 const dateLabels = computed(() => {

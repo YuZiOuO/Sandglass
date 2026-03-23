@@ -8,7 +8,7 @@ import EventsTimelineFilterSelecter from '@/views/common/EventsTimelineFilterSel
 import { NCard } from 'naive-ui'
 import { ref } from 'vue'
 defineProps<{ config: EventsTimelineConfig }>()
-const displayPreset = ref<EventsTimelineDisplayPreset>('today')
+const displayPreset = ref<EventsTimelineDisplayPreset>()
 </script>
 
 <template>

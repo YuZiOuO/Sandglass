@@ -5,9 +5,15 @@ import {
 import { attendanceModuleIconMap } from '../attendance/icon'
 import { CheckboxOutline, GitCommitOutline, GitMergeOutline } from '@vicons/ionicons5'
 import type { Component } from 'vue'
-import type { DropdownOption, TimelineItemProps } from 'naive-ui'
+import type { TimelineItemProps } from 'naive-ui'
 import type { useGithubListRepoCommitsQuery } from '@/services-composable/third-party/github'
 import type { googleTask } from '@/services-composable/third-party/google-tasks'
+
+export type EventAction = {
+  label: string
+  key: string
+  onSelect: () => void
+}
 
 export type Event = {
   // basic
@@ -20,10 +26,9 @@ export type Event = {
   icon: Component
   timelineType: TimelineItemProps['type']
   lineDashed: boolean
-  dropdown?: {
-    options: DropdownOption[]
-    callback: (key: string, options: DropdownOption) => void
-  }
+  
+  // actions
+  actions?: EventAction[]
 }
 
 type Commits = ReturnType<typeof useGithubListRepoCommitsQuery>['data']['value']
@@ -37,13 +42,17 @@ export function commits2Events(c: Commits): Event[] {
         header: 'Commit',
         content: item.commit.message + ' @' + item.sha.substring(0, 6),
         timelineType: 'info',
+        url: item.html_url
       }
     }) ?? []
   )
 }
 
 type AttendanceRecords = ReturnType<typeof useAttendanceRecordQuery>['data']['value']
-export function attendanceRecord2Events(r: AttendanceRecords): Event[] {
+export function attendanceRecord2Events(
+  r: AttendanceRecords,
+  handlers?: { onDelete?: (id: string) => void },
+): Event[] {
   const recordType2Name: Record<AttendanceRecordType, string> = {
     IN: '签到',
     OUT: '签退',
@@ -56,25 +65,23 @@ export function attendanceRecord2Events(r: AttendanceRecords): Event[] {
     PAUSE: 'warning',
   } as const
 
-  const dropdownOptions: DropdownOption[] = [
-    {
-      label: '删除',
-      key: 'delete',
-    },
-  ] as const
-
   return (
     r?.map((item) => {
+      const actions: EventAction[] = [
+        {
+          label: '删除',
+          key: 'delete',
+          onSelect: () => handlers?.onDelete?.(item.id),
+        },
+      ]
+
       return {
         timestamp: new Date(item.time).getTime(),
         icon: attendanceModuleIconMap[item.type],
         lineDashed: !(item.type === 'IN'),
         header: recordType2Name[item.type] + ' @ ' + item.projectId,
         timelineType: recordType2TimelineType[item.type],
-        dropdown: {
-          options: dropdownOptions,
-          callback: () => {},
-        },
+        actions,
       }
     }) ?? []
   )

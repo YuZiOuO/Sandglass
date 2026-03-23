@@ -81,7 +81,7 @@ const attendanceStatus2TagType = {
 } as const
 
 const current_time = useNow()
-const attendanceRecordToday = useAttendanceRecordQuery('today')
+const attendanceRecordToday = useAttendanceRecordQuery(undefined,'today')
 
 const attendanceTarget = useAttendanceTargetQuery()
 

@@ -40,5 +40,14 @@ const createPrismaClient = () => {
 };
 
 export const db = createPrismaClient();
-
 export * as schema from "@sandglass/schema/generated/schemas/index";
+
+async function bootstrap() {
+  try {
+    const res = await db.$queryRaw`SELECT 1`;
+    console.log("[INFO] 🐘 Database Connected.");
+  } catch (err) {
+    console.error("[Fatal] ❌ Failed to initialize Database connection: ", err);
+  }
+}
+bootstrap();

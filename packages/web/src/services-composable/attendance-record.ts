@@ -18,8 +18,8 @@ export type AttendanceRecordQueryType = NonNullable<
   InferQuery<typeof cli.attendanceRecord.$get>['preset']
 >
 export function useAttendanceRecordQuery(
-  type: MaybeRefOrGetter<AttendanceRecordQueryType | undefined>,
   projectId?: MaybeRefOrGetter<string | undefined>,
+  type?: MaybeRefOrGetter<AttendanceRecordQueryType | undefined>,
 ) {
   return useQuery({
     queryKey: ['attendance', type, projectId],
@@ -29,7 +29,6 @@ export function useAttendanceRecordQuery(
       })
       return await processHonoResponse(res)
     },
-    enabled: !!toValue(type),
   })
 }
 
