@@ -46,5 +46,5 @@ import EventsTimelineFilterSelecter from '../common/EventsTimelineFilterSelecter
 import type { EventsTimelineDisplayPreset } from '../common/EventsTimeline.vue'
 import { ref } from 'vue'
 
-const displayPreset = ref<EventsTimelineDisplayPreset>('today')
+const displayPreset = ref<EventsTimelineDisplayPreset>()
 </script>
