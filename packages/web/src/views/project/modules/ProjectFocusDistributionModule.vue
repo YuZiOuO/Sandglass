@@ -21,8 +21,8 @@ const smoothKernel = [1, 4, 6, 4, 1]
 const smoothKernelWeight = smoothKernel.reduce((acc, n) => acc + n, 0)
 
 const { data: records, isLoading } = useAttendanceRecordQuery(
-  computed(() => props.rangeType),
   computed(() => props.projectId),
+  computed(() => props.rangeType),
 )
 
 const hourlyDurations = computed(() => {

@@ -59,10 +59,10 @@ import { computed } from 'vue'
 import { useGoogleTasksQuery } from '@/services-composable/third-party/google-tasks'
 import { attendanceRecord2Events, commits2Events, tasks2Events } from './EventsTimeline'
 
+export type EventsTimelineDisplayPreset = [number, number]
 /**
  * if undefined, events of that type will not be displayed
  */
-export type EventsTimelineDisplayPreset = 'today' | 'withIn7days' | 'withIn30days'
 export type EventsTimelineConfig = {
   attendance: { projectId?: string }
   github: { owner?: string; repo?: string }
@@ -79,28 +79,9 @@ const props = defineProps<{
   displayPreset?: EventsTimelineDisplayPreset
 }>()
 
-const presetStartTimestamp = computed(() => {
-  let relativeDate: Date | undefined = new Date()
-  switch (props.displayPreset) {
-    case 'today':
-      relativeDate.setHours(0, 0, 0, 0)
-      break
-    case 'withIn7days':
-      relativeDate.setDate(relativeDate.getDate() - 7)
-      break
-    case 'withIn30days':
-      relativeDate.setDate(relativeDate.getDate() - 30)
-      break
-    default:
-      relativeDate = undefined
-  }
-  return relativeDate?.getTime()
-})
-
 // Raw Data
 const attendanceRecords = useAttendanceRecordQuery(
-  () => props.displayPreset,
-  () => props.config.attendance.projectId,
+  () => props.config.attendance.projectId
 )
 const commits = useGithubListRepoCommitsQuery(
   () => props.config.github.owner,
@@ -120,25 +101,20 @@ const attendanceEvents = computed(() =>
     onDelete: (id) => deleteAttendance(id),
   }),
 )
-const commitsEvents = computed(() =>
-  commits2Events(
-    commits.data.value?.filter((item) =>
-      presetStartTimestamp.value
-        ? new Date(item.commit.author!.date!).getTime() > presetStartTimestamp.value
-        : true,
-    ),
-  ),
-)
+const commitsEvents = computed(() => commits2Events(commits.data.value))
 const tasksEvents = computed(() => tasks2Events(tasks.data.value?.items))
-const mergedEvents = computed(() => {
-  const merged = [...attendanceEvents.value, ...commitsEvents.value, ...tasksEvents.value]
-  return merged.sort((a, b) => a.timestamp - b.timestamp)
-})
 
-// Merged
-const filteredMergedEvents = computed(() =>
-  mergedEvents.value.filter(
-    (item) => !presetStartTimestamp.value || item.timestamp > presetStartTimestamp.value,
-  ),
-)
+const filteredMergedEvents = computed(() => {
+  const merged = [...attendanceEvents.value, ...commitsEvents.value, ...tasksEvents.value]
+  return merged
+    .filter((item) => {
+      if (props.displayPreset) {
+        const [start, end] = props.displayPreset
+        return item.timestamp >= start && item.timestamp < end
+      } else {
+        return true
+      }
+    })
+    .sort((a, b) => a.timestamp - b.timestamp)
+})
 </script>
