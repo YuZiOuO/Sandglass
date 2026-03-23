@@ -7,7 +7,7 @@
       :description="queryHook.error.value.message"
     >
       <template #footer>
-        <NButton @click="() => queryHook.refetch()"> 重试 </NButton>
+        <NButton @click="() => queryHook.refetch()">重试</NButton>
       </template>
     </NResult>
   </div>

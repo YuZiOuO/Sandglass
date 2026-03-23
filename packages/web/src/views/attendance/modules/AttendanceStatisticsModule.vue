@@ -1,17 +1,17 @@
 <template>
   <div style="width: 100%; height: 400px">
-    <VChart class="chart" :option="chartOptions"> </VChart>
+    <VChart class="chart" :option="chartOptions"></VChart>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
 import { computed } from 'vue'
-import { computeWorkTimeOfToday, groupByDate } from './hooks'
 import { useAttendanceRecordQuery } from '@/services-composable/attendance-record'
 import VChart from 'vue-echarts'
+import { computeWorkTimeOfToday, groupByDate } from '../hooks'
 
-const attendanceRecordWithIn30days = useAttendanceRecordQuery('withIn30days')
+const attendanceRecordWithIn30days = useAttendanceRecordQuery(undefined,'withIn30days')
 const attendanceRecordByDate = computed(() => groupByDate(attendanceRecordWithIn30days.data.value))
 const chartOptions = computed<EChartsOption>(() => {
   return {

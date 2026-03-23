@@ -10,29 +10,33 @@ import {
   NPopconfirm,
   NPopselect,
   NFlex,
-  NSpace,
   NTag,
   NIcon,
   type SelectOption,
 } from 'naive-ui'
-import {
-  useProjectQuery,
-} from '@/services-composable/project'
+import { useProjectQuery } from '@/services-composable/project'
 import { LogoGithub } from '@vicons/ionicons5'
 import { IconGoogleCalendar } from '@/assets'
-import { useProjectResourcesQuery, useResourcesCreateMutation, useResourcesDeleteMutation, type ResourcesCreateDTO } from '@/services-composable/resources'
+import {
+  useProjectResourcesQuery,
+  useResourcesCreateMutation,
+  useResourcesDeleteMutation,
+  type ResourcesCreateDTO,
+} from '@/services-composable/resources'
 
 const props = defineProps<{
   projectId: string
 }>()
 
-const resources = useProjectResourcesQuery(computed(() => props.projectId).value)
+const resources = useProjectResourcesQuery(computed(() => props.projectId))
 
-const resourceCreateModel = ref<ResourcesCreateDTO['json']>({
+const resourceCreateModel = ref<Omit<ResourcesCreateDTO, 'projectId'>>({
   title: '',
   url: '',
 })
 const resourceCreate = useResourcesCreateMutation()
+
+
 const resourceDelete = useResourcesDeleteMutation()
 
 const selectOption: SelectOption[] = [{ label: '删除', value: 'delete' }]
@@ -41,35 +45,33 @@ const project = useProjectQuery(() => props.projectId)
 </script>
 
 <template>
-  <n-card size="small" title="Resources">
+  <n-card size="small" title="Resources" :bordered="false">
     <!-- action -->
     <template #header-extra>
       <n-popconfirm
         @positive-click="
           () =>
             resourceCreate.mutate({
-              query: { projectId: projectId },
-              json: {
-                ...resourceCreateModel,
-              },
+              ...resourceCreateModel,
+              projectId: props.projectId,
             })
         "
         :positive-button-props="{ loading: resourceCreate.isPending.value }"
         :show="resourceCreate.isPending.value || undefined"
       >
         <template #trigger>
-          <n-button :size="'tiny'"> + </n-button>
+          <n-button :size="'tiny'">+</n-button>
         </template>
         <n-flex>
           新增一个
-          <n-input v-model:value="resourceCreateModel.title" placeholder="标题"> </n-input>
-          <n-input v-model:value="resourceCreateModel.url" placeholder="URL"> </n-input>
+          <n-input v-model:value="resourceCreateModel.title" placeholder="标题"></n-input>
+          <n-input v-model:value="resourceCreateModel.url" placeholder="URL"></n-input>
         </n-flex>
       </n-popconfirm>
     </template>
 
     <!-- repo and calendar entry  -->
-    <n-space :wrap="false">
+    <NFlex>
       <n-button
         text
         tag="a"
@@ -97,7 +99,7 @@ const project = useProjectQuery(() => props.projectId)
           </template>
         </n-tag>
       </n-button>
-    </n-space>
+    </NFlex>
 
     <!-- display -->
     <n-list hoverable map clickable v-if="resources.data.value">
@@ -123,6 +125,6 @@ const project = useProjectQuery(() => props.projectId)
     </n-list>
 
     <!-- empty -->
-    <n-empty v-else> </n-empty>
+    <n-empty v-else></n-empty>
   </n-card>
 </template>

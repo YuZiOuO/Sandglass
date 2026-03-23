@@ -30,20 +30,20 @@ export function computeWorkTimeOfToday(records: AttendanceRecord[]) {
   return statusMachineCountTimeMs
 }
 
-export function groupByDate(records:AttendanceRecord[] | undefined){
-  const initial = new Map<string, AttendanceRecord[]>();
+export function groupByDate(records: AttendanceRecord[] | undefined) {
+  const initial = new Map<string, AttendanceRecord[]>()
 
-  if(!records || records.length === 0){
+  if (!records || records.length === 0) {
     return initial
   }
 
-  records.reduce((acc,cur) => {
+  records.reduce((acc, cur) => {
     const key = new Date(cur.time).toLocaleDateString() // date of current record
-    const group = acc.get(key) || [];
-    group.push(cur);
-    acc.set(key,group)
-    return acc;
-  },initial);
+    const group = acc.get(key) || []
+    group.push(cur)
+    acc.set(key, group)
+    return acc
+  }, initial)
 
   return initial
 }

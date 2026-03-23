@@ -2,11 +2,20 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
 import { db } from "./db";
 import { env } from "./env";
+import { passkey } from "@better-auth/passkey";
 
 export const authBasePath = "/auth";
 export const auth = betterAuth({
+  appName: "Sandglass",
+  plugins: [
+    passkey({
+      rpName: "Sandglass",
+      rpID: new URL(env.ALLOWED_ORIGINS).hostname,
+      origin: env.ALLOWED_ORIGINS,
+    }),
+  ],
   database: prismaAdapter(db, { provider: "postgresql" }),
-  trustedOrigins: env.ALLOWED_ORIGINS,
+  trustedOrigins: [env.ALLOWED_ORIGINS],
   baseURL: env.BETTER_AUTH_BASE_URL,
   basePath: authBasePath,
   account: {
@@ -18,6 +27,12 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false,
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes
+    },
+  },
   socialProviders: {
     google: {
       clientId: env.GApis_OAuth2CliId,
@@ -27,12 +42,13 @@ export const auth = betterAuth({
         "https://www.googleapis.com/auth/tasks",
       ],
       accessType: "offline",
-      prompt: "consent",
+      prompt: "select_account",
     },
     github: {
       clientId: env.GH_clientId,
       clientSecret: env.GH_clientSecret,
-      scope: ["user", "repo:status"],
+      scope: ["user", "repo"],
+      prompt: "select_account",
     },
   },
 });

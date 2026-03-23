@@ -58,7 +58,7 @@ import {
   NTag,
   NSkeleton,
 } from 'naive-ui'
-import { computeWorkTimeOfToday } from './hooks'
+import { computeWorkTimeOfToday } from '../hooks'
 import { computed } from 'vue'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -81,7 +81,7 @@ const attendanceStatus2TagType = {
 } as const
 
 const current_time = useNow()
-const attendanceRecordToday = useAttendanceRecordQuery('today')
+const attendanceRecordToday = useAttendanceRecordQuery(undefined,'today')
 
 const attendanceTarget = useAttendanceTargetQuery()
 

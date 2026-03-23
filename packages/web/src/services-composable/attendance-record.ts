@@ -1,18 +1,25 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
-import { cli, globalQueryClient, processHonoResponse, type FixUnknownDate } from './common'
-import type { InferRequestType, InferResponseType } from 'hono'
+import {
+  cli,
+  globalQueryClient,
+  processHonoResponse,
+  type FixUnknownDate,
+  type InferBody,
+  type InferQuery,
+} from './common'
+import type { InferResponseType } from 'hono'
 import { toValue, type MaybeRefOrGetter } from 'vue'
 
 export const attendanceKeys = {
-  namesapce: ['attendance'] as const
+  namesapce: ['attendance'] as const,
 }
 
 export type AttendanceRecordQueryType = NonNullable<
-  InferRequestType<typeof cli.attendanceRecord.$get>['query']['preset']
+  InferQuery<typeof cli.attendanceRecord.$get>['preset']
 >
 export function useAttendanceRecordQuery(
-  type: MaybeRefOrGetter<AttendanceRecordQueryType | undefined>,
   projectId?: MaybeRefOrGetter<string | undefined>,
+  type?: MaybeRefOrGetter<AttendanceRecordQueryType | undefined>,
 ) {
   return useQuery({
     queryKey: ['attendance', type, projectId],
@@ -22,7 +29,6 @@ export function useAttendanceRecordQuery(
       })
       return await processHonoResponse(res)
     },
-    enabled: !!toValue(type),
   })
 }
 
@@ -37,10 +43,11 @@ export function useAttendanceLatestStatus() {
 }
 
 export type AttendanceRecordCreateDTO = FixUnknownDate<
-  InferRequestType<typeof cli.attendanceRecord.$post>['json'],
+  InferBody<typeof cli.attendanceRecord.$post>,
   'time'
 >
 export function useAttendanceRecordCreateMutate() {
+
   return useMutation({
     mutationKey: ['attendance'],
     mutationFn: async (dto: AttendanceRecordCreateDTO) => {

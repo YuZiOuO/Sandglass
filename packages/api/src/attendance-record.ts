@@ -40,7 +40,7 @@ export const attendanceRecordRoutes = factory
             uid: uid,
             id: data.projectId,
           },
-          select: { id: true }
+          select: { id: true },
         });
 
         if (!associatedProject) {
@@ -49,10 +49,10 @@ export const attendanceRecordRoutes = factory
       }
 
       const createdRecord = await db.attendanceRecord.create({
-          data: { ...data, uid: uid },
-        });
+        data: { ...data, uid: uid },
+      });
 
-        return c.json(createdRecord);
+      return c.json(createdRecord);
     },
   )
   .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
@@ -72,19 +72,28 @@ export const attendanceRecordRoutes = factory
       z.discriminatedUnion("preset", [
         z
           .object({
-            from: z.coerce.date(),
-            to: z.coerce.date(),
+            from: z.coerce.date().optional(),
+            to: z.coerce.date().optional(),
             projectId: z.uuid().optional(),
+            // args that should not be valid
             preset: z.undefined().optional(),
           })
           .refine((data) => {
-            return data.from < data.to;
+            // 'from' and 'to' is valid when
+            // 1. both exists and from < to
+            // 2. both undefined
+            if (data.from && data.to) {
+              return data.from < data.to;
+            } else {
+              return !data.from && !data.to;
+            }
           }),
         z.object({
-          from: z.undefined().optional(),
-          to: z.undefined().optional(),
           projectId: z.uuid().optional(),
           preset: z.enum(["today", "withIn7days", "withIn30days", "latest"]),
+          // args that should not be valid
+          from: z.undefined().optional(),
+          to: z.undefined().optional(),
         }),
       ]),
     ),
@@ -105,12 +114,13 @@ export const attendanceRecordRoutes = factory
         return c.json(res ? [res] : []);
       }
 
-      let from: Date;
-      let to: Date;
+      let from: Date | undefined;
+      let to: Date | undefined;
 
       const MS_PER_DAY = 24 * 60 * 60 * 1000;
       switch (data.preset) {
         case undefined:
+          // Assert: as stated in validator
           from = data.from;
           to = data.to;
           break;
@@ -136,8 +146,8 @@ export const attendanceRecordRoutes = factory
       const res = await db.attendanceRecord.findMany({
         where: {
           time: {
-            gte: from!,
-            lt: to!,
+            gte: from,
+            lt: to,
           },
           uid: uid,
         },

@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import { notifyError, useAuthStatus } from '@/services-composable/common'
+import { notifyError, useOptimisticAuthStatus } from '@/services-composable/common'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'Workbench',
+      name: 'Homepage',
       component: HomeView,
     },
     {
@@ -17,9 +17,14 @@ const router = createRouter({
       component: LoginView,
     },
     {
+      path: '/login/success',
+      name: 'OAuthSuccess',
+      component: () => import('@/views/OAuthSuccessView.vue'),
+    },
+    {
       path: '/project',
       name: 'ProjectList',
-      component: () => import('@/views/ProjectListView.vue'),
+      component: () => import('@/views/project-list/ProjectListView.vue'),
     },
     {
       path: '/attendance',
@@ -41,12 +46,12 @@ const router = createRouter({
 
 // auth guard
 router.beforeEach(async (to, _from, next) => {
-  const isLoggedIn = useAuthStatus()
+  const isLoggedIn = useOptimisticAuthStatus()
 
   const loginPath = '/login'
-  const whiteList = ['/', loginPath]
+  const whiteList = ['/', '/login/success', loginPath]
 
-  const err = new Error();
+  const err = new Error()
   err.name = '路径不合法'
 
   if (!isLoggedIn.value) {

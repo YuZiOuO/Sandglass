@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane } from 'naive-ui'
+import { NGrid, NGridItem, NFlex, NCard, NTabs, NTabPane, NSplit, NScrollbar } from 'naive-ui'
 import { useProjectQuery } from '@/services-composable/project'
 
-import ProjectTasksModule from './ProjectTasksModule.vue'
-import ProjectCalendarModule from './ProjectCalendarModule.vue'
-import ProjectResourcesModule from './ProjectResourcesModule.vue'
-import ProjectEditorModule from './ProjectEditorModule.vue'
-import ProjectFlowModule from './ProjectFlowModule.vue'
-import ProjectHeatmapModule from './ProjectHeatmapModule.vue'
-import AttendanceActionsModule from '../attendance/AttendanceActionsModule.vue'
+import ProjectTasksModule from './modules/ProjectTasksModule.vue'
+import ProjectCalendarModule from './modules/ProjectCalendarModule.vue'
+import ProjectResourcesModule from './modules/ProjectResourcesModule.vue'
+import ProjectEditorModule from './modules/ProjectEditorModule.vue'
+import ProjectFlowModule from './modules/ProjectFlowModule.vue'
+import ProjectHeatmapModule from './modules/ProjectHeatmapModule.vue'
+import ProjectWeeklyFocusChart from './modules/ProjectFocusChartModule.vue'
+import AttendanceActionsModule from '../attendance/modules/AttendanceActionsModule.vue'
 
 const route = useRoute()
 const projectId = computed(() => route.params.id as string)
@@ -18,24 +19,31 @@ const project = useProjectQuery(projectId)
 </script>
 
 <template>
-  <div class="project-view p-4 h-full">
-    <n-grid x-gap="12" :cols="24" class="h-full">
-      <n-grid-item span="4" class="flex flex-col gap-4">
-        <NFlex>
-          <ProjectTasksModule :tasklist-id="project.data.value?.tasklistId" />
-          <ProjectResourcesModule :project-id="projectId" />
-        </NFlex>
-      </n-grid-item>
-
-      <n-grid-item span="12" class="h-full">
-        <NCard>
-          <n-tabs type="line" animated>
+  <n-grid x-gap="12" :cols="24">
+    <n-grid-item span="16">
+      <NSplit :default-size="0.35">
+        <template #1>
+          <NSplit direction="vertical" :default-size="0.5">
+            <template #1>
+              <NScrollbar>
+                <ProjectTasksModule :tasklist-id="project.data.value?.tasklistId" />
+              </NScrollbar>
+            </template>
+            <template #2>
+              <NScrollbar>
+                <ProjectResourcesModule :project-id="projectId" />
+              </NScrollbar>
+            </template>
+          </NSplit>
+        </template>
+        <template #2>
+          <n-tabs type="line" animated style="padding: 10px">
             <n-tab-pane name="stat" tab="统计">
               <ProjectHeatmapModule
                 :owner="project.data.value?.repoOwner"
                 :repo="project.data.value?.repoName"
               />
-              and Others...
+              <ProjectWeeklyFocusChart :project-id="projectId" />
             </n-tab-pane>
             <n-tab-pane name="editor" tab="工作区">
               <ProjectEditorModule />
@@ -44,20 +52,35 @@ const project = useProjectQuery(projectId)
               <ProjectCalendarModule :calendar-id="project.data.value?.calendarId" />
             </n-tab-pane>
           </n-tabs>
-        </NCard>
-      </n-grid-item>
+        </template>
+      </NSplit>
+    </n-grid-item>
 
-      <n-grid-item span="8" class="flex flex-col gap-4">
-        <NFlex>
-          <NCard>
-            <AttendanceActionsModule :project-id="projectId" />
-          </NCard>
+    <n-grid-item span="8">
+      <NFlex>
+        <NCard>
+          <AttendanceActionsModule :project-id="projectId" />
+        </NCard>
+        <NScrollbar>
           <ProjectFlowModule
-            :calendar-id="project.data.value?.calendarId"
-            :project-id="projectId"
+            :config="{
+              attendance: {
+                projectId: projectId,
+              },
+              github: {
+                owner: project.data.value?.repoOwner,
+                repo: project.data.value?.repoName,
+              },
+              googleCalendar: {
+                calendarId: project.data.value?.calendarId,
+              },
+              googleTask: {
+                TasklistId: project.data.value?.tasklistId,
+              },
+            }"
           />
-        </NFlex>
-      </n-grid-item>
-    </n-grid>
-  </div>
+        </NScrollbar>
+      </NFlex>
+    </n-grid-item>
+  </n-grid>
 </template>

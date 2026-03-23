@@ -4,9 +4,7 @@
       <n-space vertical :size="20">
         <n-tag type="success" round>Alpha</n-tag>
         <n-h1 style="margin: 0">Sandglass</n-h1>
-        <n-text depth="3">
-          把一门课程当作一个项目，统一管理考勤、日程、任务与代码进度。
-        </n-text>
+        <n-text depth="3">把一门课程当作一个项目，统一管理考勤、日程、任务与代码进度。</n-text>
         <n-space>
           <n-button type="primary" @click="router.push('/project')">开始使用</n-button>
           <n-button secondary @click="router.push('/login')">登录</n-button>
@@ -25,16 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  NSpace,
-  NCard,
-  NTag,
-  NH1,
-  NText,
-  NButton,
-  NGrid,
-  NGridItem,
-} from 'naive-ui'
+import { NSpace, NCard, NTag, NH1, NText, NButton, NGrid, NGridItem } from 'naive-ui'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

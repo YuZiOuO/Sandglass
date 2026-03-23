@@ -3,7 +3,7 @@
     <n-card>
       <n-flex vertical>
         <n-flex justify="center">
-          <n-h1> 登录 </n-h1>
+          <n-h1>登录</n-h1>
           <n-auto-complete v-model:value="form.email" placeholder="邮箱" clearable />
           <n-input
             v-model:value="form.password"
@@ -16,18 +16,14 @@
             @click="
               async () => {
                 const res = await signIn.mutateAsync({ ...form })
-                if (!res.error) {
-                  message.success('登录成功，正在跳转...')
-                  router.push('/')
-                } else {
-                  message.error('登录失败: ' + res.error.message)
-                }
+                handleLogin(res.error?.message)
               }
             "
             :loading="signIn.isPending.value"
             :disabled="signIn.isPending.value"
-            >登录</n-button
           >
+            登录
+          </n-button>
           <n-button
             @click="
               async () => {
@@ -41,13 +37,52 @@
             "
             :loading="signUp.isPending.value"
             :disabled="signUp.isPending.value"
-            >注册</n-button
           >
+            注册
+          </n-button>
         </n-flex>
-        <n-divider dashed> 第三方OAuth </n-divider>
+        <n-divider dashed>第三方OAuth</n-divider>
         <n-flex justify="center">
-          <n-button type="primary" round> Github </n-button>
-          <n-button type="primary" round> Passkey </n-button>
+          <n-button
+            type="primary"
+            round
+            @click="
+              async () => {
+                const res = await githubSignIn.mutateAsync()
+                console.log(res)
+                handleRedirect(res.error?.message)
+              }
+            "
+            :loading="githubSignIn.isPending.value"
+          >
+            Github
+          </n-button>
+          <n-button
+            type="primary"
+            round
+            @click="
+              async () => {
+                const res = await googleSignIn.mutateAsync()
+                handleRedirect(res.error?.message)
+              }
+            "
+            :loading="googleSignIn.isPending.value"
+          >
+            Google
+          </n-button>
+          <n-button
+            type="primary"
+            round
+            @click="
+              async () => {
+                const res = await passkeySignIn.mutateAsync()
+                handleLogin(res.error?.message)
+              }
+            "
+            :loading="passkeySignIn.isPending.value"
+          >
+            Passkey
+          </n-button>
         </n-flex>
       </n-flex>
     </n-card>
@@ -55,7 +90,12 @@
 </template>
 
 <script setup lang="ts">
-import { useSignInMutate, useSignUpMutate } from '@/services-composable/user'
+import {
+  usePasskeySignInMutate,
+  useSignInMutate,
+  useSignUpMutate,
+  useSocialSignInMutate,
+} from '@/services-composable/user'
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -69,7 +109,27 @@ const router = useRouter()
 const message = useMessage()
 
 const signIn = useSignInMutate()
+const passkeySignIn = usePasskeySignInMutate()
+const githubSignIn = useSocialSignInMutate('github')
+const googleSignIn = useSocialSignInMutate('google')
 const signUp = useSignUpMutate()
+
+function handleLogin(err?: string) {
+  if (!err) {
+    message.success('登录成功，正在跳转...')
+    router.push('/')
+  } else {
+    message.error('登录失败: ' + err)
+  }
+}
+
+function handleRedirect(err?: string) {
+  if (!err) {
+    message.loading('跳转到第三方页面...')
+  } else {
+    message.error('获取第三方登录URL登录失败: ' + err)
+  }
+}
 </script>
 
 <style scoped>

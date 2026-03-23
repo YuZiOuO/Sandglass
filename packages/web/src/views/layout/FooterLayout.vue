@@ -1,7 +1,5 @@
 <template>
-  <n-text depth="3" class="footer-text">
-    Sandglass · Time flows, wisdom unfolds.
-  </n-text>
+  <n-text depth="3" class="footer-text">Sandglass · Time flows, wisdom unfolds.</n-text>
 </template>
 
 <script lang="ts">

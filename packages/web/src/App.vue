@@ -12,13 +12,7 @@
 
 <script setup lang="ts">
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-import {
-  NConfigProvider,
-  zhCN,
-  dateZhCN,
-  NLoadingBarProvider,
-  NMessageProvider,
-} from 'naive-ui'
-import LoadingBarController from './common/LoadingBarController.vue';
-import RootLayout from './views/layout/RootLayout.vue';
+import { NConfigProvider, zhCN, dateZhCN, NLoadingBarProvider, NMessageProvider } from 'naive-ui'
+import LoadingBarController from './views/common/LoadingBarController.vue'
+import RootLayout from './views/layout/RootLayout.vue'
 </script>
