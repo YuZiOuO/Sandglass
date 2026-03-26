@@ -48,7 +48,7 @@
         "@better-auth/passkey": "^1.5.1",
         "@sandglass/api": "workspace:*",
         "@sandglass/schema": "workspace:*",
-        "@tanstack/vue-query": "^5.90.5",
+        "@tanstack/vue-query": "^5.95.2",
         "@vicons/ionicons5": "^0.13.0",
         "@vueuse/core": "^14.1.0",
         "better-auth": "^1.5.6",
@@ -531,11 +531,11 @@
 
     "@tanstack/match-sorter-utils": ["@tanstack/match-sorter-utils@8.19.4", "", { "dependencies": { "remove-accents": "0.5.0" } }, "sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg=="],
 
-    "@tanstack/query-core": ["@tanstack/query-core@5.91.2", "", {}, "sha512-Uz2pTgPC1mhqrrSGg18RKCWT/pkduAYtxbcyIyKBhw7dTWjXZIzqmpzO2lBkyWr4hlImQgpu1m1pei3UnkFRWw=="],
+    "@tanstack/query-core": ["@tanstack/query-core@5.95.2", "", {}, "sha512-o4T8vZHZET4Bib3jZ/tCW9/7080urD4c+0/AUaYVpIqOsr7y0reBc1oX3ttNaSW5mYyvZHctiQ/UOP2PfdmFEQ=="],
 
     "@tanstack/query-devtools": ["@tanstack/query-devtools@5.94.5", "", {}, "sha512-rjn7mdo9wdB9AhthaOkwT3uLn15DrkDOI9Nyg6vU8BXi8/VsQSUvv1g0L0AdAaFH/4VDaBDe7SQSxqlTwMu1Mw=="],
 
-    "@tanstack/vue-query": ["@tanstack/vue-query@5.92.12", "", { "dependencies": { "@tanstack/match-sorter-utils": "^8.19.4", "@tanstack/query-core": "5.91.2", "@vue/devtools-api": "^6.6.3", "vue-demi": "^0.14.10" }, "peerDependencies": { "@vue/composition-api": "^1.1.2", "vue": "^2.6.0 || ^3.3.0" }, "optionalPeers": ["@vue/composition-api"] }, "sha512-WDYqVh3IWkhQu/PFP5Gg3o6kpjDoWfl/TkkCBQZ0RWK6T9nbC0xXpJ9Knx6bovehr9KOgQ2RCyJp/GvQshryMg=="],
+    "@tanstack/vue-query": ["@tanstack/vue-query@5.95.2", "", { "dependencies": { "@tanstack/match-sorter-utils": "^8.19.4", "@tanstack/query-core": "5.95.2", "@vue/devtools-api": "^6.6.3", "vue-demi": "^0.14.10" }, "peerDependencies": { "@vue/composition-api": "^1.1.2", "vue": "^2.6.0 || ^3.3.0" }, "optionalPeers": ["@vue/composition-api"] }, "sha512-GleO0GrUPdvObtff/D3iQ5kUERQM3dM6vT5pWl4zC3ap2JO84x4SQbUa1G7czKx96lETRiHnw7ZuatSRaaZqQQ=="],
 
     "@tanstack/vue-query-devtools": ["@tanstack/vue-query-devtools@6.1.7", "", { "dependencies": { "@tanstack/query-devtools": "5.94.5" }, "peerDependencies": { "@tanstack/vue-query": "^5.94.5", "vue": "^3.3.0" } }, "sha512-LqY6OEzCyx6JWuShuhJV1JO97uZh9Vr6CtLpj1ZGqTCNQMS35Z6WeXgsx6+L0VtRXrwycmHza0SHnHrDbI+IAg=="],
 
