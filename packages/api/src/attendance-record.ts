@@ -125,6 +125,7 @@ export const attendanceRecordRoutes = factory
             lt: to,
           },
           uid: uid,
+          projectId: data.projectId,
         },
         orderBy: { time: "asc" },
       });
