@@ -1,8 +1,10 @@
-import type { AttendanceRecord } from '@/services-composable/attendance-record'
-import type { AttendanceType } from '../../../../schema/generated/schemas'
+import type {
+  AttendanceRecord,
+  AttendanceRecordType,
+} from '@/services-composable/attendance-record'
 
 export function computeWorkTimeOfToday(records: AttendanceRecord[]) {
-  let statusMachine: AttendanceType = 'OUT'
+  let statusMachine: AttendanceRecordType = 'OUT'
   let statusMachineCachedTime: Date = new Date()
   let statusMachineCountTimeMs = 0
   for (const r of records) {

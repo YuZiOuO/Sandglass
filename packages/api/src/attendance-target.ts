@@ -1,20 +1,17 @@
 import { zValidator } from "@hono/zod-validator";
 import { factory } from "./factory";
-import {
-  AttendanceLeaveRecordCreateInputObjectZodSchema,
-  AttendanceTargetCreateInputObjectZodSchema,
-} from "@sandglass/schema/generated/schemas";
 import { db } from "./db";
-import { z } from "zod";
+import {
+  attendanceRecordIdBodySchema,
+  attendanceTargetUpdateBodySchema,
+  leaveRecordCreateBodySchema,
+} from "./schemas/attendance";
 
 export const attendanceTargetRoutes = factory
   .createApp()
   .put(
     "/",
-    zValidator(
-      "json",
-      AttendanceTargetCreateInputObjectZodSchema.omit({ user: true }),
-    ),
+    zValidator("json", attendanceTargetUpdateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
       const data = c.req.valid("json");
@@ -39,13 +36,7 @@ export const attendanceTargetRoutes = factory
   })
   .put(
     "leave",
-    zValidator(
-      "json",
-      AttendanceLeaveRecordCreateInputObjectZodSchema.omit({
-        id: true,
-        user: true,
-      }),
-    ),
+    zValidator("json", leaveRecordCreateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
       const data = c.req.valid("json");
@@ -66,7 +57,7 @@ export const attendanceTargetRoutes = factory
   )
   .delete(
     "leave",
-    zValidator("json", z.object({ id: z.uuid() })),
+    zValidator("json", attendanceRecordIdBodySchema),
     async (c) => {
       const uid = c.var.user.id;
       const data = c.req.valid("json");
