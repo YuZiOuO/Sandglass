@@ -15,6 +15,10 @@ import {
   PrismaClientValidationError,
 } from "@sandglass/schema/generated/prisma/internal/prismaNamespace";
 import { env } from "./env";
+import { createLogger } from "./log";
+import { LOG_SCOPES } from "@sandglass/shared";
+
+const log = createLogger(LOG_SCOPES.api);
 
 const app = factory
   .createApp()
@@ -55,11 +59,11 @@ const app = factory
       err instanceof PrismaClientInitializationError ||
       err instanceof PrismaClientValidationError
     ) {
-      console.error("Database error:", err);
+      log.error("request.failed.db", { err });
       return c.json({ ok: false, error: { code: "INTERNAL_DB" } }, 500);
     }
 
-    console.error("Unhandled error:", err);
+    log.error("request.failed", { err });
     return c.json({ ok: false, error: { code: "INTERNAL" } }, 500);
   });
 

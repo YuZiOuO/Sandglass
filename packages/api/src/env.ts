@@ -1,5 +1,9 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
+import { createLogger } from "./log";
+import { LOG_SCOPES } from "@sandglass/shared";
+
+const log = createLogger(LOG_SCOPES.env);
 
 export const env = createEnv({
   server: {
@@ -13,10 +17,6 @@ export const env = createEnv({
     GH_clientId: z.string(),
     GH_clientSecret: z.string(),
 
-    DB_TRACE: z
-      .string()
-      .optional()
-      .transform((v) => v === "true" || v === "1"),
     TZ: z.string().refine(
       (val) => {
         try {
@@ -31,8 +31,7 @@ export const env = createEnv({
   },
   runtimeEnv: process.env,
   onValidationError: (issue) => {
-    console.error("❌ Enviroment Validation Error:");
-    console.error(issue);
-    process.exit(-1)
+    log.error("env.validation.failed", { issue });
+    process.exit(-1);
   },
 });
