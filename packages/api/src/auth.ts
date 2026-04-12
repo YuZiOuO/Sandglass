@@ -1,12 +1,31 @@
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
+import { isAPIError } from "better-auth/api";
 import { db } from "./db";
 import { env } from "./env";
 import { passkey } from "@better-auth/passkey";
+import { createLogger } from "./log";
+import { LOG_SCOPES } from "@sandglass/shared";
 
 export const authBasePath = "/auth";
+const log = createLogger(LOG_SCOPES.api);
+
 export const auth = betterAuth({
   appName: "Sandglass",
+  logger: {
+    level: "warn",
+    log(level, message, ...args) {
+      const detail = args.length ? (args.length === 1 ? args[0] : args) : undefined;
+      log[level](`auth.internal.${message}`, detail === undefined ? undefined : { detail });
+    },
+  },
+  onAPIError: {
+    throw: false,
+    onError(error) {
+      if (isAPIError(error) && error.statusCode < 500) return;
+      log.error("auth.api.failed", error instanceof Error ? { err: error } : { detail: error });
+    },
+  },
   plugins: [
     passkey({
       rpName: "Sandglass",
@@ -21,7 +40,7 @@ export const auth = betterAuth({
   account: {
     accountLinking: {
       allowDifferentEmails: true,
-      trustedProviders: ["google", 'github']
+      trustedProviders: ["google", "github"],
     },
   },
   emailAndPassword: {

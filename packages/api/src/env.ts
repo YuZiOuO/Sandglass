@@ -7,6 +7,7 @@ const log = createLogger(LOG_SCOPES.env);
 
 export const env = createEnv({
   server: {
+    NODE_ENV: z.enum(["development", "test", "production"]),
     BETTER_AUTH_BASE_URL: z.string(),
     BETTER_AUTH_SECRET: z.string(),
     DATABASE_URL: z.string(),
