@@ -2,10 +2,58 @@
   <NCard :title="'创建'">
     <NFlex>
       <!-- preview -->
-      {{ projectModel }}
+      <NList>
+        <NListItem>
+          <NThing>
+            <template #header>
+              <NText :depth="projectModel.name ? 1 : 3">
+                {{ projectModel.name ? projectModel.name : '项目名称' }}
+              </NText>
+            </template>
+            <template #description>
+              <NSpace size="small">
+                <NTag
+                  :type="projectModel.repoOwner && projectModel.repoName ? 'info' : 'default'"
+                  size="small"
+                  :bordered="false"
+                >
+                  <template #icon>
+                    <NIcon><LogoGithub /></NIcon>
+                  </template>
+                  {{
+                    projectModel.repoOwner && projectModel.repoName
+                      ? `${projectModel.repoOwner}/${projectModel.repoName}`
+                      : '未绑定 Repo'
+                  }}
+                </NTag>
+                <NTag
+                  :type="projectModel.calendarId ? 'success' : 'default'"
+                  size="small"
+                  :bordered="false"
+                >
+                  <template #icon>
+                    <NIcon><IconGoogleCalendarOutline /></NIcon>
+                  </template>
+                  {{ projectModel.calendarId ? selectedCalendarName : '未绑定 Calendar' }}
+                </NTag>
+                <NTag
+                  :type="projectModel.tasklistId ? 'warning' : 'default'"
+                  size="small"
+                  :bordered="false"
+                >
+                  <template #icon>
+                    <NIcon><IconGoogleTasksOutline /></NIcon>
+                  </template>
+                  {{ projectModel.tasklistId ? selectedTasklistName : '未绑定 Tasks' }}
+                </NTag>
+              </NSpace>
+            </template>
+          </NThing>
+        </NListItem>
+      </NList>
 
       <!-- name input -->
-      <NInput v-model:value="projectModel.name" placeholder="项目名称"></NInput>
+      <NInput v-model:value="projectModel.name" placeholder="输入项目名称以改变预览"></NInput>
 
       <!-- google bio binding -->
       <NGrid cols="1 m:2" responsive="screen" :x-gap="12" :y-gap="12">
@@ -174,6 +222,7 @@
     <!-- submit -->
     <template #header-extra>
       <NButton
+        type="primary"
         @click="async () => projectCreate.mutate(projectModel)"
         :loading="projectCreate.isPending.value"
       >
@@ -184,9 +233,25 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NInput, NButton, NSelect, NFlex, useMessage, NGrid, NGi } from 'naive-ui'
+import {
+  NCard,
+  NInput,
+  NButton,
+  NSelect,
+  NFlex,
+  useMessage,
+  NGrid,
+  NGi,
+  NList,
+  NListItem,
+  NThing,
+  NSpace,
+  NTag,
+  NIcon,
+  NText,
+} from 'naive-ui'
 import { useProjectCreateMutation, type ProjectCreateDTO } from '@/services-composable/project'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import {
   type googleCalendar,
   useGoogleCalendarCreateMutation,
@@ -229,10 +294,22 @@ const repoCreate = useGithubRepositoryCreateMutation()
 const repoCreateModel = ref<CreateRepositoryDTO>({
   name: '',
   description: '',
-
-  // TODO: user shoule select these
-  private: true, 
+  private: true,
   auto_init: true,
+})
+
+const selectedCalendarName = computed(() => {
+  if (!projectModel.value.calendarId) return ''
+  const items = calendars.data.value?.items || []
+  const found = items.find(i => i.id === projectModel.value.calendarId)
+  return found?.summary || '未知日历'
+})
+
+const selectedTasklistName = computed(() => {
+  if (!projectModel.value.tasklistId) return ''
+  const items = tasklists.data.value?.items || []
+  const found = items.find(i => i.id === projectModel.value.tasklistId)
+  return found?.title || '未知任务列表'
 })
 
 watch(
