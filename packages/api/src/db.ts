@@ -40,7 +40,6 @@ const createPrismaClient = () => {
 };
 
 export const db = createPrismaClient();
-export * as schema from "@sandglass/schema/generated/schemas/index";
 
 async function bootstrap() {
   try {

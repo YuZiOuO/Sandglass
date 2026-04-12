@@ -1,8 +1,13 @@
 import { zValidator } from "@hono/zod-validator";
-import { db, schema } from "./db";
+import type { Prisma } from "@sandglass/schema/generated/prisma/client";
+import { db } from "./db";
 import { factory } from "./factory";
-import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
+import {
+  attendanceRecordCreateBodySchema,
+  attendanceRecordIdBodySchema,
+  attendanceRecordQuerySchema,
+} from "./schemas/attendance";
 
 /**
  * Get day boundaries (00:00:00) for the given date
@@ -22,23 +27,17 @@ export const attendanceRecordRoutes = factory
    */
   .post(
     "/",
-    zValidator(
-      "json",
-      schema.AttendanceRecordUncheckedCreateInputObjectZodSchema.omit({
-        id: true,
-        uid: true,
-      }),
-    ),
+    zValidator("json", attendanceRecordCreateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
-      const data = c.req.valid("json");
+      const body = c.req.valid("json");
 
       // Validate ProjectId
-      if (data.projectId) {
+      if (body.projectId) {
         const associatedProject = await db.project.findFirst({
           where: {
             uid: uid,
-            id: data.projectId,
+            id: body.projectId,
           },
           select: { id: true },
         });
@@ -48,14 +47,19 @@ export const attendanceRecordRoutes = factory
         }
       }
 
+      const data = {
+        ...body,
+        uid,
+      } satisfies Prisma.AttendanceRecordUncheckedCreateInput;
+
       const createdRecord = await db.attendanceRecord.create({
-        data: { ...data, uid: uid },
+        data,
       });
 
       return c.json(createdRecord);
     },
   )
-  .delete("/", zValidator("json", z.object({ id: z.uuid() })), async (c) => {
+  .delete("/", zValidator("json", attendanceRecordIdBodySchema), async (c) => {
     const uid = c.var.user.id;
     const idObject = c.req.valid("json");
 
@@ -67,36 +71,7 @@ export const attendanceRecordRoutes = factory
   })
   .get(
     "/",
-    zValidator(
-      "query",
-      z.discriminatedUnion("preset", [
-        z
-          .object({
-            from: z.coerce.date().optional(),
-            to: z.coerce.date().optional(),
-            projectId: z.uuid().optional(),
-            // args that should not be valid
-            preset: z.undefined().optional(),
-          })
-          .refine((data) => {
-            // 'from' and 'to' is valid when
-            // 1. both exists and from < to
-            // 2. both undefined
-            if (data.from && data.to) {
-              return data.from < data.to;
-            } else {
-              return !data.from && !data.to;
-            }
-          }),
-        z.object({
-          projectId: z.uuid().optional(),
-          preset: z.enum(["today", "withIn7days", "withIn30days", "latest"]),
-          // args that should not be valid
-          from: z.undefined().optional(),
-          to: z.undefined().optional(),
-        }),
-      ]),
-    ),
+    zValidator("query", attendanceRecordQuerySchema),
     async (c) => {
       const uid = c.var.user.id;
       const data = c.req.valid("query");
@@ -150,6 +125,7 @@ export const attendanceRecordRoutes = factory
             lt: to,
           },
           uid: uid,
+          projectId: data.projectId,
         },
         orderBy: { time: "asc" },
       });

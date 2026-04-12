@@ -1,31 +1,33 @@
 import { zValidator } from "@hono/zod-validator";
+import type { Prisma } from "@sandglass/schema/generated/prisma/client";
 import { factory } from "./factory";
-import {
-  AttendanceLeaveRecordCreateInputObjectZodSchema,
-  AttendanceTargetCreateInputObjectZodSchema,
-} from "@sandglass/schema/generated/schemas";
 import { db } from "./db";
-import { z } from "zod";
+import {
+  attendanceRecordIdBodySchema,
+  attendanceTargetUpdateBodySchema,
+  leaveRecordCreateBodySchema,
+} from "./schemas/attendance";
 
 export const attendanceTargetRoutes = factory
   .createApp()
   .put(
     "/",
-    zValidator(
-      "json",
-      AttendanceTargetCreateInputObjectZodSchema.omit({ user: true }),
-    ),
+    zValidator("json", attendanceTargetUpdateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
-      const data = c.req.valid("json");
+      const body = c.req.valid("json");
+      const update = {
+        timeMs: body.timeMs,
+      } satisfies Prisma.AttendanceTargetUncheckedUpdateInput;
+      const create = {
+        uid,
+        timeMs: body.timeMs,
+      } satisfies Prisma.AttendanceTargetUncheckedCreateInput;
 
       const res = await db.attendanceTarget.upsert({
         where: { uid: uid },
-        update: { timeMs: data.timeMs },
-        create: {
-          uid: uid,
-          timeMs: data.timeMs,
-        },
+        update,
+        create,
       });
       return c.json(res);
     },
@@ -39,26 +41,22 @@ export const attendanceTargetRoutes = factory
   })
   .put(
     "leave",
-    zValidator(
-      "json",
-      AttendanceLeaveRecordCreateInputObjectZodSchema.omit({
-        id: true,
-        user: true,
-      }),
-    ),
+    zValidator("json", leaveRecordCreateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
-      const data = c.req.valid("json");
+      const body = c.req.valid("json");
+      const create = {
+        uid,
+        ...body,
+      } satisfies Prisma.AttendanceLeaveRecordUncheckedCreateInput;
+      const update = {
+        ...body,
+      } satisfies Prisma.AttendanceLeaveRecordUncheckedUpdateInput;
 
       const res = await db.attendanceLeaveRecord.upsert({
-        where: { uid_date: { date: data.date, uid: uid } },
-        create: {
-          uid: uid,
-          ...data,
-        },
-        update: {
-          ...data,
-        },
+        where: { uid_date: { date: body.date, uid: uid } },
+        create,
+        update,
       });
 
       return c.json(res);
@@ -66,7 +64,7 @@ export const attendanceTargetRoutes = factory
   )
   .delete(
     "leave",
-    zValidator("json", z.object({ id: z.uuid() })),
+    zValidator("json", attendanceRecordIdBodySchema),
     async (c) => {
       const uid = c.var.user.id;
       const data = c.req.valid("json");

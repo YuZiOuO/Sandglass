@@ -1,12 +1,15 @@
 import { zValidator } from "@hono/zod-validator";
+import type { Prisma } from "@sandglass/schema/generated/prisma/client";
 import { db } from "./db";
 import { factory } from "./factory";
-import z from "zod";
-import {
-  ProjectCreateInputObjectZodSchema,
-  ResourcesCreateInputObjectZodSchema,
-} from "@sandglass/schema/generated/schemas";
 import { HTTPException } from "hono/http-exception";
+import {
+  projectCreateBodySchema,
+  projectIdQuerySchema,
+  resourceCreateBodySchema,
+  resourceIdQuerySchema,
+  resourceProjectIdQuerySchema,
+} from "./schemas/project";
 
 export const projectRoutes = factory
   .createApp()
@@ -15,7 +18,7 @@ export const projectRoutes = factory
     const res = await db.project.findMany({ where: { uid: uid } });
     return c.json(res);
   })
-  .get("/", zValidator("query", z.object({ id: z.uuid() })), async (c) => {
+  .get("/", zValidator("query", projectIdQuerySchema), async (c) => {
     const uid = c.var.user.id;
     const data = c.req.valid("query");
 
@@ -24,7 +27,7 @@ export const projectRoutes = factory
     });
     return c.json(res);
   })
-  .delete("/", zValidator("query", z.object({ id: z.uuid() })), async (c) => {
+  .delete("/", zValidator("query", projectIdQuerySchema), async (c) => {
     const uid = c.var.user.id;
     const data = c.req.valid("query");
 
@@ -33,20 +36,16 @@ export const projectRoutes = factory
   })
   .post(
     "/",
-    zValidator(
-      "json",
-      ProjectCreateInputObjectZodSchema.omit({
-        id: true,
-        user: true,
-        resources: true,
-        attendanceRecords: true,
-      }),
-    ),
+    zValidator("json", projectCreateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
-      const data = c.req.valid("json");
+      const body = c.req.valid("json");
+      const data = {
+        ...body,
+        uid,
+      } satisfies Prisma.ProjectUncheckedCreateInput;
 
-      const res = await db.project.create({ data: { ...data, uid: uid } });
+      const res = await db.project.create({ data });
       return c.json(res);
     },
   );
@@ -55,7 +54,7 @@ export const ResourcesRoutes = factory
   .createApp()
   .get(
     "/",
-    zValidator("query", z.object({ projectId: z.uuid() })),
+    zValidator("query", resourceProjectIdQuerySchema),
     async (c) => {
       const uid = c.var.user.id;
       const projectId = c.req.valid("query").projectId;
@@ -74,11 +73,8 @@ export const ResourcesRoutes = factory
   )
   .post(
     "/",
-    zValidator("query", z.object({ projectId: z.uuid() })),
-    zValidator(
-      "json",
-      ResourcesCreateInputObjectZodSchema.omit({ id: true, project: true }),
-    ),
+    zValidator("query", resourceProjectIdQuerySchema),
+    zValidator("json", resourceCreateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
       const projectId = c.req.valid("query").projectId;
@@ -90,15 +86,17 @@ export const ResourcesRoutes = factory
       }
 
       const resource = c.req.valid("json");
-      const createdResource = await db.resources.create({
-        data: {
-          ...resource,
-          project: {
-            connect: {
-              id: projectId,
-            },
+      const data = {
+        ...resource,
+        project: {
+          connect: {
+            id: projectId,
           },
         },
+      } satisfies Prisma.ResourcesCreateInput;
+
+      const createdResource = await db.resources.create({
+        data,
       });
 
       return c.json(createdResource);
@@ -106,7 +104,7 @@ export const ResourcesRoutes = factory
   )
   .delete(
     "/",
-    zValidator("query", z.object({ resourceId: z.uuid() })),
+    zValidator("query", resourceIdQuerySchema),
     async (c) => {
       const uid = c.var.user.id;
       const resourceId = c.req.valid("query").resourceId;
