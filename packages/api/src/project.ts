@@ -1,4 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
+import type { Prisma } from "@sandglass/schema/generated/prisma/client";
 import { db } from "./db";
 import { factory } from "./factory";
 import { HTTPException } from "hono/http-exception";
@@ -38,9 +39,13 @@ export const projectRoutes = factory
     zValidator("json", projectCreateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
-      const data = c.req.valid("json");
+      const body = c.req.valid("json");
+      const data = {
+        ...body,
+        uid,
+      } satisfies Prisma.ProjectUncheckedCreateInput;
 
-      const res = await db.project.create({ data: { ...data, uid: uid } });
+      const res = await db.project.create({ data });
       return c.json(res);
     },
   );
@@ -81,15 +86,17 @@ export const ResourcesRoutes = factory
       }
 
       const resource = c.req.valid("json");
-      const createdResource = await db.resources.create({
-        data: {
-          ...resource,
-          project: {
-            connect: {
-              id: projectId,
-            },
+      const data = {
+        ...resource,
+        project: {
+          connect: {
+            id: projectId,
           },
         },
+      } satisfies Prisma.ResourcesCreateInput;
+
+      const createdResource = await db.resources.create({
+        data,
       });
 
       return c.json(createdResource);

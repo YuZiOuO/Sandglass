@@ -1,4 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
+import type { Prisma } from "@sandglass/schema/generated/prisma/client";
 import { db } from "./db";
 import { factory } from "./factory";
 import { HTTPException } from "hono/http-exception";
@@ -29,14 +30,14 @@ export const attendanceRecordRoutes = factory
     zValidator("json", attendanceRecordCreateBodySchema),
     async (c) => {
       const uid = c.var.user.id;
-      const data = c.req.valid("json");
+      const body = c.req.valid("json");
 
       // Validate ProjectId
-      if (data.projectId) {
+      if (body.projectId) {
         const associatedProject = await db.project.findFirst({
           where: {
             uid: uid,
-            id: data.projectId,
+            id: body.projectId,
           },
           select: { id: true },
         });
@@ -46,8 +47,13 @@ export const attendanceRecordRoutes = factory
         }
       }
 
+      const data = {
+        ...body,
+        uid,
+      } satisfies Prisma.AttendanceRecordUncheckedCreateInput;
+
       const createdRecord = await db.attendanceRecord.create({
-        data: { ...data, uid: uid },
+        data,
       });
 
       return c.json(createdRecord);
