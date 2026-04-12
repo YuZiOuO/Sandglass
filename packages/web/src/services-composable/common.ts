@@ -3,10 +3,12 @@ import type { AppType } from '@sandglass/api'
 import { createAuthClient } from 'better-auth/vue'
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/vue-query'
 import type { ClientResponse, InferRequestType } from 'hono/client'
-import { createDiscreteApi } from 'naive-ui'
 import { computed, watchEffect } from 'vue'
 import { passkeyClient } from '@better-auth/passkey/client'
 import { useStorage } from '@vueuse/core'
+import { notifyError, withTraceContext, type TraceableError } from '@/error'
+
+type SandglassApiError = TraceableError
 
 /**
  * Hono RPC Client
@@ -23,9 +25,9 @@ export async function processHonoResponse<T, U extends number, F extends string>
   if (res.ok) {
     return await res.json()
   } else {
-    const err = new Error(res.status + ' ' + res.statusText)
+    const err = new Error(res.status + ' ' + res.statusText) as SandglassApiError
     err.name = 'Sandglass API Error'
-    throw err
+    throw withTraceContext(err, res.headers, res.status, res.statusText)
   }
 }
 
@@ -35,6 +37,17 @@ export async function processHonoResponse<T, U extends number, F extends string>
 export const authCli = createAuthClient({
   baseURL: import.meta.env.SG_WEB_API_BASEURL,
   basePath: '/auth',
+  fetchOptions: {
+    credentials: 'include',
+    onError(context) {
+      withTraceContext(
+        context.error as TraceableError,
+        context.response.headers,
+        context.response.status,
+        context.response.statusText,
+      )
+    },
+  },
   plugins: [passkeyClient()],
 })
 
@@ -60,14 +73,6 @@ export function useOptimisticAuthStatus() {
     }
   })
   return isLoggedIn
-}
-
-/**
- * UI Message Api for notifying error
- */
-const UIApi = createDiscreteApi(['notification'])
-export const notifyError = (err: Error) => {
-  UIApi.notification.error({ title: err.name, description: err.message })
 }
 
 /**
@@ -107,5 +112,3 @@ export type FixUnknownDate<T, K extends keyof T> = Omit<T, K> & {
 export type InferBody<T> = InferRequestType<T> extends { json: infer J } ? J : never
 export type InferQuery<T> = InferRequestType<T> extends { query: infer Q } ? Q : never
 export type InferParam<T> = InferRequestType<T> extends { param: infer P } ? P : never
-
-

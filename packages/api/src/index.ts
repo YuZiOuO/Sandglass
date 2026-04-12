@@ -7,14 +7,17 @@ import { projectRoutes, ResourcesRoutes } from "./project";
 import { attendanceRoutes } from "./attendance";
 import { cors } from "hono/cors";
 import { auth, authBasePath } from "./auth";
-import {
-  PrismaClientInitializationError,
-  PrismaClientKnownRequestError,
-  PrismaClientRustPanicError,
-  PrismaClientUnknownRequestError,
-  PrismaClientValidationError,
-} from "@sandglass/schema/generated/prisma/internal/prismaNamespace";
 import { env } from "./env";
+import { createLogger } from "./log";
+import { LOG_SCOPES, TRACE_HEADERS } from "@sandglass/shared";
+
+const log = createLogger(LOG_SCOPES.api);
+const PRISMA_ERROR_NAME_PREFIX = "PrismaClient";
+
+// Entry-boundary helper: the app only needs to know the error came from Prisma client internals.
+const isPrismaClientError = (err: unknown): err is Error => {
+  return err instanceof Error && err.name.startsWith(PRISMA_ERROR_NAME_PREFIX);
+};
 
 const app = factory
   .createApp()
@@ -29,10 +32,12 @@ const app = factory
     cors({
       origin: env.ALLOWED_ORIGINS,
       credentials: true,
+      exposeHeaders: [TRACE_HEADERS.requestId, TRACE_HEADERS.cfRay],
     }),
   )
   .use(middleware.loggerMiddleware)
 
+  // Delegate auth routes to better-auth. Errors still flow into app.onError.
   .on(["POST", "GET"], authBasePath + "/*", (c) => {
     return auth.handler(c.req.raw);
   })
@@ -48,18 +53,12 @@ const app = factory
   .route("/resource", ResourcesRoutes)
 
   .onError((err, c) => {
-    if (
-      err instanceof PrismaClientKnownRequestError ||
-      err instanceof PrismaClientUnknownRequestError ||
-      err instanceof PrismaClientRustPanicError ||
-      err instanceof PrismaClientInitializationError ||
-      err instanceof PrismaClientValidationError
-    ) {
-      console.error("Database error:", err);
-      return c.json({ ok: false, error: { code: "INTERNAL_DB" } }, 500);
+    if (isPrismaClientError(err)) {
+      log.error("request.failed.db", { err });
+    } else {
+      log.error("request.failed", { err });
     }
 
-    console.error("Unhandled error:", err);
     return c.json({ ok: false, error: { code: "INTERNAL" } }, 500);
   });
 

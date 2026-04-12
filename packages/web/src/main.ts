@@ -14,9 +14,11 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, BarChart, LineChart } from 'echarts/charts'
 import { globalQueryClient } from './services-composable/common'
+import { initSentry } from './sentry'
 
 async function bootstrap() {
   const app = createApp(App)
+  initSentry(app)
   app.use(router)
   app.use(VueQueryPlugin, { queryClient: globalQueryClient })
 

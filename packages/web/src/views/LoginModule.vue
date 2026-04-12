@@ -16,7 +16,7 @@
             @click="
               async () => {
                 const res = await signIn.mutateAsync({ ...form })
-                handleLogin(res.error?.message)
+                handleLogin(res.error)
               }
             "
             :loading="signIn.isPending.value"
@@ -31,7 +31,7 @@
                 if (!res.error) {
                   message.success('注册成功，请继续登录')
                 } else {
-                  message.error('注册失败: ' + res.error.message)
+                  notifyError(res.error)
                 }
               }
             "
@@ -50,7 +50,7 @@
               async () => {
                 const res = await githubSignIn.mutateAsync()
                 console.log(res)
-                handleRedirect(res.error?.message)
+                handleRedirect(res.error)
               }
             "
             :loading="githubSignIn.isPending.value"
@@ -63,7 +63,7 @@
             @click="
               async () => {
                 const res = await googleSignIn.mutateAsync()
-                handleRedirect(res.error?.message)
+                handleRedirect(res.error)
               }
             "
             :loading="googleSignIn.isPending.value"
@@ -76,7 +76,7 @@
             @click="
               async () => {
                 const res = await passkeySignIn.mutateAsync()
-                handleLogin(res.error?.message)
+                handleLogin(res.error)
               }
             "
             :loading="passkeySignIn.isPending.value"
@@ -96,6 +96,7 @@ import {
   useSignUpMutate,
   useSocialSignInMutate,
 } from '@/services-composable/user'
+import { notifyError } from '@/error'
 import { NAutoComplete, NButton, NCard, NDivider, NFlex, NH1, NInput, useMessage } from 'naive-ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -114,20 +115,20 @@ const githubSignIn = useSocialSignInMutate('github')
 const googleSignIn = useSocialSignInMutate('google')
 const signUp = useSignUpMutate()
 
-function handleLogin(err?: string) {
+function handleLogin(err?: unknown) {
   if (!err) {
     message.success('登录成功，正在跳转...')
     router.push('/')
   } else {
-    message.error('登录失败: ' + err)
+    notifyError(err)
   }
 }
 
-function handleRedirect(err?: string) {
+function handleRedirect(err?: unknown) {
   if (!err) {
     message.loading('跳转到第三方页面...')
   } else {
-    message.error('获取第三方登录URL登录失败: ' + err)
+    notifyError(err)
   }
 }
 </script>

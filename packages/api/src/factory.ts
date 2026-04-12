@@ -8,6 +8,8 @@ type Env = {
   Variables: {
     user: typeof auth.$Infer.Session.user;
     session: typeof auth.$Infer.Session.session;
+    requestId: string;
+    cfRay?: string;
   };
 };
 export const factory = createFactory<Env>();

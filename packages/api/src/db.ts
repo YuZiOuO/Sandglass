@@ -2,6 +2,11 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@sandglass/schema/generated/prisma/client";
 import { env } from "./env";
+import { createLogger } from "./log";
+import { LOG_SCOPES } from "@sandglass/shared";
+
+const log = createLogger(LOG_SCOPES.db);
+const SLOW_QUERY_THRESHOLD_MS = 300;
 
 const connectionString = env.DATABASE_URL;
 
@@ -12,41 +17,65 @@ const pool = new Pool({
   connectionTimeoutMillis: 5000, // increase timeout for high latency networks
 });
 
+pool.on("error", (err) => {
+  log.error("db.pool.error", { err });
+});
+
 const adapter = new PrismaPg(pool);
 
+const summarizeQuery = (query: string) => {
+  const normalized = query.replace(/\s+/g, " ").trim();
+  if (normalized.length <= 240) return normalized;
+  return normalized.slice(0, 237) + "...";
+};
+
 const createPrismaClient = () => {
-  if (env.DB_TRACE) {
-    const client = new PrismaClient({
-      adapter,
-      log: [
-        { emit: "event", level: "query" },
-        { emit: "stdout", level: "info" },
-        { emit: "stdout", level: "warn" },
-        { emit: "stdout", level: "error" },
-      ],
-    });
-
-    client.$on("query", (e) => {
-      console.log(`[Query] ${e.query} (${Math.round(e.duration)}ms)`);
-    });
-
-    return client;
-  }
-
-  return new PrismaClient({
+  const client = new PrismaClient({
     adapter,
-    log: ["info", "warn", "error"],
+    log: [
+      { emit: "event", level: "query" },
+      { emit: "event", level: "info" },
+      { emit: "event", level: "warn" },
+      { emit: "event", level: "error" },
+    ],
   });
+
+  client.$on("query", (event) => {
+    if (event.duration < SLOW_QUERY_THRESHOLD_MS) {
+      return;
+    }
+
+    log.warn("db.query.slow", {
+      durationMs: Math.round(event.duration),
+      query: summarizeQuery(event.query),
+      target: event.target,
+    });
+  });
+
+  client.$on("info", (event) => {
+    log.info("db.info", { target: event.target, detail: event.message });
+  });
+
+  client.$on("warn", (event) => {
+    log.warn("db.warn", { target: event.target, detail: event.message });
+  });
+
+  client.$on("error", (event) => {
+    log.error("db.error", { target: event.target, detail: event.message });
+  });
+
+  return client;
 };
 
 export const db = createPrismaClient();
 
-async function bootstrap() {
+async function verifyDatabaseConnection() {
   try {
-    const res = await db.$queryRaw`SELECT 1`;
-    console.log("[INFO] 🐘 Database Connected.");
+    await db.$queryRaw`SELECT 1`;
+    log.info("db.connected");
   } catch (err) {
-    console.error("[Fatal] ❌ Failed to initialize Database connection: ", err);
+    log.error("db.connection.failed", { err });
+    throw err;
   }
 }
-bootstrap();
+await verifyDatabaseConnection();
