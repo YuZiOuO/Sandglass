@@ -1,8 +1,9 @@
 import { factory } from "./factory";
 import { auth } from "./auth";
 import { createLogger, updateRequestContext, withRequestContext } from "./log";
+import { LOG_SCOPES, TRACE_HEADERS } from "@sandglass/shared";
 
-const log = createLogger("http");
+const log = createLogger(LOG_SCOPES.http);
 
 const getPathname = (url: string) => {
   return new URL(url).pathname;
@@ -13,8 +14,8 @@ const getHeader = (value: string | undefined) => {
 };
 
 export const loggerMiddleware = factory.createMiddleware(async (c, next) => {
-  const requestId = getHeader(c.req.header("x-request-id")) ?? crypto.randomUUID();
-  const cfRay = getHeader(c.req.header("cf-ray"));
+  const requestId = getHeader(c.req.header(TRACE_HEADERS.requestId)) ?? crypto.randomUUID();
+  const cfRay = getHeader(c.req.header(TRACE_HEADERS.cfRay));
   const method = c.req.method;
   const path = getPathname(c.req.url);
   const startedAt = performance.now();
@@ -23,7 +24,7 @@ export const loggerMiddleware = factory.createMiddleware(async (c, next) => {
   if (cfRay) {
     c.set("cfRay", cfRay);
   }
-  c.header("x-request-id", requestId);
+  c.header(TRACE_HEADERS.requestId, requestId);
 
   await withRequestContext({ requestId, cfRay, method, path }, async () => {
     try {

@@ -7,6 +7,11 @@ import { createDiscreteApi } from 'naive-ui'
 import { computed, watchEffect } from 'vue'
 import { passkeyClient } from '@better-auth/passkey/client'
 import { useStorage } from '@vueuse/core'
+import { captureFrontendError } from '@/sentry'
+import type { ErrorTraceContext } from '@sandglass/shared'
+import { TRACE_HEADERS } from '@sandglass/shared'
+
+type SandglassApiError = Error & ErrorTraceContext
 
 /**
  * Hono RPC Client
@@ -23,8 +28,12 @@ export async function processHonoResponse<T, U extends number, F extends string>
   if (res.ok) {
     return await res.json()
   } else {
-    const err = new Error(res.status + ' ' + res.statusText)
+    const err = new Error(res.status + ' ' + res.statusText) as SandglassApiError
     err.name = 'Sandglass API Error'
+    err.requestId = res.headers.get(TRACE_HEADERS.requestId) ?? undefined
+    err.cfRay = res.headers.get(TRACE_HEADERS.cfRay) ?? undefined
+    err.status = res.status
+    err.statusText = res.statusText
     throw err
   }
 }
@@ -67,7 +76,10 @@ export function useOptimisticAuthStatus() {
  */
 const UIApi = createDiscreteApi(['notification'])
 export const notifyError = (err: Error) => {
-  UIApi.notification.error({ title: err.name, description: err.message })
+  const requestId = 'requestId' in err && typeof err.requestId === 'string' ? err.requestId : undefined
+  const description = requestId ? `${err.message} (request: ${requestId})` : err.message
+  UIApi.notification.error({ title: err.name, description })
+  captureFrontendError(err)
 }
 
 /**
@@ -107,5 +119,3 @@ export type FixUnknownDate<T, K extends keyof T> = Omit<T, K> & {
 export type InferBody<T> = InferRequestType<T> extends { json: infer J } ? J : never
 export type InferQuery<T> = InferRequestType<T> extends { query: infer Q } ? Q : never
 export type InferParam<T> = InferRequestType<T> extends { param: infer P } ? P : never
-
-

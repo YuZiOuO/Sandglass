@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
   // Fail the build early instead of shipping a bundle that crashes at runtime.
   z.object({
     SG_WEB_API_BASEURL: z.url(),
+    SG_WEB_SENTRY_DSN: z.url().optional(),
   }).parse(env)
 
   return {
