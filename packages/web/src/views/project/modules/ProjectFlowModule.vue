@@ -2,17 +2,16 @@
   <NCard 
     size="small" 
     title="Flow" 
-    class="flex-col-fill"
-    content-class="flex-col-fill"
+    class="flex flex-col min-h-0"
+    content-class="flex flex-col flex-1 min-h-0"
     content-style="padding: 0;"
   >
     <template #header-extra>
       <events-timeline-filter-selecter v-model:value="displayPreset" />
     </template>
     
-    <div class="scroll-wrapper">
-      <NScrollbar style="height: 100%;">
-        <div style="padding: 12px;">
+    <NScrollbar class="flex-1 min-h-0">
+      <div style="padding: 12px;">
           <events-timeline
             :config="{
               ...config,
@@ -21,7 +20,6 @@
           />
         </div>
       </NScrollbar>
-    </div>
   </NCard>
 </template>
 
@@ -37,20 +35,3 @@ import { ref } from 'vue'
 defineProps<{ config: EventsTimelineConfig }>()
 const displayPreset = ref<EventsTimelineDisplayPreset>()
 </script>
-
-<style>
-.flex-col-fill {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-.scroll-wrapper {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-</style>
