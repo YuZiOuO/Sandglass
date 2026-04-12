@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { notifyError } from '@/error'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
-import { notifyError, useOptimisticAuthStatus } from '@/services-composable/common'
+import { useOptimisticAuthStatus } from '@/services-composable/common'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

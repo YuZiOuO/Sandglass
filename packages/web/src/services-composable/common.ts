@@ -3,15 +3,12 @@ import type { AppType } from '@sandglass/api'
 import { createAuthClient } from 'better-auth/vue'
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/vue-query'
 import type { ClientResponse, InferRequestType } from 'hono/client'
-import { createDiscreteApi } from 'naive-ui'
 import { computed, watchEffect } from 'vue'
 import { passkeyClient } from '@better-auth/passkey/client'
 import { useStorage } from '@vueuse/core'
-import { captureFrontendError } from '@/sentry'
-import type { ErrorTraceContext } from '@sandglass/shared'
-import { TRACE_HEADERS } from '@sandglass/shared'
+import { notifyError, withTraceContext, type TraceableError } from '@/error'
 
-type SandglassApiError = Error & ErrorTraceContext
+type SandglassApiError = TraceableError
 
 /**
  * Hono RPC Client
@@ -30,11 +27,7 @@ export async function processHonoResponse<T, U extends number, F extends string>
   } else {
     const err = new Error(res.status + ' ' + res.statusText) as SandglassApiError
     err.name = 'Sandglass API Error'
-    err.requestId = res.headers.get(TRACE_HEADERS.requestId) ?? undefined
-    err.cfRay = res.headers.get(TRACE_HEADERS.cfRay) ?? undefined
-    err.status = res.status
-    err.statusText = res.statusText
-    throw err
+    throw withTraceContext(err, res.headers, res.status, res.statusText)
   }
 }
 
@@ -44,6 +37,17 @@ export async function processHonoResponse<T, U extends number, F extends string>
 export const authCli = createAuthClient({
   baseURL: import.meta.env.SG_WEB_API_BASEURL,
   basePath: '/auth',
+  fetchOptions: {
+    credentials: 'include',
+    onError(context) {
+      withTraceContext(
+        context.error as TraceableError,
+        context.response.headers,
+        context.response.status,
+        context.response.statusText,
+      )
+    },
+  },
   plugins: [passkeyClient()],
 })
 
@@ -69,17 +73,6 @@ export function useOptimisticAuthStatus() {
     }
   })
   return isLoggedIn
-}
-
-/**
- * UI Message Api for notifying error
- */
-const UIApi = createDiscreteApi(['notification'])
-export const notifyError = (err: Error) => {
-  const requestId = 'requestId' in err && typeof err.requestId === 'string' ? err.requestId : undefined
-  const description = requestId ? `${err.message} (request: ${requestId})` : err.message
-  UIApi.notification.error({ title: err.name, description })
-  captureFrontendError(err)
 }
 
 /**

@@ -10,6 +10,11 @@ import { LOG_SCOPES } from "@sandglass/shared";
 export const authBasePath = "/auth";
 const log = createLogger(LOG_SCOPES.api);
 
+const isExpectedAuthError = (error: unknown) => {
+  if (!isAPIError(error) || !("statusCode" in error)) return false;
+  return typeof error.statusCode === "number" && error.statusCode < 500;
+};
+
 export const auth = betterAuth({
   appName: "Sandglass",
   logger: {
@@ -22,7 +27,7 @@ export const auth = betterAuth({
   onAPIError: {
     throw: false,
     onError(error) {
-      if (isAPIError(error) && error.statusCode < 500) return;
+      if (isExpectedAuthError(error)) return;
       log.error("auth.api.failed", error instanceof Error ? { err: error } : { detail: error });
     },
   },

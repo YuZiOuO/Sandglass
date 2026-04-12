@@ -17,7 +17,6 @@
   "dependencies": {
     "@better-auth/passkey": "^1.5.1",
     "@sandglass/api": "workspace:*",
-    "@sandglass/schema": "workspace:*",
     "@sandglass/shared": "workspace:*",
     "@sentry/vue": "^10.48.0",
     "@tanstack/vue-query": "^5.95.2",

@@ -9,7 +9,7 @@ import { cors } from "hono/cors";
 import { auth, authBasePath } from "./auth";
 import { env } from "./env";
 import { createLogger } from "./log";
-import { LOG_SCOPES } from "@sandglass/shared";
+import { LOG_SCOPES, TRACE_HEADERS } from "@sandglass/shared";
 
 const log = createLogger(LOG_SCOPES.api);
 const PRISMA_ERROR_NAME_PREFIX = "PrismaClient";
@@ -32,6 +32,7 @@ const app = factory
     cors({
       origin: env.ALLOWED_ORIGINS,
       credentials: true,
+      exposeHeaders: [TRACE_HEADERS.requestId, TRACE_HEADERS.cfRay],
     }),
   )
   .use(middleware.loggerMiddleware)
@@ -54,10 +55,10 @@ const app = factory
   .onError((err, c) => {
     if (isPrismaClientError(err)) {
       log.error("request.failed.db", { err });
-      return c.json({ ok: false, error: { code: "INTERNAL_DB" } }, 500);
+    } else {
+      log.error("request.failed", { err });
     }
 
-    log.error("request.failed", { err });
     return c.json({ ok: false, error: { code: "INTERNAL" } }, 500);
   });
 
