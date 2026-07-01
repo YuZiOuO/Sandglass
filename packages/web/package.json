@@ -24,7 +24,7 @@
     "@vueuse/core": "^14.1.0",
     "better-auth": "^1.6.13",
     "dayjs": "^1.11.20",
-    "echarts": "^6.0.0",
+    "echarts": "^6.1.0",
     "hono": "^4.11.7",
     "octokit": "^5.0.5",
     "serve": "^14.2.5",
