@@ -1,14 +1,8 @@
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "composite": true,
-    "paths": {
-      "@sandglass/*": ["./apps/*/src", "./packages/*/src"]
-    }
-  },
-  "references": [
-    { "path": "./packages/schema" },
-    { "path": "./packages/api" },
-    { "path": "./packages/web" }
-  ]
-}
+  {
+    "files": [],
+    "references": [
+      {
+        "path": "./packages/web"
+      }
+    ]
+  }
