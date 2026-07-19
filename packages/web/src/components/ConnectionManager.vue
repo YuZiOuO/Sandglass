@@ -1,14 +1,35 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { NAlert, NButton, NCard, NDescriptions, NDescriptionsItem, NEmpty, NSpin } from 'naive-ui'
 
 import type { Capability } from '../core/capability'
 import { GoogleConnection } from '../connections/google'
 
-const capabilities = ref<readonly Capability[]>([])
 const loading = ref(true)
 const connected = ref(false)
 const error = ref('')
 let connection: GoogleConnection
+const emit = defineEmits<{
+  ready: [capabilities: readonly Capability[]]
+}>()
+
+function setConnected() {
+  connected.value = true
+  emit('ready', connection.capabilities)
+}
+
+const status = computed(() => {
+  if (loading.value) {
+    return 'Checking'
+  }
+  if (connected.value) {
+    return 'Connected'
+  }
+  if (error.value) {
+    return 'Connection failed'
+  }
+  return 'Not connected'
+})
 
 async function connect() {
   loading.value = true
@@ -16,8 +37,7 @@ async function connect() {
 
   try {
     await connection.set()
-    capabilities.value = connection.capabilities
-    connected.value = true
+    setConnected()
   } catch (cause) {
     error.value = cause instanceof Error ? cause.message : 'Google auth failed.'
   } finally {
@@ -30,8 +50,7 @@ onMounted(async () => {
     connection = new GoogleConnection()
 
     if ((await connection.check()) || (await connection.resume())) {
-      capabilities.value = connection.capabilities
-      connected.value = true
+      setConnected()
     }
   } catch (cause) {
     error.value = cause instanceof Error ? cause.message : 'Google auth failed.'
@@ -42,16 +61,24 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main>
-    <header>
-      <p v-if="loading">Loading...</p>
-      <p v-else-if="connected">Google connected.</p>
-      <p v-else-if="error">{{ error }}</p>
-      <p v-else>Google is not connected.</p>
-      <button v-if="!loading" type="button" @click="connect">
+  <n-card size="small" title="Google">
+    <template #header-extra>
+      <n-button v-if="!loading" size="small" type="primary" @click="connect">
         {{ connected ? 'Reconnect Google' : 'Connect Google' }}
-      </button>
-    </header>
-    <slot v-if="connected" :capabilities="capabilities" />
-  </main>
+      </n-button>
+    </template>
+
+    <n-spin :show="loading">
+      <n-descriptions label-placement="left" :column="1" size="small">
+        <n-descriptions-item label="Provider">Google</n-descriptions-item>
+        <n-descriptions-item label="Status">{{ status }}</n-descriptions-item>
+        <n-descriptions-item v-if="connected" label="Capabilities">
+          {{ connection.capabilities.length }}
+        </n-descriptions-item>
+      </n-descriptions>
+      <n-alert v-if="error" type="error" :title="error" />
+      <n-empty v-else-if="!connected" description="Connect Google to enable its capabilities." />
+      <n-empty v-else description="Google connected." />
+    </n-spin>
+  </n-card>
 </template>

@@ -24,8 +24,26 @@ export class GoogleMailCapability implements MailCapability {
     })
   }
 
+  async unarchiveMail(id: string) {
+    await fetch(`${GMAIL_API_ROOT}/messages/${id}/modify`, {
+      method: 'POST',
+      headers: {
+        ...this.getRequestHeaders(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ addLabelIds: ['INBOX'] }),
+    })
+  }
+
   async trashMail(id: string) {
     await fetch(`${GMAIL_API_ROOT}/messages/${id}/trash`, {
+      method: 'POST',
+      headers: this.getRequestHeaders(),
+    })
+  }
+
+  async untrashMail(id: string) {
+    await fetch(`${GMAIL_API_ROOT}/messages/${id}/untrash`, {
       method: 'POST',
       headers: this.getRequestHeaders(),
     })
@@ -54,6 +72,7 @@ export class GoogleMailCapability implements MailCapability {
         )
 
         const message = (await messageResponse.json()) as {
+          labelIds: string[]
           snippet: string
           payload: {
             headers: Array<{
@@ -68,6 +87,7 @@ export class GoogleMailCapability implements MailCapability {
           id,
           title: headers.find((header) => header.name === 'Subject')!.value,
           content: `${headers.find((header) => header.name === 'From')!.value}\n\n${message.snippet}`,
+          archived: !message.labelIds.includes('INBOX'),
         }
       }),
     )
