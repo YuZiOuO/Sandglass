@@ -1,5 +1,15 @@
 {
+  "name": "sandglass",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "lint:staged": "bun run --filter @sandglass/web lint:staged",
+    "check": "bun run --filter @sandglass/web check"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.0"
+  }
 }

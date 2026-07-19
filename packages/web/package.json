@@ -4,16 +4,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "test:unit": "vitest",
+    "build": "run-p typecheck \"build-only {@}\" --",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build",
-    "lint": "run-s \"lint:*\"",
-    "lint:oxlint": "oxlint . --fix",
-    "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "check": "run-s typecheck lint format:check test build-only",
+    "dev": "vite",
+    "format": "prettier --write --experimental-cli src/",
+    "format:check": "prettier --check --experimental-cli src/",
+    "lint": "oxlint . && eslint . --cache",
+    "lint:fix": "oxlint . --fix && eslint . --fix --cache",
+    "lint:staged": "lint-staged",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "vue-tsc --build"
   },
   "dependencies": {
     "vue": "^3.5.38",

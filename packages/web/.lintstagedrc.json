@@ -1,0 +1,7 @@
+{
+  "*.{ts,vue}": [
+    "prettier --write --experimental-cli",
+    "eslint --fix --cache",
+    "oxlint --fix"
+  ]
+}
