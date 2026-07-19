@@ -1,11 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { Plugin } from './core/plugin'
+import ConnectionManager from './components/ConnectionManager.vue'
+import MailPanel from './plugins/mail/MailPanel.vue'
+
+const plugins: Plugin[] = [MailPanel]
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <ConnectionManager v-slot="{ capabilities }">
+    <template v-for="plugin in plugins" :key="plugin">
+      <component :is="plugin" :capabilities="capabilities" />
+    </template>
+  </ConnectionManager>
 </template>
-
-<style scoped></style>

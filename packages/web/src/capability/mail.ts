@@ -1,7 +1,14 @@
 import type { Capability } from '../core/capability'
 
-// Intentional marker interface until the capability contract is defined.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface MailCapability extends Capability {
-  // TODO:implmentation
+  listMails: () => Promise<readonly Mail[]>
+  listAllMails: () => Promise<readonly Mail[]>
+  archiveMail: (id: string) => Promise<void>
+  trashMail: (id: string) => Promise<void>
+}
+
+export type Mail = {
+  id: string
+  title: string
+  content: string
 }

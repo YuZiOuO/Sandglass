@@ -1,6 +1,7 @@
 import type { Capability } from '../../core/capability'
 import type { Connection } from '../../core/connection'
 import { requestGoogleAccessToken } from './gis'
+import { GoogleMailCapability } from './mail'
 
 const GOOGLE_SCOPE =
   'https://mail.google.com/ https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks'
@@ -9,7 +10,22 @@ const GOOGLE_ACCESS_TOKEN_STORAGE_KEY = 'google-access-token'
 const storage = globalThis.localStorage
 
 export class GoogleConnection implements Connection {
-  readonly capabilities: readonly Capability[] = []
+  readonly capabilities: readonly Capability[]
+  private readonly mailCapability: GoogleMailCapability
+
+  constructor() {
+    this.mailCapability = new GoogleMailCapability(() => {
+      const accessToken = storage.getItem(GOOGLE_ACCESS_TOKEN_STORAGE_KEY)
+      if (!accessToken) {
+        throw new Error('Google is not authenticated.')
+      }
+
+      return {
+        Authorization: `Bearer ${accessToken}`,
+      }
+    })
+    this.capabilities = [this.mailCapability]
+  }
 
   async set() {
     if (!GOOGLE_CLIENT_ID) {
