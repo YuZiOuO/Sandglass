@@ -2,71 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [master]
   pull_request:
-    branches: ["*"]
+
+permissions:
+  contents: read
 
 jobs:
-  quality-check:
-    name: Lint, Test & Build
+  check:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      # Check for changes in specific paths (including dependencies)
-      - uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            schema:
-              - 'packages/schema/**'
-            api:
-              - 'packages/schema/**'
-              - 'packages/api/**'
-            web:
-              - 'packages/schema/**'
-              - 'packages/api/**'
-              - 'packages/web/**'
-
-      # Install dependencies (Always run to ensure environment is ready)
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
-
-      # Generate Prisma Client (Always run as it's needed for build/type-check)
-      - name: Generate Prisma Client (Schema)
-        run: bun run --filter ./packages/schema prisma:gen
-
-      # --- Schema Checks ---
-      - name: Type Check (Schema)
-        if: steps.changes.outputs.schema == 'true'
-        run: bun x tsc --noEmit -p packages/schema/tsconfig.json
-
-      # --- API Checks ---
-      - name: Type Check (API)
-        if: steps.changes.outputs.api == 'true'
-        run: bun run --filter ./packages/api type-check
-
-      # --- Web Checks ---
-      - name: Type Check (Web)
-        if: steps.changes.outputs.web == 'true'
-        run: bun run --filter ./packages/web type-check
-
-      - name: Lint (Web)
-        if: steps.changes.outputs.web == 'true'
-        run: bun run --filter ./packages/web lint
-
-      - name: Unit Tests (Web)
-        if: steps.changes.outputs.web == 'true'
-        run: bun run --filter ./packages/web test:unit
-
-      - name: Build (Web)
-        if: steps.changes.outputs.web == 'true'
-        run: bun run --filter ./packages/web build-only
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run check

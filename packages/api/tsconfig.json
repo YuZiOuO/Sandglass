@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "types": ["bun"],
-    "skipLibCheck": true
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": ["ESNext"],
+    "types": ["@cloudflare/workers-types"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
   }
 }

@@ -8,17 +8,15 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.env
 .DS_Store
 dist
 dist-ssr
 coverage
 *.local
 
-/cypress/videos/
-/cypress/screenshots/
-
 # Editor directories and files
-# .vscode/*
+.vscode/*
 !.vscode/extensions.json
 .idea
 *.suo
@@ -29,4 +27,14 @@ coverage
 
 *.tsbuildinfo
 
-.env
+.eslintcache
+
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
+
+# Vitest
+__screenshots__/
+
+# Vite
+*.timestamp-*-*.mjs

@@ -1,0 +1,1 @@
+export { GithubConnection } from './connection'
