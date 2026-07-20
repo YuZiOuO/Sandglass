@@ -4,22 +4,20 @@ import { cors } from "hono/cors";
 
 const app = new Hono<{
   Bindings: {
-    WEB_ORIGIN?: string
-  }
-}>();
+    WEB_ORIGIN?: string;
+  };
+}>()
+  .use(
+    "*",
+    cors({
+      origin: (origin, c) => c.env.WEB_ORIGIN ?? origin,
+      credentials: true,
+    }),
+  )
+  .get("/", (c) => {
+    return c.text("Service Healthy!");
+  })
+  .route("/google", google);
 
-app.use(
-  cors({
-    origin: (origin, c) => c.env.WEB_ORIGIN ?? origin,
-    credentials: true,
-  }),
-);
-
-app.get("/", (c) => {
-  return c.text("Service Healthy!");
-});
-
-app.route("/google", google);
-
-export type AppType = typeof app
-export default app
+export type AppType = typeof app;
+export default app;

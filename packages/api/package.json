@@ -13,5 +13,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260719.1",
     "wrangler": "^4.110.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts"
+    }
   }
 }

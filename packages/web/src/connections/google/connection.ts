@@ -1,8 +1,7 @@
+import { cli } from '@/main'
 import type { Capability } from '../../core/capability'
 import type { Connection } from '../../core/connection'
 import { GoogleMailCapability } from './mail'
-
-const API_ROOT = import.meta.env.VITE_API_ROOT ?? ''
 
 export class GoogleConnection implements Connection {
   readonly capabilities: readonly Capability[]
@@ -23,21 +22,27 @@ export class GoogleConnection implements Connection {
   }
 
   authorize() {
-    globalThis.location.assign(`${API_ROOT}/google/authorize`)
+    globalThis.location.assign(cli.google.authorize.$url().toString())
   }
 
   async restore() {
-    const response = await fetch(`${API_ROOT}/google/access-token`, {
-      method: 'POST',
-      credentials: 'include',
-    })
+    const response = await cli.google['access-token'].$post(
+      {},
+      {
+        init: {
+          credentials: 'include',
+        },
+      },
+    )
+
     if (!response.ok) {
       this.accessToken = ''
       return false
     }
 
-    const session = (await response.json()) as { authenticated: boolean; accessToken: string }
-    this.accessToken = session.accessToken
-    return session.authenticated
+    const { authenticated, accessToken } = await response.json()
+    this.accessToken = accessToken
+
+    return authenticated
   }
 }
