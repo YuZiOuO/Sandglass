@@ -17,17 +17,12 @@ import {
 } from 'naive-ui'
 import type { NotificationReactive } from 'naive-ui'
 
-import type { MailCapability } from '../../capability/mail'
-import type { Capability } from '@/interfaces'
-
-type Mail = Awaited<ReturnType<MailCapability['listMails']>>[number]
+import type { Mail, MailCapability } from '../../capability/mail'
 
 const { capabilities } = defineProps<{
-  capabilities: readonly Capability[]
+  capabilities: readonly [MailCapability]
 }>()
-const mail = capabilities.find(
-  (capability): capability is MailCapability => 'listMails' in capability,
-)
+const capability = capabilities[0]
 const mails = ref<readonly Mail[]>([])
 const mode = ref<'current' | 'all'>('current')
 const loading = ref(false)
@@ -35,16 +30,39 @@ const processing = ref(false)
 const error = ref('')
 const notification = useNotification()
 
-async function loadMails() {
-  if (!mail) {
-    return
-  }
+const actions = {
+  archive: {
+    run: (id: string) => capability.archiveMail(id),
+    undo: (id: string) => capability.unarchiveMail(id),
+    title: 'Mail archived.',
+    failure: 'Failed to archive mail.',
+    undoFailure: 'Failed to undo archive.',
+  },
+  unarchive: {
+    run: (id: string) => capability.unarchiveMail(id),
+    undo: (id: string) => capability.archiveMail(id),
+    title: 'Mail unarchived.',
+    failure: 'Failed to unarchive mail.',
+    undoFailure: 'Failed to undo unarchive.',
+  },
+  trash: {
+    run: (id: string) => capability.trashMail(id),
+    undo: (id: string) => capability.untrashMail(id),
+    title: 'Mail moved to trash.',
+    failure: 'Failed to trash mail.',
+    undoFailure: 'Failed to restore mail.',
+  },
+} as const
+type Action = keyof typeof actions
 
+async function loadMails() {
   loading.value = true
   error.value = ''
 
   try {
-    mails.value = await (mode.value === 'current' ? mail.listMails() : mail.listAllMails())
+    mails.value = await (mode.value === 'current'
+      ? capability.listMails()
+      : capability.listAllMails())
   } catch (cause) {
     error.value = cause instanceof Error ? cause.message : 'Failed to load mail.'
   } finally {
@@ -53,10 +71,6 @@ async function loadMails() {
 }
 
 async function perform(action: () => Promise<void>, failure: string) {
-  if (!mail) {
-    return false
-  }
-
   processing.value = true
   error.value = ''
 
@@ -94,39 +108,10 @@ function showUndoNotification(title: string, undo: () => Promise<unknown>) {
   })
 }
 
-async function archiveMail(id: string) {
-  if (!mail) {
-    return
-  }
-
-  if (await perform(() => mail.archiveMail(id), 'Failed to archive mail.')) {
-    showUndoNotification('Mail archived.', () =>
-      perform(() => mail.unarchiveMail(id), 'Failed to undo archive.'),
-    )
-  }
-}
-
-async function unarchiveMail(id: string) {
-  if (!mail) {
-    return
-  }
-
-  if (await perform(() => mail.unarchiveMail(id), 'Failed to unarchive mail.')) {
-    showUndoNotification('Mail unarchived.', () =>
-      perform(() => mail.archiveMail(id), 'Failed to undo unarchive.'),
-    )
-  }
-}
-
-async function trashMail(id: string) {
-  if (!mail) {
-    return
-  }
-
-  if (await perform(() => mail.trashMail(id), 'Failed to trash mail.')) {
-    showUndoNotification('Mail moved to trash.', () =>
-      perform(() => mail.untrashMail(id), 'Failed to restore mail.'),
-    )
+async function changeMail(id: string, action: Action) {
+  const { run, undo, title, failure, undoFailure } = actions[action]
+  if (await perform(() => run(id), failure)) {
+    showUndoNotification(title, () => perform(() => undo(id), undoFailure))
   }
 }
 
@@ -138,7 +123,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section v-if="mail">
+  <section>
     <n-card title="Mail">
       <template #header-extra>
         <n-button size="small" :loading="loading" :disabled="processing" @click="loadMails">
@@ -164,7 +149,7 @@ onMounted(() => {
                       v-if="!item.archived"
                       size="small"
                       :disabled="processing"
-                      @click="archiveMail(item.id)"
+                      @click="changeMail(item.id, 'archive')"
                     >
                       Archive
                     </n-button>
@@ -172,11 +157,11 @@ onMounted(() => {
                       v-else
                       size="small"
                       :disabled="processing"
-                      @click="unarchiveMail(item.id)"
+                      @click="changeMail(item.id, 'unarchive')"
                     >
                       Unarchive
                     </n-button>
-                    <n-popconfirm @positive-click="trashMail(item.id)">
+                    <n-popconfirm @positive-click="changeMail(item.id, 'trash')">
                       <template #trigger>
                         <n-button size="small" type="error" secondary :disabled="processing">
                           Trash

@@ -10,8 +10,8 @@ export interface Connection {
   readonly capabilities: readonly Capability[]
 }
 
-export type Plugin = Component<{
-  capabilities: readonly Capability[]
+export type Plugin<C extends readonly Capability[] = readonly Capability[]> = Component<{
+  capabilities: C
 }>
 
 // Intentional marker interface for capability services.

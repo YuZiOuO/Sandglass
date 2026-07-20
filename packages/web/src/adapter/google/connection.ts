@@ -4,7 +4,7 @@ import type { Capability, Connection } from '@/interfaces'
 
 export class GoogleConnection implements Connection {
   readonly capabilities: readonly Capability[]
-  private readonly mailCapability: GoogleMailCapability
+  readonly mailCapability: GoogleMailCapability
   private accessToken = ''
 
   constructor() {

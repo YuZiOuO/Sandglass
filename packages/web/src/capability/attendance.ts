@@ -1,7 +1,23 @@
 import type { Capability } from '@/interfaces'
 
-// Intentional marker interface until the capability contract is defined.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface AttendanceCapability extends Capability {
-  // TODO:implmentation
+  record: (record: Omit<AttendanceRecord, 'id'>) => Promise<AttendanceRecord>
+  list: (range?: QueryRange) => Promise<readonly AttendanceRecord[]>
+  remove: (id: string) => Promise<void>
 }
+
+export type AttendanceRecord = {
+  id: string
+  time: Date
+  type: 'IN' | 'PAUSE' | 'OUT'
+}
+
+export type QueryRange =
+  | {
+      from: Date
+      to?: Date
+    }
+  | {
+      from?: Date
+      to: Date
+    }

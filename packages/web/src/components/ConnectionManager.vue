@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import {
   NAlert,
   NButton,
@@ -11,7 +11,7 @@ import {
   NSpin,
 } from 'naive-ui'
 
-import type { Capability, Connection } from '@/interfaces'
+import type { Connection } from '@/interfaces'
 import { GithubConnection } from '../adapter/github'
 import { GoogleConnection } from '../adapter/google'
 
@@ -23,17 +23,19 @@ type ManagedConnection = {
   error: string
 }
 
+const googleConnection = new GoogleConnection()
+const githubConnection = new GithubConnection()
 const connections = ref<ManagedConnection[]>([
   {
     name: 'Google',
-    connection: new GoogleConnection(),
+    connection: googleConnection,
     loading: true,
     connected: false,
     error: '',
   },
   {
     name: 'GitHub',
-    connection: new GithubConnection(),
+    connection: githubConnection,
     loading: true,
     connected: false,
     error: '',
@@ -41,14 +43,8 @@ const connections = ref<ManagedConnection[]>([
 ])
 
 const emit = defineEmits<{
-  ready: [capabilities: readonly Capability[]]
+  ready: [connections: { google?: GoogleConnection; github?: GithubConnection }]
 }>()
-
-const capabilities = computed(() =>
-  connections.value
-    .filter(({ connected }) => connected)
-    .flatMap(({ connection }) => connection.capabilities),
-)
 
 function authorize(item: ManagedConnection) {
   item.error = ''
@@ -68,7 +64,10 @@ onMounted(async () => {
     }),
   )
 
-  emit('ready', capabilities.value)
+  emit('ready', {
+    google: connections.value[0]?.connected ? googleConnection : undefined,
+    github: connections.value[1]?.connected ? githubConnection : undefined,
+  })
 })
 </script>
 
