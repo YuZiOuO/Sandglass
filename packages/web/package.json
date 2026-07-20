@@ -18,6 +18,13 @@
     "test:watch": "vitest",
     "typecheck": "vue-tsc --build"
   },
+  "lint-staged": {
+    "*.{ts,vue}": [
+      "prettier --write --experimental-cli",
+      "eslint --fix --cache",
+      "oxlint --fix"
+    ]
+  },
   "dependencies": {
     "@vicons/ionicons5": "^0.13.0",
     "naive-ui": "^2.44.1",

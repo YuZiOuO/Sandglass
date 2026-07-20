@@ -5,8 +5,8 @@
   ],
   "scripts": {
     "prepare": "husky",
-    "lint:staged": "bun run --filter @sandglass/web lint:staged",
-    "check": "bun run --filter @sandglass/web check"
+    "lint:staged": "bun run --filter @sandglass/web lint:staged && bun run --filter @sandglass/api lint:staged",
+    "check": "bun run --filter @sandglass/api check && bun run --filter @sandglass/web check"
   },
   "devDependencies": {
     "husky": "^9.1.7",

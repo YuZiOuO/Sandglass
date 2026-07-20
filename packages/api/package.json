@@ -4,7 +4,20 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "check": "bun run typecheck && bun run lint && bun run format:check",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "lint:staged": "lint-staged",
+    "typecheck": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "oxlint --fix"
+    ]
   },
   "dependencies": {
     "arctic": "^3.7.0",
@@ -12,6 +25,9 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260719.1",
+    "oxlint": "~1.69.0",
+    "prettier": "3.8.4",
+    "typescript": "~6.0.0",
     "wrangler": "^4.110.0"
   },
   "exports": {
