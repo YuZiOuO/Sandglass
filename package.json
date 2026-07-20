@@ -11,5 +11,8 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^16.2.0"
+  },
+  "dependencies": {
+    "hono": "^4.12.31"
   }
 }

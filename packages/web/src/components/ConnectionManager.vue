@@ -31,25 +31,16 @@ const status = computed(() => {
   return 'Not connected'
 })
 
-async function connect() {
-  loading.value = true
+function connect() {
   error.value = ''
-
-  try {
-    await connection.set()
-    setConnected()
-  } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'Google auth failed.'
-  } finally {
-    loading.value = false
-  }
+  connection.authorize()
 }
 
 onMounted(async () => {
   try {
     connection = new GoogleConnection()
 
-    if ((await connection.check()) || (await connection.resume())) {
+    if (await connection.restore()) {
       setConnected()
     }
   } catch (cause) {

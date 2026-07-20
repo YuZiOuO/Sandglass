@@ -10,9 +10,9 @@ export class GithubConnection implements Connection {
     this.capabilities = []
   }
 
-  async set() {}
+  authorize() {}
 
-  async check() {
+  async restore() {
     return true
   }
 }
