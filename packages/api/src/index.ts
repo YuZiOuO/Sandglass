@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import google from "./google";
+import github from "./github";
 import { cors } from "hono/cors";
 
 const app = new Hono<{
@@ -17,7 +18,8 @@ const app = new Hono<{
   .get("/", (c) => {
     return c.text("Service Healthy!");
   })
-  .route("/google", google);
+  .route("/google", google)
+  .route("/github", github);
 
 export type AppType = typeof app;
 export default app;

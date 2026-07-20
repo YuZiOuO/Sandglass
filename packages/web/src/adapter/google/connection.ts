@@ -1,4 +1,4 @@
-import { cli } from '@/main'
+import { cli } from '@/lib'
 import { GoogleMailCapability } from './mail'
 import type { Capability, Connection } from '@/interfaces'
 

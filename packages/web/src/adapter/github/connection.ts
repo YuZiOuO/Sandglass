@@ -1,6 +1,5 @@
 import type { Capability, Connection } from '@/interfaces'
-
-// TODO:Implmentation
+import { cli } from '@/lib'
 
 export class GithubConnection implements Connection {
   readonly capabilities: readonly Capability[]
@@ -9,9 +8,25 @@ export class GithubConnection implements Connection {
     this.capabilities = []
   }
 
-  authorize() {}
+  authorize() {
+    globalThis.location.assign(cli.github.authorize.$url().toString())
+  }
 
   async restore() {
-    return true
+    const response = await cli.github['access-token'].$post(
+      {},
+      {
+        init: {
+          credentials: 'include',
+        },
+      },
+    )
+
+    if (!response.ok) {
+      return false
+    }
+
+    const { authenticated } = await response.json()
+    return authenticated
   }
 }
