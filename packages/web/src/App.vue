@@ -2,8 +2,7 @@
 import { NNotificationProvider, NSpace } from 'naive-ui'
 import { ref } from 'vue'
 
-import type { Capability } from './core/capability'
-import type { Plugin } from './core/plugin'
+import type { Capability, Plugin } from './interfaces'
 import ConnectionManager from './components/ConnectionManager.vue'
 import MailPanel from './plugins/mail/MailPanel.vue'
 

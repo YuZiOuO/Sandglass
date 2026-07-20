@@ -18,7 +18,7 @@ import {
 import type { NotificationReactive } from 'naive-ui'
 
 import type { MailCapability } from '../../capability/mail'
-import type { Capability } from '../../core/capability'
+import type { Capability } from '@/interfaces'
 
 type Mail = Awaited<ReturnType<MailCapability['listMails']>>[number]
 

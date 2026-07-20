@@ -2,8 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { NAlert, NButton, NCard, NDescriptions, NDescriptionsItem, NEmpty, NSpin } from 'naive-ui'
 
-import type { Capability } from '../core/capability'
-import { GoogleConnection } from '../connections/google'
+import type { Capability } from '@/interfaces'
+import { GoogleConnection } from '../adapter/google'
 
 const loading = ref(true)
 const connected = ref(false)

@@ -1,4 +1,4 @@
-import type { Capability } from '../core/capability'
+import type { Capability } from '@/interfaces'
 
 // Intentional marker interface until the capability contract is defined.
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

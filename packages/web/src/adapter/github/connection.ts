@@ -1,5 +1,4 @@
-import type { Capability } from '../core/capability'
-import type { Connection } from '../core/connection'
+import type { Capability, Connection } from '@/interfaces'
 
 // TODO:Implmentation
 

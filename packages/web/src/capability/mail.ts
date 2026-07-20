@@ -1,4 +1,4 @@
-import type { Capability } from '../core/capability'
+import type { Capability } from '@/interfaces'
 
 export interface MailCapability extends Capability {
   listMails: () => Promise<readonly Mail[]>

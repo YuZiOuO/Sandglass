@@ -1,7 +1,6 @@
 import { cli } from '@/main'
-import type { Capability } from '../../core/capability'
-import type { Connection } from '../../core/connection'
 import { GoogleMailCapability } from './mail'
+import type { Capability, Connection } from '@/interfaces'
 
 export class GoogleConnection implements Connection {
   readonly capabilities: readonly Capability[]
