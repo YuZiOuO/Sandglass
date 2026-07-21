@@ -59,7 +59,7 @@ const app = new Hono<{
       httpOnly: true,
       secure: c.req.url.startsWith('https:'),
       sameSite: 'Lax',
-      path: '/github',
+      path: '/',
     })
     return c.redirect(c.env.WEB_ORIGIN ?? new URL('/', c.req.url).origin)
   })
@@ -80,7 +80,7 @@ const app = new Hono<{
     try {
       token = await github.refreshAccessToken(refreshToken)
     } catch {
-      deleteCookie(c, 'github_refresh_token', { path: '/github' })
+      deleteCookie(c, 'github_refresh_token', { path: '/' })
       return c.json({ authenticated: false }, 401)
     }
 
@@ -89,7 +89,7 @@ const app = new Hono<{
         httpOnly: true,
         secure: c.req.url.startsWith('https:'),
         sameSite: 'Lax',
-        path: '/github',
+        path: '/',
       })
     }
 

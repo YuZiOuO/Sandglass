@@ -79,7 +79,7 @@ const app = new Hono<{
       httpOnly: true,
       secure: c.req.url.startsWith('https:'),
       sameSite: 'Lax',
-      path: '/google',
+      path: '/',
     })
     return c.redirect(c.env.WEB_ORIGIN ?? new URL('/', c.req.url).origin)
   })
@@ -100,7 +100,7 @@ const app = new Hono<{
     try {
       token = await google.refreshAccessToken(refreshToken)
     } catch {
-      deleteCookie(c, 'google_refresh_token', { path: '/google' })
+      deleteCookie(c, 'google_refresh_token', { path: '/' })
       return c.json({ authenticated: false }, 401)
     }
 
@@ -108,7 +108,7 @@ const app = new Hono<{
       headers: { Authorization: `Bearer ${token.accessToken()}` },
     })
     if (!profileResponse.ok) {
-      deleteCookie(c, 'google_refresh_token', { path: '/google' })
+      deleteCookie(c, 'google_refresh_token', { path: '/' })
       return c.json({ authenticated: false }, 401)
     }
 
