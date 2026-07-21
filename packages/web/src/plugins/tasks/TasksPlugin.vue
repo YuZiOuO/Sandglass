@@ -17,9 +17,10 @@ import {
 import type { Task, TaskCapability } from '@/capability/task'
 import type { Scope, Scoped } from '@/interfaces'
 
-const { capability } = defineProps<{
-  capability?: Scoped<TaskCapability>
+const { capabilities } = defineProps<{
+  capabilities: readonly [Scoped<TaskCapability>]
 }>()
+const capability = capabilities[0]
 
 const scopes = ref<readonly Scope[]>([])
 const selectedScope = ref<string>()

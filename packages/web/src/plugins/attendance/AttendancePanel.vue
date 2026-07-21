@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
@@ -20,10 +20,13 @@ import {
 import { CafeOutline, MoonOutline, PlayOutline, SunnyOutline } from '@vicons/ionicons5'
 
 import type { AttendanceCapability, AttendanceRecord } from '@/capability/attendance'
+import type { AttendanceState } from '@/adapter/static/attendance'
+import type { StatePort } from '@/interfaces'
 import AttendanceTimeline from './AttendanceTimeline.vue'
 
-const { capabilities } = defineProps<{
+const { capabilities, state } = defineProps<{
   capabilities: readonly [AttendanceCapability]
+  state: StatePort<AttendanceState>
 }>()
 const capability = capabilities[0]
 
@@ -121,8 +124,13 @@ onMounted(() => {
   timer = window.setInterval(() => {
     now.value = new Date()
   }, 1000)
-  void load()
 })
+
+watch(
+  () => state.read(),
+  () => void load(),
+  { immediate: true },
+)
 
 onBeforeUnmount(() => {
   if (timer !== undefined) {

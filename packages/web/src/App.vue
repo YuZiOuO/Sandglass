@@ -1,29 +1,48 @@
 <script setup lang="ts">
-import { NGi, NGrid, NNotificationProvider, NSpace } from 'naive-ui'
-import { computed, h, shallowRef } from 'vue'
+import { NNotificationProvider, NSpace } from 'naive-ui'
+import { computed, shallowRef } from 'vue'
 
 import type { GoogleConnection } from './adapter/google'
 import ConnectionManager from './components/ConnectionManager.vue'
-import { LocalAttendanceAdapter } from './adapter/local/attendance'
+import { AttendanceAdapter } from './adapter/static/attendance'
+import type { AttendanceState } from './adapter/static/attendance'
 import AttendancePanel from './plugins/attendance/AttendancePanel.vue'
 import CalendarPlugin from './plugins/calendar/CalendarPlugin.vue'
 import MailPanel from './plugins/mail/MailPanel.vue'
 import TasksPlugin from './plugins/tasks/TasksPlugin.vue'
+import SyncManager from './components/SyncManager.vue'
+import { createPlugin } from './lib'
 
-const attendanceCapability = new LocalAttendanceAdapter()
+const attendance = createPlugin({
+  id: 'attendance',
+  state: (): AttendanceState => ({ records: [] }),
+  capabilities: (state) => [new AttendanceAdapter(state)] as const,
+  component: AttendancePanel,
+})
+const syncSources = [attendance.syncSource!] as const
 const googleConnection = shallowRef<GoogleConnection>()
 const plugins = computed(() => {
-  const attendance = {
-    id: 'attendance',
-    component: () => h(AttendancePanel, { capabilities: [attendanceCapability] as const }),
-  }
   const connection = googleConnection.value
-  const mail = connection && {
-    id: 'mail',
-    component: () => h(MailPanel, { capabilities: [connection.mailCapability] as const }),
-  }
+  if (!connection) return [attendance]
 
-  return mail ? [attendance, mail] : [attendance]
+  return [
+    attendance,
+    createPlugin({
+      id: 'mail',
+      capabilities: () => [connection.mailCapability] as const,
+      component: MailPanel,
+    }),
+    createPlugin({
+      id: 'calendar',
+      capabilities: () => [connection.calendarCapability] as const,
+      component: CalendarPlugin,
+    }),
+    createPlugin({
+      id: 'tasks',
+      capabilities: () => [connection.taskCapability] as const,
+      component: TasksPlugin,
+    }),
+  ]
 })
 
 function setConnections(value: { google?: GoogleConnection }) {
@@ -35,14 +54,7 @@ function setConnections(value: { google?: GoogleConnection }) {
   <n-notification-provider>
     <n-space vertical size="large">
       <ConnectionManager @ready="setConnections" />
-      <n-grid cols="1 m:2" x-gap="16" y-gap="16">
-        <n-gi>
-          <CalendarPlugin :capability="googleConnection?.calendarCapability" />
-        </n-gi>
-        <n-gi>
-          <TasksPlugin :capability="googleConnection?.taskCapability" />
-        </n-gi>
-      </n-grid>
+      <SyncManager :sources="syncSources" />
       <component :is="plugin.component" v-for="plugin in plugins" :key="plugin.id" />
     </n-space>
   </n-notification-provider>

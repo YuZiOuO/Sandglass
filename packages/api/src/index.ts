@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import google from './google'
 import github from './github'
+import sync from './sync'
 import { cors } from 'hono/cors'
 
 const app = new Hono<{
@@ -20,6 +21,7 @@ const app = new Hono<{
   })
   .route('/google', google)
   .route('/github', github)
+  .route('/sync', sync)
 
 export type AppType = typeof app
 export default app

@@ -1,4 +1,7 @@
 import type { Component } from 'vue'
+import type { JsonObject, JsonValue } from 'type-fest'
+
+export type { JsonObject, JsonValue }
 
 export interface Connection {
   /** Starts the provider-specific user authorization flow. */
@@ -10,8 +13,17 @@ export interface Connection {
   readonly capabilities: readonly Capability[]
 }
 
-export type Plugin<C extends readonly Capability[] = readonly Capability[]> = Component<{
+export interface StatePort<S extends JsonValue> {
+  read: () => S
+  write: (value: S) => void
+}
+
+export type Plugin<
+  C extends readonly Capability[] = readonly Capability[],
+  S extends JsonObject = JsonObject,
+> = Component<{
   capabilities: C
+  state?: StatePort<S>
 }>
 
 // Intentional marker interface for capability services.
