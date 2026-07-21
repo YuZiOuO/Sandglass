@@ -17,3 +17,13 @@ export type Plugin<C extends readonly Capability[] = readonly Capability[]> = Co
 // Intentional marker interface for capability services.
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface Capability {}
+
+export interface Scoped<C extends Capability> extends Capability {
+  listScopes: () => Promise<readonly Scope[]>
+  forScope: (id: string) => C
+}
+
+export type Scope = {
+  id: string
+  name: string
+}

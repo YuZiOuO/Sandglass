@@ -3,7 +3,9 @@ import type { Mail, MailCapability } from '../../capability/mail'
 const GMAIL_API_ROOT = 'https://gmail.googleapis.com/gmail/v1/users/me'
 
 export class GoogleMailCapability implements MailCapability {
-  constructor(private readonly getRequestHeaders: () => Record<string, string>) {}
+  constructor(
+    private readonly request: (url: string | URL, init?: RequestInit) => Promise<Response>,
+  ) {}
 
   async listMails() {
     return this.list('labelIds=INBOX')
@@ -14,47 +16,34 @@ export class GoogleMailCapability implements MailCapability {
   }
 
   async archiveMail(id: string) {
-    await fetch(`${GMAIL_API_ROOT}/messages/${id}/modify`, {
+    await this.request(`${GMAIL_API_ROOT}/messages/${id}/modify`, {
       method: 'POST',
-      headers: {
-        ...this.getRequestHeaders(),
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ removeLabelIds: ['INBOX'] }),
     })
   }
 
   async unarchiveMail(id: string) {
-    await fetch(`${GMAIL_API_ROOT}/messages/${id}/modify`, {
+    await this.request(`${GMAIL_API_ROOT}/messages/${id}/modify`, {
       method: 'POST',
-      headers: {
-        ...this.getRequestHeaders(),
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ addLabelIds: ['INBOX'] }),
     })
   }
 
   async trashMail(id: string) {
-    await fetch(`${GMAIL_API_ROOT}/messages/${id}/trash`, {
+    await this.request(`${GMAIL_API_ROOT}/messages/${id}/trash`, {
       method: 'POST',
-      headers: this.getRequestHeaders(),
     })
   }
 
   async untrashMail(id: string) {
-    await fetch(`${GMAIL_API_ROOT}/messages/${id}/untrash`, {
+    await this.request(`${GMAIL_API_ROOT}/messages/${id}/untrash`, {
       method: 'POST',
-      headers: this.getRequestHeaders(),
     })
   }
 
   private async list(query: string) {
-    const listResponse = await fetch(
+    const listResponse = await this.request(
       `${GMAIL_API_ROOT}/messages?maxResults=10${query ? `&${query}` : ''}`,
-      {
-        headers: this.getRequestHeaders(),
-      },
     )
     const { messages } = (await listResponse.json()) as {
       messages: Array<{
@@ -64,11 +53,8 @@ export class GoogleMailCapability implements MailCapability {
 
     return Promise.all(
       messages.map(async ({ id }): Promise<Mail> => {
-        const messageResponse = await fetch(
+        const messageResponse = await this.request(
           `${GMAIL_API_ROOT}/messages/${id}?format=metadata&metadataHeaders=Subject&metadataHeaders=From`,
-          {
-            headers: this.getRequestHeaders(),
-          },
         )
 
         const message = (await messageResponse.json()) as {

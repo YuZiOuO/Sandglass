@@ -1,7 +1,20 @@
 import type { Capability } from '@/interfaces'
 
-// Intentional marker interface until the capability contract is defined.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface TaskCapability extends Capability {
-  // TODO:implmentation
+  list: () => Promise<readonly Task[]>
+  create: (input: CreateTaskInput) => Promise<Task>
+  update: (id: string, patch: UpdateTaskInput) => Promise<Task>
+  remove: (id: string) => Promise<void>
 }
+
+// Task hierarchy is intentionally flattened in the initial contract.
+export type Task = {
+  id: string
+  title: string
+  notes?: string
+  dueDate?: string
+  completed: boolean
+}
+
+export type CreateTaskInput = Omit<Task, 'id' | 'completed'>
+export type UpdateTaskInput = Partial<Omit<Task, 'id'>>
