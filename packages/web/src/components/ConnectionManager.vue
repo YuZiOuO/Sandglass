@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import {
-  NAlert,
-  NButton,
-  NCard,
-  NDescriptions,
-  NDescriptionsItem,
-  NEmpty,
-  NSpace,
-  NSpin,
-} from 'naive-ui'
+import { NAlert, NButton, NCard, NDescriptions, NDescriptionsItem, NSpace, NSpin } from 'naive-ui'
 
 import type { Connection } from '@/interfaces'
 import { GithubConnection } from '../adapter/github'
@@ -99,11 +90,6 @@ onMounted(async () => {
           </n-descriptions-item>
         </n-descriptions>
         <n-alert v-if="item.error" type="error" :title="item.error" />
-        <n-empty
-          v-else-if="!item.connected"
-          description="Connect this provider to enable its capabilities."
-        />
-        <n-empty v-else description="Connection active." />
       </n-spin>
     </n-card>
   </n-space>

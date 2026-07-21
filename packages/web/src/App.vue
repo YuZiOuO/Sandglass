@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NNotificationProvider, NSpace } from 'naive-ui'
+import { NGrid, NGridItem, NNotificationProvider } from 'naive-ui'
 import { computed, shallowRef } from 'vue'
 
 import type { GoogleConnection } from './adapter/google'
@@ -52,10 +52,26 @@ function setConnections(value: { google?: GoogleConnection }) {
 
 <template>
   <n-notification-provider>
-    <n-space vertical size="large">
-      <ConnectionManager @ready="setConnections" />
-      <SyncManager :sources="syncSources" />
-      <component :is="plugin.component" v-for="plugin in plugins" :key="plugin.id" />
-    </n-space>
+    <main class="app-shell">
+      <n-grid cols="1 s:2" responsive="screen" :x-gap="16" :y-gap="16">
+        <n-grid-item>
+          <ConnectionManager @ready="setConnections" />
+        </n-grid-item>
+        <n-grid-item>
+          <SyncManager :sources="syncSources" />
+        </n-grid-item>
+        <n-grid-item v-for="plugin in plugins" :key="plugin.id">
+          <component :is="plugin.component" />
+        </n-grid-item>
+      </n-grid>
+    </main>
   </n-notification-provider>
 </template>
+
+<style>
+.app-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px;
+}
+</style>

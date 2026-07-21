@@ -45,8 +45,8 @@ export class GoogleMailCapability implements MailCapability {
     const listResponse = await this.request(
       `${GMAIL_API_ROOT}/messages?maxResults=10${query ? `&${query}` : ''}`,
     )
-    const { messages } = (await listResponse.json()) as {
-      messages: Array<{
+    const { messages = [] } = (await listResponse.json()) as {
+      messages?: Array<{
         id: string
       }>
     }
