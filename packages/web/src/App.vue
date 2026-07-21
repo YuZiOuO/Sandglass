@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { NNotificationProvider, NSpace } from 'naive-ui'
+import { NGi, NGrid, NNotificationProvider, NSpace } from 'naive-ui'
 import { computed, h, shallowRef } from 'vue'
 
 import type { GoogleConnection } from './adapter/google'
 import ConnectionManager from './components/ConnectionManager.vue'
 import { LocalAttendanceAdapter } from './adapter/local/attendance'
 import AttendancePanel from './plugins/attendance/AttendancePanel.vue'
+import CalendarPlugin from './plugins/calendar/CalendarPlugin.vue'
 import MailPanel from './plugins/mail/MailPanel.vue'
+import TasksPlugin from './plugins/tasks/TasksPlugin.vue'
 
 const attendanceCapability = new LocalAttendanceAdapter()
 const googleConnection = shallowRef<GoogleConnection>()
@@ -33,6 +35,14 @@ function setConnections(value: { google?: GoogleConnection }) {
   <n-notification-provider>
     <n-space vertical size="large">
       <ConnectionManager @ready="setConnections" />
+      <n-grid cols="1 m:2" x-gap="16" y-gap="16">
+        <n-gi>
+          <CalendarPlugin :capability="googleConnection?.calendarCapability" />
+        </n-gi>
+        <n-gi>
+          <TasksPlugin :capability="googleConnection?.taskCapability" />
+        </n-gi>
+      </n-grid>
       <component :is="plugin.component" v-for="plugin in plugins" :key="plugin.id" />
     </n-space>
   </n-notification-provider>
