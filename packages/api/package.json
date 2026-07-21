@@ -24,9 +24,9 @@
     "hono": "^4.12.31"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260719.1",
-    "oxlint": "~1.69.0",
-    "prettier": "3.8.4",
+    "@cloudflare/workers-types": "^5.20260721.1",
+    "oxlint": "~1.74.0",
+    "prettier": "3.9.6",
     "typescript": "~6.0.0",
     "wrangler": "^4.110.0"
   },
