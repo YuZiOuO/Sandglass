@@ -1,23 +1,49 @@
 import { cli } from '@/lib'
+import { GoogleCalendarCapability } from './calendar'
 import { GoogleMailCapability } from './mail'
-import type { Capability, Connection } from '@/interfaces'
+import { GoogleTaskCapability } from './task'
+import type { CalendarCapability } from '@/capability/calendar'
+import type { TaskCapability } from '@/capability/task'
+import type { Capability, Connection, Scoped } from '@/interfaces'
 
 export class GoogleConnection implements Connection {
   readonly capabilities: readonly Capability[]
+  readonly calendarCapability: Scoped<CalendarCapability>
   readonly mailCapability: GoogleMailCapability
+  readonly taskCapability: Scoped<TaskCapability>
   private accessToken = ''
 
   constructor() {
-    this.mailCapability = new GoogleMailCapability(() => {
-      if (!this.accessToken) {
-        throw new Error('Google is not authenticated.')
-      }
+    const request = this.request.bind(this)
 
-      return {
-        Authorization: `Bearer ${this.accessToken}`,
-      }
+    this.calendarCapability = new GoogleCalendarCapability(request)
+    this.mailCapability = new GoogleMailCapability(request)
+    this.taskCapability = new GoogleTaskCapability(request)
+    this.capabilities = [this.calendarCapability, this.mailCapability, this.taskCapability]
+  }
+
+  private getRequestHeaders() {
+    if (!this.accessToken) {
+      throw new Error('Google is not authenticated.')
+    }
+
+    return { Authorization: `Bearer ${this.accessToken}` }
+  }
+
+  private async request(url: string | URL, init?: RequestInit) {
+    const response = await fetch(url, {
+      ...init,
+      headers: {
+        ...this.getRequestHeaders(),
+        ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+      },
     })
-    this.capabilities = [this.mailCapability]
+
+    if (!response.ok) {
+      throw new Error(`Google API request failed (${response.status}).`)
+    }
+
+    return response
   }
 
   authorize() {

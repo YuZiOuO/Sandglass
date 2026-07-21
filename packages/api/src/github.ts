@@ -2,8 +2,6 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { Hono } from 'hono'
 import { GitHub, generateState } from 'arctic'
 
-const GITHUB_PROFILE_URL = 'https://api.github.com/user'
-
 const app = new Hono<{
   Bindings: {
     GITHUB_CLIENT_ID: string
@@ -93,14 +91,6 @@ const app = new Hono<{
         sameSite: 'Lax',
         path: '/github',
       })
-    }
-
-    const profileResponse = await fetch(GITHUB_PROFILE_URL, {
-      headers: { Authorization: `Bearer ${token.accessToken()}` },
-    })
-    if (!profileResponse.ok) {
-      deleteCookie(c, 'github_refresh_token', { path: '/github' })
-      return c.json({ authenticated: false }, 401)
     }
 
     return c.json({ authenticated: true, accessToken: token.accessToken() })

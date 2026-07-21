@@ -9,7 +9,9 @@ export class GithubConnection implements Connection {
   }
 
   authorize() {
-    globalThis.location.assign(cli.github.authorize.$url().toString())
+    const url = cli.github.authorize.$url()
+    url.searchParams.set('prompt', 'login')
+    globalThis.location.assign(url.toString())
   }
 
   async restore() {
