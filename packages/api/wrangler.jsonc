@@ -4,6 +4,12 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-07-20",
   "keep_vars": true,
+  "r2_buckets": [
+    {
+      "binding": "SYNC_BUCKET",
+      "bucket_name": "sandglass-sync-prod",
+    },
+  ],
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
@@ -14,12 +20,6 @@
   //   {
   //     "binding": "MY_KV_NAMESPACE",
   //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-  //   }
-  // ],
-  // "r2_buckets": [
-  //   {
-  //     "binding": "MY_BUCKET",
-  //     "bucket_name": "my-bucket"
   //   }
   // ],
   // "d1_databases": [

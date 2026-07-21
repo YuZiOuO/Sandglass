@@ -17,9 +17,10 @@ import {
 import type { CalendarCapability, CalendarEvent } from '@/capability/calendar'
 import type { Scope, Scoped } from '@/interfaces'
 
-const { capability } = defineProps<{
-  capability?: Scoped<CalendarCapability>
+const { capabilities } = defineProps<{
+  capabilities: readonly [Scoped<CalendarCapability>]
 }>()
+const capability = capabilities[0]
 
 const scopes = ref<readonly Scope[]>([])
 const selectedScope = ref<string>()

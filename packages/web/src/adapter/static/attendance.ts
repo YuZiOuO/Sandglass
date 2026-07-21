@@ -1,11 +1,14 @@
 import type { AttendanceCapability, AttendanceRecord, QueryRange } from '@/capability/attendance'
+import type { StatePort } from '@/interfaces'
+import type { JsonObject } from 'type-fest'
 
-const STORAGE_KEY = 'sandglass.attendance.records.v1'
+export type AttendanceState = JsonObject & {
+  records: readonly (Omit<AttendanceRecord, 'time'> & { time: string })[]
+}
 
-// Dates are serialized explicitly because JSON has no Date representation.
-type StoredRecord = Omit<AttendanceRecord, 'time'> & { time: string }
+export class AttendanceAdapter implements AttendanceCapability {
+  constructor(private readonly state: StatePort<AttendanceState>) {}
 
-export class LocalAttendanceAdapter implements AttendanceCapability {
   async record(record: Omit<AttendanceRecord, 'id'>) {
     const records = this.read()
     const saved: AttendanceRecord = {
@@ -14,7 +17,7 @@ export class LocalAttendanceAdapter implements AttendanceCapability {
     }
 
     records.push(saved)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+    this.write(records)
     return saved
   }
 
@@ -29,11 +32,16 @@ export class LocalAttendanceAdapter implements AttendanceCapability {
 
   async remove(id: string) {
     const records = this.read().filter((record) => record.id !== id)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
+    this.write(records)
   }
 
   private read(): AttendanceRecord[] {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as StoredRecord[]
-    return stored.map((record) => ({ ...record, time: new Date(record.time) }))
+    return this.state.read().records.map((record) => ({ ...record, time: new Date(record.time) }))
+  }
+
+  private write(records: readonly AttendanceRecord[]) {
+    this.state.write({
+      records: records.map((record) => ({ ...record, time: record.time.toISOString() })),
+    })
   }
 }
