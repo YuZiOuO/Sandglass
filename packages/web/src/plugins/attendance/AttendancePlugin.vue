@@ -3,7 +3,6 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
-  NCard,
   NDivider,
   NEmpty,
   NFlex,
@@ -140,95 +139,93 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <n-card title="考勤">
-    <n-empty v-if="loading" description="正在加载考勤记录。" />
-    <template v-else>
-      <n-alert v-if="error" type="error" :title="error" />
+  <n-empty v-if="loading" description="正在加载考勤记录。" />
+  <template v-else>
+    <n-alert v-if="error" type="error" :title="error" />
 
-      <n-h1 style="width: 100%; margin: 0; text-align: center">
-        <n-time :time="now.getTime()" format="HH:mm:ss" />
-      </n-h1>
-      <n-divider />
+    <n-h1 style="width: 100%; margin: 0; text-align: center">
+      <n-time :time="now.getTime()" format="HH:mm:ss" />
+    </n-h1>
+    <n-divider />
 
-      <n-flex align="center">
-        <Transition name="status" mode="out-in">
-          <n-tag :key="status" :type="statusType" :bordered="false">{{ statusLabel }}</n-tag>
-        </Transition>
-        <n-progress
-          :percentage="status === 'IN' ? 100 : 0"
-          :processing="status === 'IN'"
-          :status="status === 'IN' ? 'success' : undefined"
-          indicator-placement="inside"
-        />
-      </n-flex>
+    <n-flex align="center">
+      <Transition name="status" mode="out-in">
+        <n-tag :key="status" :type="statusType" :bordered="false">{{ statusLabel }}</n-tag>
+      </Transition>
+      <n-progress
+        :percentage="status === 'IN' ? 100 : 0"
+        :processing="status === 'IN'"
+        :status="status === 'IN' ? 'success' : undefined"
+        indicator-placement="inside"
+      />
+    </n-flex>
 
-      <n-divider />
-      <n-grid :cols="2">
-        <n-gi>
-          <n-statistic label="今日累计" :value="formatHours(todayWorkTime)">
-            <template #suffix>h</template>
-          </n-statistic>
-        </n-gi>
-        <n-gi>
-          <n-statistic label="记录数" :value="records.length" />
-        </n-gi>
-      </n-grid>
+    <n-divider />
+    <n-grid :cols="2">
+      <n-gi>
+        <n-statistic label="今日累计" :value="formatHours(todayWorkTime)">
+          <template #suffix>h</template>
+        </n-statistic>
+      </n-gi>
+      <n-gi>
+        <n-statistic label="记录数" :value="records.length" />
+      </n-gi>
+    </n-grid>
 
-      <n-divider />
-      <n-grid cols="s:1 m:3" responsive="screen" x-gap="12">
-        <n-gi>
-          <n-button
-            block
-            type="primary"
-            size="large"
-            :disabled="!canRecordIn"
-            :loading="saving === 'IN'"
-            @click="record('IN')"
-          >
-            <template #icon>
-              <n-icon><component :is="status === 'PAUSE' ? PlayOutline : SunnyOutline" /></n-icon>
-            </template>
-            {{ status === 'PAUSE' ? '恢复' : '签到' }}
-          </n-button>
-        </n-gi>
-        <n-gi>
-          <n-button
-            block
-            type="warning"
-            size="large"
-            :disabled="!canPause"
-            :loading="saving === 'PAUSE'"
-            @click="record('PAUSE')"
-          >
-            <template #icon>
-              <n-icon><CafeOutline /></n-icon>
-            </template>
-            暂停
-          </n-button>
-        </n-gi>
-        <n-gi>
-          <n-popconfirm @positive-click="record('OUT')">
-            <template #trigger>
-              <n-button
-                block
-                type="error"
-                size="large"
-                :disabled="!canRecordOut"
-                :loading="saving === 'OUT'"
-              >
-                <template #icon>
-                  <n-icon><MoonOutline /></n-icon>
-                </template>
-                签退
-              </n-button>
-            </template>
-            您将签退。当前时间：{{ now.toLocaleTimeString() }}
-          </n-popconfirm>
-        </n-gi>
-      </n-grid>
+    <n-divider />
+    <n-grid cols="s:1 m:3" responsive="screen" x-gap="12">
+      <n-gi>
+        <n-button
+          block
+          type="primary"
+          size="large"
+          :disabled="!canRecordIn"
+          :loading="saving === 'IN'"
+          @click="record('IN')"
+        >
+          <template #icon>
+            <n-icon><component :is="status === 'PAUSE' ? PlayOutline : SunnyOutline" /></n-icon>
+          </template>
+          {{ status === 'PAUSE' ? '恢复' : '签到' }}
+        </n-button>
+      </n-gi>
+      <n-gi>
+        <n-button
+          block
+          type="warning"
+          size="large"
+          :disabled="!canPause"
+          :loading="saving === 'PAUSE'"
+          @click="record('PAUSE')"
+        >
+          <template #icon>
+            <n-icon><CafeOutline /></n-icon>
+          </template>
+          暂停
+        </n-button>
+      </n-gi>
+      <n-gi>
+        <n-popconfirm @positive-click="record('OUT')">
+          <template #trigger>
+            <n-button
+              block
+              type="error"
+              size="large"
+              :disabled="!canRecordOut"
+              :loading="saving === 'OUT'"
+            >
+              <template #icon>
+                <n-icon><MoonOutline /></n-icon>
+              </template>
+              签退
+            </n-button>
+          </template>
+          您将签退。当前时间：{{ now.toLocaleTimeString() }}
+        </n-popconfirm>
+      </n-gi>
+    </n-grid>
 
-      <n-divider />
-      <attendance-timeline :records="records" :on-remove="remove" />
-    </template>
-  </n-card>
+    <n-divider />
+    <attendance-timeline :records="records" :on-remove="remove" />
+  </template>
 </template>

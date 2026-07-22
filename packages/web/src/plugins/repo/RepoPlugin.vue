@@ -3,7 +3,6 @@ import { computed, onMounted, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
-  NCard,
   NEmpty,
   NIcon,
   NSelect,
@@ -31,7 +30,7 @@ const loadingActivities = ref(false)
 const error = ref('')
 
 const scopeOptions = computed(() => [
-  { label: 'All repositories', value: '' },
+  { label: '所有仓库', value: '' },
   ...scopes.value.map((scope) => ({ label: scope.name, value: scope.id })),
 ])
 
@@ -39,9 +38,9 @@ const displayedActivities = computed(() => [...activities.value].reverse())
 const loading = computed(() => loadingScopes.value || loadingActivities.value)
 
 const activityMeta = {
-  commit: { label: 'Commit', color: '#3b82f6', icon: GitCommit },
-  issue: { label: 'Issue', color: '#f59e0b', icon: AlertCircleOutline },
-  'pull-request': { label: 'Pull request', color: '#10b981', icon: GitPullRequest },
+  commit: { label: '提交', color: '#3b82f6', icon: GitCommit },
+  issue: { label: '议题', color: '#f59e0b', icon: AlertCircleOutline },
+  'pull-request': { label: '拉取请求', color: '#10b981', icon: GitPullRequest },
 } as const
 
 async function loadScopes() {
@@ -55,7 +54,7 @@ async function loadScopes() {
     }
     await loadActivities()
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'Failed to load GitHub repositories.'
+    error.value = cause instanceof Error ? cause.message : '加载 GitHub 仓库失败。'
   } finally {
     loadingScopes.value = false
   }
@@ -76,7 +75,7 @@ async function loadActivities() {
     activities.value = await capability.list({ from, to })
   } catch (cause) {
     activities.value = []
-    error.value = cause instanceof Error ? cause.message : 'Failed to load GitHub activity.'
+    error.value = cause instanceof Error ? cause.message : '加载 GitHub 动态失败。'
   } finally {
     loadingActivities.value = false
   }
@@ -91,50 +90,47 @@ onMounted(() => void loadScopes())
 </script>
 
 <template>
-  <n-card title="GitHub activity">
-    <template #header-extra>
+  <n-space vertical>
+    <n-space justify="end">
       <n-button
         size="small"
         :loading="loading"
-        aria-label="Refresh GitHub activity"
-        title="Refresh GitHub activity"
+        aria-label="刷新 GitHub 动态"
+        title="刷新 GitHub 动态"
         @click="loadScopes"
       >
         <template #icon>
           <n-icon><RefreshOutline /></n-icon>
         </template>
-        Refresh
+        刷新
       </n-button>
-    </template>
-
-    <n-space vertical>
-      <n-alert v-if="error" type="error" :title="error" />
-      <n-select
-        v-model:value="selectedScope"
-        :options="scopeOptions"
-        :loading="loadingScopes"
-        :disabled="loadingScopes"
-        aria-label="Repository"
-      />
-
-      <n-spin :show="loadingActivities">
-        <n-empty v-if="!displayedActivities.length" description="No activity in the last 7 days." />
-        <n-timeline v-else>
-          <n-timeline-item
-            v-for="(activity, index) in displayedActivities"
-            :key="`${activity.kind}-${activity.time.getTime()}-${index}`"
-            :time="formatTime(activity.time)"
-            :title="activityMeta[activity.kind].label"
-          >
-            <template #icon>
-              <n-icon :color="activityMeta[activity.kind].color" :size="18">
-                <component :is="activityMeta[activity.kind].icon" />
-              </n-icon>
-            </template>
-            {{ activity.description }}
-          </n-timeline-item>
-        </n-timeline>
-      </n-spin>
     </n-space>
-  </n-card>
+    <n-alert v-if="error" type="error" :title="error" />
+    <n-select
+      v-model:value="selectedScope"
+      :options="scopeOptions"
+      :loading="loadingScopes"
+      :disabled="loadingScopes"
+      aria-label="仓库"
+    />
+
+    <n-spin :show="loadingActivities">
+      <n-empty v-if="!displayedActivities.length" description="最近 7 天没有动态。" />
+      <n-timeline v-else>
+        <n-timeline-item
+          v-for="(activity, index) in displayedActivities"
+          :key="`${activity.kind}-${activity.time.getTime()}-${index}`"
+          :time="formatTime(activity.time)"
+          :title="activityMeta[activity.kind].label"
+        >
+          <template #icon>
+            <n-icon :color="activityMeta[activity.kind].color" :size="18">
+              <component :is="activityMeta[activity.kind].icon" />
+            </n-icon>
+          </template>
+          {{ activity.description }}
+        </n-timeline-item>
+      </n-timeline>
+    </n-spin>
+  </n-space>
 </template>

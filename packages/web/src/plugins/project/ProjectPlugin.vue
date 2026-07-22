@@ -31,7 +31,6 @@ import { computed, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
-  NCard,
   NCheckbox,
   NEmpty,
   NFlex,
@@ -100,16 +99,16 @@ const selectedProject = computed(() =>
 )
 const createTitle = computed(() =>
   createKind.value === 'repo'
-    ? 'Create repository'
+    ? '创建仓库'
     : createKind.value === 'calendar'
-      ? 'Create calendar'
-      : 'Create task list',
+      ? '创建日历'
+      : '创建任务列表',
 )
 
 const activityMeta = {
-  commit: { label: 'Commit', color: '#3b82f6', icon: GitCommit },
-  issue: { label: 'Issue', color: '#f59e0b', icon: AlertCircleOutline },
-  'pull-request': { label: 'Pull request', color: '#10b981', icon: GitPullRequest },
+  commit: { label: '提交', color: '#3b82f6', icon: GitCommit },
+  issue: { label: '议题', color: '#f59e0b', icon: AlertCircleOutline },
+  'pull-request': { label: '拉取请求', color: '#10b981', icon: GitPullRequest },
 } as const
 
 function saveState() {
@@ -135,11 +134,11 @@ function nameExists(name: string, except?: string) {
 function createProject() {
   const name = newProjectName.value.trim()
   if (!name) {
-    error.value = 'Project name is required.'
+    error.value = '请输入项目名称。'
     return
   }
   if (nameExists(name)) {
-    error.value = 'A project with this name already exists.'
+    error.value = '已存在同名项目。'
     return
   }
 
@@ -156,7 +155,7 @@ function renameProject() {
   const name = renameProjectName.value.trim()
   if (!project || !name) return
   if (nameExists(name, project.name)) {
-    error.value = 'A project with this name already exists.'
+    error.value = '已存在同名项目。'
     return
   }
 
@@ -197,7 +196,7 @@ function updateBinding(kind: keyof Project['bindings'], value: string | null) {
 function options(scopes: readonly Scope[], binding?: string) {
   const values = scopes.map((scope) => ({ label: scope.name, value: scope.id }))
   if (binding && !scopes.some((scope) => scope.id === binding)) {
-    return [{ label: `Unavailable: ${binding}`, value: binding, disabled: true }, ...values]
+    return [{ label: `不可用：${binding}`, value: binding, disabled: true }, ...values]
   }
   return values
 }
@@ -218,7 +217,7 @@ async function loadScopes() {
   const failures = [repositories, calendars, taskLists].filter(
     (result): result is PromiseRejectedResult => result.status === 'rejected',
   )
-  scopeError.value = failures.length ? 'Some resources could not be loaded.' : ''
+  scopeError.value = failures.length ? '部分资源加载失败。' : ''
   loadingScopes.value = false
 }
 
@@ -254,7 +253,7 @@ async function loadData() {
   events.value = eventResult.status === 'fulfilled' ? eventResult.value : []
   tasks.value = taskResult.status === 'fulfilled' ? taskResult.value : []
   if ([activityResult, eventResult, taskResult].some((result) => result.status === 'rejected')) {
-    error.value = 'Some project data could not be loaded.'
+    error.value = '部分项目数据加载失败。'
   }
   loadingData.value = false
 }
@@ -280,12 +279,12 @@ async function createScope() {
           ? await services.calendars?.createScope(name)
           : await services.tasks?.createScope(name)
 
-    if (!scope) throw new Error('This resource is not connected.')
+    if (!scope) throw new Error('对应服务尚未连接。')
     updateBinding(createKind.value, scope.id)
     createDialogVisible.value = false
     await loadScopes()
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'Failed to create resource.'
+    error.value = cause instanceof Error ? cause.message : '创建资源失败。'
   } finally {
     creating.value = false
   }
@@ -321,7 +320,7 @@ watch(
 </script>
 
 <template>
-  <n-card title="Projects">
+  <div>
     <n-alert v-if="error || scopeError" type="warning" :title="error || scopeError" />
     <div class="project-layout">
       <div>
@@ -329,15 +328,10 @@ watch(
           <n-input-group>
             <n-input
               v-model:value="newProjectName"
-              placeholder="New project"
+              placeholder="新项目"
               @keyup.enter="createProject"
             />
-            <n-button
-              type="primary"
-              aria-label="Create project"
-              title="Create project"
-              @click="createProject"
-            >
+            <n-button type="primary" aria-label="创建项目" title="创建项目" @click="createProject">
               <template #icon
                 ><n-icon><AddOutline /></n-icon
               ></template>
@@ -353,33 +347,33 @@ watch(
               <n-thing :title="project.name" />
             </n-list-item>
           </n-list>
-          <n-empty v-else description="Create a project to get started." />
+          <n-empty v-else description="创建一个项目开始使用。" />
         </n-space>
       </div>
 
       <div>
-        <n-empty v-if="!selectedProject" description="Select or create a project." />
+        <n-empty v-if="!selectedProject" description="选择或创建一个项目。" />
         <template v-else>
           <n-flex align="center" justify="space-between" :wrap="true" :size="12">
-            <n-input v-model:value="renameProjectName" aria-label="Project name" />
+            <n-input v-model:value="renameProjectName" aria-label="项目名称" />
             <n-flex>
-              <n-button size="small" type="primary" @click="renameProject">Rename</n-button>
+              <n-button size="small" type="primary" @click="renameProject">重命名</n-button>
               <n-popconfirm @positive-click="deleteProject">
                 <template #trigger>
                   <n-button size="small" type="error" secondary>
                     <template #icon
                       ><n-icon><TrashOutline /></n-icon
                     ></template>
-                    Delete
+                    删除
                   </n-button>
                 </template>
-                Delete this project? External resources will be kept.
+                删除此项目？已绑定的外部资源会保留。
               </n-popconfirm>
             </n-flex>
           </n-flex>
 
           <n-space vertical size="large" style="margin-top: 20px">
-            <n-form-item label="Repository">
+            <n-form-item label="仓库">
               <n-input-group>
                 <n-select
                   style="flex: 1"
@@ -387,13 +381,13 @@ watch(
                   :options="options(repoScopes, selectedProject.bindings.repo)"
                   :disabled="!services.repositories"
                   clearable
-                  placeholder="Select repository"
+                  placeholder="选择仓库"
                   @update:value="(value) => updateBinding('repo', value)"
                 />
                 <n-button
                   :disabled="!services.repositories"
-                  aria-label="Create repository"
-                  title="Create repository"
+                  aria-label="创建仓库"
+                  title="创建仓库"
                   @click="openCreate('repo')"
                 >
                   <template #icon
@@ -402,7 +396,7 @@ watch(
                 </n-button>
               </n-input-group>
             </n-form-item>
-            <n-form-item label="Calendar">
+            <n-form-item label="日历">
               <n-input-group>
                 <n-select
                   style="flex: 1"
@@ -410,13 +404,13 @@ watch(
                   :options="options(calendarScopes, selectedProject.bindings.calendar)"
                   :disabled="!services.calendars"
                   clearable
-                  placeholder="Select calendar"
+                  placeholder="选择日历"
                   @update:value="(value) => updateBinding('calendar', value)"
                 />
                 <n-button
                   :disabled="!services.calendars"
-                  aria-label="Create calendar"
-                  title="Create calendar"
+                  aria-label="创建日历"
+                  title="创建日历"
                   @click="openCreate('calendar')"
                 >
                   <template #icon
@@ -425,7 +419,7 @@ watch(
                 </n-button>
               </n-input-group>
             </n-form-item>
-            <n-form-item label="Task list">
+            <n-form-item label="任务列表">
               <n-input-group>
                 <n-select
                   style="flex: 1"
@@ -433,13 +427,13 @@ watch(
                   :options="options(taskScopes, selectedProject.bindings.task)"
                   :disabled="!services.tasks"
                   clearable
-                  placeholder="Select task list"
+                  placeholder="选择任务列表"
                   @update:value="(value) => updateBinding('task', value)"
                 />
                 <n-button
                   :disabled="!services.tasks"
-                  aria-label="Create task list"
-                  title="Create task list"
+                  aria-label="创建任务列表"
+                  title="创建任务列表"
                   @click="openCreate('task')"
                 >
                   <template #icon
@@ -452,11 +446,8 @@ watch(
 
           <n-spin :show="loadingScopes || loadingData">
             <n-tabs type="line" animated style="margin-top: 12px">
-              <n-tab-pane name="activity" tab="Activity">
-                <n-empty
-                  v-if="!selectedProject.bindings.repo"
-                  description="Bind a repository first."
-                />
+              <n-tab-pane name="activity" tab="动态">
+                <n-empty v-if="!selectedProject.bindings.repo" description="请先绑定仓库。" />
                 <n-timeline v-else-if="activities.length">
                   <n-timeline-item
                     v-for="(activity, index) in [...activities].reverse()"
@@ -472,13 +463,10 @@ watch(
                     {{ activity.description }}
                   </n-timeline-item>
                 </n-timeline>
-                <n-empty v-else description="No activity in the last 7 days." />
+                <n-empty v-else description="最近 7 天没有动态。" />
               </n-tab-pane>
-              <n-tab-pane name="calendar" tab="Calendar">
-                <n-empty
-                  v-if="!selectedProject.bindings.calendar"
-                  description="Bind a calendar first."
-                />
+              <n-tab-pane name="calendar" tab="日历">
+                <n-empty v-if="!selectedProject.bindings.calendar" description="请先绑定日历。" />
                 <n-list v-else-if="events.length" bordered>
                   <n-list-item v-for="event in events" :key="event.id">
                     <n-thing :title="event.title" :description="formatEventTime(event)">
@@ -489,13 +477,10 @@ watch(
                     </n-thing>
                   </n-list-item>
                 </n-list>
-                <n-empty v-else description="No events in the next 14 days." />
+                <n-empty v-else description="未来 14 天没有日程。" />
               </n-tab-pane>
-              <n-tab-pane name="tasks" tab="Tasks">
-                <n-empty
-                  v-if="!selectedProject.bindings.task"
-                  description="Bind a task list first."
-                />
+              <n-tab-pane name="tasks" tab="任务">
+                <n-empty v-if="!selectedProject.bindings.task" description="请先绑定任务列表。" />
                 <n-list v-else-if="tasks.length" bordered>
                   <n-list-item v-for="task in tasks" :key="task.id">
                     <n-thing :title="task.title" :description="task.notes">
@@ -508,14 +493,14 @@ watch(
                     </n-thing>
                   </n-list-item>
                 </n-list>
-                <n-empty v-else description="No tasks in this list." />
+                <n-empty v-else description="此列表中没有任务。" />
               </n-tab-pane>
             </n-tabs>
           </n-spin>
         </template>
       </div>
     </div>
-  </n-card>
+  </div>
 
   <n-modal
     v-model:show="createDialogVisible"
@@ -524,9 +509,9 @@ watch(
     style="width: min(440px, calc(100vw - 32px))"
   >
     <n-space vertical>
-      <n-input v-model:value="createName" placeholder="Name" @keyup.enter="createScope" />
+      <n-input v-model:value="createName" placeholder="名称" @keyup.enter="createScope" />
       <n-checkbox v-if="createKind === 'repo'" v-model:checked="createRepoPrivate">
-        Private repository
+        私有仓库
       </n-checkbox>
       <n-button
         type="primary"
@@ -535,7 +520,7 @@ watch(
         :disabled="!createName.trim()"
         @click="createScope"
       >
-        Create
+        创建
       </n-button>
     </n-space>
   </n-modal>
