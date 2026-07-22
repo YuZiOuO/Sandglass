@@ -1,11 +1,28 @@
+import type { RepoCapability } from '@/capability/repo'
+import { Octokit } from '@octokit/rest'
+
+import { GithubRepoCapability, GithubRepositoryCapability } from './repo'
 import type { Capability, Connection } from '@/interfaces'
 import { cli } from '@/lib'
 
 export class GithubConnection implements Connection {
   readonly capabilities: readonly Capability[]
+  readonly repoCapability: RepoCapability
+  readonly repositoryCapability: GithubRepositoryCapability
+  private client: Octokit | undefined
 
   constructor() {
-    this.capabilities = []
+    const getClient = () => {
+      if (!this.client) {
+        throw new Error('GitHub is not authenticated.')
+      }
+
+      return this.client
+    }
+
+    this.repoCapability = new GithubRepoCapability(getClient)
+    this.repositoryCapability = new GithubRepositoryCapability(getClient)
+    this.capabilities = [this.repoCapability, this.repositoryCapability]
   }
 
   authorize() {
@@ -25,10 +42,12 @@ export class GithubConnection implements Connection {
     )
 
     if (!response.ok) {
+      this.client = undefined
       return false
     }
 
-    const { authenticated } = await response.json()
+    const { authenticated, accessToken } = await response.json()
+    this.client = authenticated && accessToken ? new Octokit({ auth: accessToken }) : undefined
     return authenticated
   }
 }
