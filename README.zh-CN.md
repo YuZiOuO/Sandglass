@@ -1,85 +1,66 @@
-# ⏳ Sandglass (沙漏)
+# Sandglass
 
-> Time flows, wisdom unfolds.
+[![CI](https://github.com/YuZiOuO/Sandglass/actions/workflows/ci.yml/badge.svg)](https://github.com/YuZiOuO/Sandglass/actions/workflows/ci.yml)
 
-[![](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/YuZiOuO/sandglass/actions)
-[![](https://img.shields.io/badge/license-GPL3.0-blue)](https://github.com/YuZiOuO/sandglass/blob/main/LICENSE)
-[![](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/YuZiOuO/sandglass/pulls)
-[![Status](https://img.shields.io/badge/Status-Alpha-yellow)]()
+Sandglass 是一个可编程的个人工作台，用于组织日常工作中使用的工具、外部服务和个人数据，形成适合自己的工作流。已有插件可以组合使用；当现有功能不够贴合需求时，开发者也可以编写新的插件。
 
-> 🚧 **注意**: 本项目目前处于**早期开发阶段**。功能可能会快速迭代变化。
+当前应用提供了一个示例：以项目的形式管理课程学习，将考勤与日历、任务列表、代码仓库及外部服务集成在一起。
 
-[English](./README.md) | **中文**
+[在线演示](https://sandglass.p1xel.ink)
 
----
+[English](./README.md)
 
-## 📖 简介
+## 概述
 
-**Sandglass** 是一款为学生量身定制的**一站式效率工具**。
+插件是 Sandglass 增加功能的主要方式。每个插件可以包含：
 
-[**💻 在线演示 (Demo)**](https://sandglass.kanata.ink)
+- 用户界面；
+- 状态和业务逻辑；
+- 对外部服务的操作；
+- 面向特定领域的视图。
 
-我们将每一门课程视为一个 **项目 (Project)**。Sandglass 提供统一的看板，助你集中管理课程的截止日期、日程、笔记和代码仓库。
+工作台布局可以调整：插件可以添加、移除、排序和缩放，布局也会被保存。
 
-## ✨ 主要功能
+目前插件以 Vue 和 TypeScript 源码模块实现。
 
-### 1. ⏱️ 考勤与记录
-*   **打卡机制:** 采用类似上班打卡的模式 (开始/暂停/结束)，如实记录投入时间。
-*   **投入热力图:** 生成类似 GitHub 的贡献图，直观量化学习努力程度。
+## 架构
 
-### 2. 📅 双向同步
-*   **Google 生态互通:** 与 Google 日历和 Google 任务完全双向同步。在任意一端修改，数据实时更新。
-*   **统一视图:** 以时间轴和日历形式展示课程表、考试安排与作业截止日期。
+Sandglass 的架构围绕三类核心接口展开：
 
-### 3. 💻 代码追踪
-*   **仓库关联:** 将 Github 仓库直接绑定至课程项目。
-*   **提交可视化:** 在看板中直接查看代码提交记录与活跃度。
+- **Plugin** 提供特定业务场景所需的界面、状态和业务逻辑。
+- **Capability** 描述插件可以使用的服务，不绑定具体的服务提供方。
+- **Connection** 负责外部服务的授权与访问，并提供该连接可用的 capability。
 
-### 4. 🗂️ 知识管理
-*   **资源聚合:** 集中管理课件 PDF、实验文档与参考链接。
-*   **Markdown 笔记:** 随时记录课程重点与灵感。
+插件依赖 capability，而不是依赖具体的 connection 实现。这样可以将业务逻辑与外部 API 细节分离，并让不同连接复用相同的 capability 接口。
 
-## 🖥️ 截屏
+## 当前示例
 
-<p align="center">
-  <img src="./screenshots/screenshot_1.jpeg" />
-  <br>
-  <sub> 考勤模块预览 </sub>
-</p>
+- 支持签到、暂停、签退和历史记录的考勤功能。
+- 可以绑定仓库、日历和任务列表的项目管理。
+- Google 邮件、日历和任务集成。
+- GitHub 仓库动态和仓库选择。
 
-<p align="center">
-<img src="./screenshots/screenshot_3.jpeg"/>
-  <br>
-  <sub> Commits热力图 </sub>
-</p>
+这个插件模型也可以用于组织其他类型的工作流，或构建面向特定领域的应用。
 
-<p align="center">
-<img src="./screenshots/screenshot_2.jpeg"/>
-  <br>
-  <sub> Google与Github集成 </sub>
-</p>
+## 开发
 
-## 🛠️ 技术栈
+开发环境需要 Bun，以及 API 所需的环境配置。请先安装依赖，再分别在不同终端中启动 API 和前端开发服务器。
 
-*   **前端**: Vue 3, Vite, Naive UI, TanStack Query, ECharts
-*   **后端**: Bun, Hono, Better Auth, Zod
-*   **数据库**: PostgreSQL, Prisma
-*   **集成**: Google API, GitHub API
+```sh
+bun install
+bun run --filter @sandglass/api dev
+bun run --filter @sandglass/web dev
+```
 
-## 🚀 快速上手 (开发)
+前端位于 `packages/web`。API 位于 `packages/api`，运行在 Cloudflare Workers 上，并通过 Wrangler 进行开发和部署。启动前请配置两个软件包所需的环境变量，以及 API 声明的 Cloudflare bindings。
 
-1.  **克隆**: `git clone https://github.com/YuZiOuO/sandglass.git`
-2.  **安装**: `bun install` (或 pnpm)
-3.  **配置**: 在 `packages/api` 和 `packages/web` 配置 `.env`。
-4.  **迁移**: `cd packages/schema && bunx prisma db push`
-5.  **运行**:
-    *   后端: `cd packages/api && bun run dev`
-    *   前端: `cd packages/web && bun run dev`
+常用检查：
 
-## 🤝 贡献代码
+```sh
+bun run --filter @sandglass/web check
+bun run --filter @sandglass/api check
+```
 
-欢迎提交 PR！
-
-## 📄 许可证
+## 许可证
 
 GPL-3.0 License

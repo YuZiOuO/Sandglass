@@ -1,89 +1,66 @@
-# ⏳ Sandglass (沙漏)
+# Sandglass
 
-> Time flows, wisdom unfolds.
+[![CI](https://github.com/YuZiOuO/Sandglass/actions/workflows/ci.yml/badge.svg)](https://github.com/YuZiOuO/Sandglass/actions/workflows/ci.yml)
 
-[![](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/YuZiOuO/sandglass/actions)
-[![](https://img.shields.io/badge/license-GPL3.0-blue)](https://github.com/YuZiOuO/sandglass/blob/main/LICENSE)
-[![](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/YuZiOuO/sandglass/pulls)
-[![Status](https://img.shields.io/badge/Status-Alpha-yellow)]()
+Sandglass is a programmable personal workbench for organizing the tools, external services, and personal data used in day-to-day work. Existing plugins can be combined to support different workflows, while developers can write new plugins when more tailored behavior is needed.
 
-> 🚧 **Note**: This project is currently in **early development**. Features may change rapidly.
+The current application includes one example: managing coursework as projects, with attendance tracking, calendars, task lists, repositories, and external service integrations brought together in one workflow.
 
-**English** | [中文](./README.zh-CN.md)
+[Live Demo](https://sandglass.p1xel.ink)
 
----
+[中文](./README.zh-CN.md)
 
-## 📖 Introduction
+## Overview
 
-**Sandglass** is a one-stop productivity tool tailored for students.
+Plugins are the main way to add features to Sandglass. A plugin can provide:
 
-[**💻 Live Demo**](https://sandglass.kanata.ink)
+- a user interface;
+- state and business logic;
+- operations over external services;
+- a domain-specific view.
 
-Treat every course as a **Project**. Sandglass provides a unified dashboard to manage everything about a course: deadlines, schedules, notes, and code repositories.
+The dashboard layout can be customized: plugins can be added, removed, reordered, resized, and saved as part of the workspace layout.
 
-## ✨ Features
+Plugins are currently implemented as Vue and TypeScript source modules.
 
-### 1. ⏱️ Attendance & Tracking
+## Architecture
 
-- **Check-in System:** Track time spent on courses with a "Clock-in/Clock-out" mechanism.
-- **Heatmap:** Visualize your effort with GitHub-style contribution graphs.
+Sandglass is built around three core interfaces:
 
-### 2. 📅 Two-way Sync
+- **Plugin** provides a view together with the state and business logic for a specific use case.
+- **Capability** describes a service that a plugin can use without depending on a specific provider.
+- **Connection** manages authentication and access to an external provider, and supplies the capabilities available through that connection.
 
-- **Google Ecosystem:** Full bidirectional synchronization with Google Calendar and Google Tasks.
-- **Unified View:** Manage course schedules, exams, and deadlines in one timeline.
+Plugins depend on capabilities rather than on provider-specific connections. This keeps business logic separate from external API details and allows the same capability interface to be reused by different connections.
 
-### 3. 💻 Code & Development
+## Current Examples
 
-- **GitHub Integration:** Link course repositories directly to your project.
-- **Commit Visualization:** Track code activity and growth within the course dashboard.
+- Attendance tracking with check-in, pause, check-out, and history.
+- Project management with bindings to repositories, calendars, and task lists.
+- Gmail, Google Calendar, and Google Tasks integrations.
+- GitHub repository activity and repository selection.
 
-### 4. 🗂️ Knowledge Management
+The same plugin model can also support other workflows and domain-specific applications.
 
-- **Resources:** Centralize slides, PDFs, and reference links.
-- **Notes:** Built-in Markdown support for course notes.
+## Development
 
-## 🖥️ Screenshots
+Prerequisites: Bun and the environment configuration required by the API. Install the dependencies first, then run the API and web development servers in separate terminals.
 
-<p align="center">
-  <img src="./screenshots/screenshot_1.jpeg"/>
-  <br>
-  <sub>Preview of Attendance module </sub>
-</p>
+```sh
+bun install
+bun run --filter @sandglass/api dev
+bun run --filter @sandglass/web dev
+```
 
-<p align="center">
-<img src="./screenshots/screenshot_3.jpeg"/>
-  <br>
-  <sub> Heatmap of commits </sub>
-</p>
+The web application lives in `packages/web`. The API in `packages/api` runs on Cloudflare Workers and is developed and deployed with Wrangler. Configure the required environment variables for both packages and the Cloudflare bindings declared for the API before starting the applications.
 
-<p align="center">
-<img src="./screenshots/screenshot_2.jpeg"/>
-  <br>
-  <sub>Integration with github and google </sub>
-</p>
+Useful checks:
 
-## 🛠️ Tech Stack
+```sh
+bun run --filter @sandglass/web check
+bun run --filter @sandglass/api check
+```
 
-- **Frontend**: Vue 3, Vite, Naive UI, TanStack Query, ECharts
-- **Backend**: Bun, Hono, Better Auth, Zod
-- **Database**: PostgreSQL, Prisma
-- **Integrations**: Google API, GitHub API
-
-## 🚀 Quick Start
-
-1.  **Clone**: `git clone https://github.com/YuZiOuO/sandglass.git`
-2.  **Install**: `bun install`
-3.  **Env**: Configure `.env` in `packages/api` and `packages/web`.
-4.  **Migrate**: `cd packages/schema && bunx prisma db push`
-5.  **Run**:
-    - API: `cd packages/api && bun run dev`
-    - Web: `cd packages/web && bun run dev`
-
-## 🤝 Contribution
-
-PRs are welcome!
-
-## 📄 License
+## License
 
 GPL-3.0 License
