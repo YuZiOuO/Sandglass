@@ -17,7 +17,7 @@ const app = new Hono<{
       c.env.GITHUB_CLIENT_SECRET,
       new URL('/github/callback', c.req.url).toString(),
     )
-    const authUrl = github.createAuthorizationURL(state, [])
+    const authUrl = github.createAuthorizationURL(state, ['read:user', 'repo'])
 
     setCookie(c, 'github_oauth_state', state, {
       httpOnly: true,

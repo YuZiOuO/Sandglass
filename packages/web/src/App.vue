@@ -2,6 +2,7 @@
 import { NGrid, NGridItem, NNotificationProvider } from 'naive-ui'
 import { computed, shallowRef } from 'vue'
 
+import type { GithubConnection } from './adapter/github'
 import type { GoogleConnection } from './adapter/google'
 import ConnectionManager from './components/ConnectionManager.vue'
 import { AttendanceAdapter } from './adapter/static/attendance'
@@ -9,6 +10,7 @@ import type { AttendanceState } from './adapter/static/attendance'
 import AttendancePanel from './plugins/attendance/AttendancePanel.vue'
 import CalendarPlugin from './plugins/calendar/CalendarPlugin.vue'
 import MailPanel from './plugins/mail/MailPanel.vue'
+import RepoPlugin from './plugins/repo/RepoPlugin.vue'
 import TasksPlugin from './plugins/tasks/TasksPlugin.vue'
 import SyncManager from './components/SyncManager.vue'
 import { createPlugin } from './lib'
@@ -21,32 +23,47 @@ const attendance = createPlugin({
 })
 const syncSources = [attendance.syncSource!] as const
 const googleConnection = shallowRef<GoogleConnection>()
+const githubConnection = shallowRef<GithubConnection>()
 const plugins = computed(() => {
-  const connection = googleConnection.value
-  if (!connection) return [attendance]
+  const google = googleConnection.value
+  const github = githubConnection.value
 
   return [
     attendance,
-    createPlugin({
-      id: 'mail',
-      capabilities: () => [connection.mailCapability] as const,
-      component: MailPanel,
-    }),
-    createPlugin({
-      id: 'calendar',
-      capabilities: () => [connection.calendarCapability] as const,
-      component: CalendarPlugin,
-    }),
-    createPlugin({
-      id: 'tasks',
-      capabilities: () => [connection.taskCapability] as const,
-      component: TasksPlugin,
-    }),
+    ...(google
+      ? [
+          createPlugin({
+            id: 'mail',
+            capabilities: () => [google.mailCapability] as const,
+            component: MailPanel,
+          }),
+          createPlugin({
+            id: 'calendar',
+            capabilities: () => [google.calendarCapability] as const,
+            component: CalendarPlugin,
+          }),
+          createPlugin({
+            id: 'tasks',
+            capabilities: () => [google.taskCapability] as const,
+            component: TasksPlugin,
+          }),
+        ]
+      : []),
+    ...(github
+      ? [
+          createPlugin({
+            id: 'repo',
+            capabilities: () => [github.repoCapability, github.repositoryCapability] as const,
+            component: RepoPlugin,
+          }),
+        ]
+      : []),
   ]
 })
 
-function setConnections(value: { google?: GoogleConnection }) {
+function setConnections(value: { google?: GoogleConnection; github?: GithubConnection }) {
   googleConnection.value = value.google
+  githubConnection.value = value.github
 }
 </script>
 
