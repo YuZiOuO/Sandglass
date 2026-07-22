@@ -35,6 +35,10 @@ export interface Scoped<C extends Capability> extends Capability {
   forScope: (id: string) => C
 }
 
+export interface MutableScoped<C extends Capability, I = string> extends Scoped<C> {
+  createScope: (input: I) => Promise<Scope>
+}
+
 export type Scope = {
   id: string
   name: string

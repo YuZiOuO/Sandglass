@@ -1,5 +1,5 @@
 import type { CreateTaskInput, Task, TaskCapability, UpdateTaskInput } from '@/capability/task'
-import type { Scope, Scoped } from '@/interfaces'
+import type { MutableScoped, Scope } from '@/interfaces'
 
 const TASKS_API_ROOT = 'https://tasks.googleapis.com/tasks/v1'
 
@@ -21,7 +21,7 @@ type GoogleTaskPage = {
   nextPageToken?: string
 }
 
-export class GoogleTaskCapability implements Scoped<TaskCapability> {
+export class GoogleTaskCapability implements MutableScoped<TaskCapability> {
   constructor(
     private readonly request: (url: string | URL, init?: RequestInit) => Promise<Response>,
   ) {}
@@ -44,6 +44,15 @@ export class GoogleTaskCapability implements Scoped<TaskCapability> {
 
   forScope(id: string) {
     return new GoogleTaskList(this.request, id)
+  }
+
+  async createScope(name: string) {
+    const response = await this.request(`${TASKS_API_ROOT}/users/@me/lists`, {
+      method: 'POST',
+      body: JSON.stringify({ title: name }),
+    })
+    const taskList = (await response.json()) as { id: string; title: string }
+    return { id: taskList.id, name: taskList.title }
   }
 }
 

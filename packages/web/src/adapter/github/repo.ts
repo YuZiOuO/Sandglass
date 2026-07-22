@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest'
 
 import type { Activity, RepoCapability } from '@/capability/repo'
-import type { Scope, Scoped } from '@/interfaces'
+import type { MutableScoped, Scope } from '@/interfaces'
 
 const PER_PAGE = 100
 
@@ -104,7 +104,10 @@ export class GithubRepoCapability implements RepoCapability {
   }
 }
 
-export class GithubRepositoryCapability implements Scoped<RepoCapability> {
+export class GithubRepositoryCapability implements MutableScoped<
+  RepoCapability,
+  { name: string; private: boolean }
+> {
   constructor(private readonly getClient: () => Octokit) {}
 
   async listScopes() {
@@ -125,5 +128,10 @@ export class GithubRepositoryCapability implements Scoped<RepoCapability> {
 
   forScope(id: string) {
     return new GithubRepoCapability(this.getClient, id)
+  }
+
+  async createScope(input: { name: string; private: boolean }) {
+    const repository = await this.getClient().rest.repos.createForAuthenticatedUser(input)
+    return { id: String(repository.data.id), name: repository.data.full_name }
   }
 }
