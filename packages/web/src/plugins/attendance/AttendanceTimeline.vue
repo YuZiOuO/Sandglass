@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { NButton, NPopconfirm, NTag, NTimeline, NTimelineItem } from 'naive-ui'
+import { NButton, NEmpty, NPopconfirm, NTag, NTimeline, NTimelineItem } from 'naive-ui'
 
 import type { AttendanceRecord } from '@/capability/attendance'
 

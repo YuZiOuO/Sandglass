@@ -28,6 +28,7 @@
   "dependencies": {
     "@octokit/rest": "^22.0.1",
     "@vicons/ionicons5": "^0.13.0",
+    "gridstack": "^13.0.1",
     "naive-ui": "^2.44.1",
     "pinia": "^4.0.2",
     "pinia-plugin-persistedstate": "^4.7.1",

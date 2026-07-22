@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
-  NCard,
   NEmpty,
   NList,
   NListItem,
@@ -47,7 +46,7 @@ async function loadScopes() {
     scopes.value = await capability.listScopes()
     selectedScope.value = scopes.value[0]?.id
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'Failed to load calendars.'
+    error.value = cause instanceof Error ? cause.message : '加载日历失败。'
   } finally {
     loading.value = false
   }
@@ -69,7 +68,7 @@ async function loadEvents() {
     to.setDate(to.getDate() + 14)
     events.value = await capability.forScope(selectedScope.value).list({ from, to })
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'Failed to load calendar events.'
+    error.value = cause instanceof Error ? cause.message : '加载日程失败。'
   } finally {
     loading.value = false
   }
@@ -92,38 +91,35 @@ watch(selectedScope, () => void loadEvents())
 </script>
 
 <template>
-  <n-card title="Calendar">
-    <template #header-extra>
-      <n-button size="small" :loading="loading" @click="loadScopes">Refresh</n-button>
-    </template>
-
-    <n-space vertical>
-      <n-alert v-if="error" type="error" :title="error" />
-      <n-empty v-if="!capability" description="Connect Google to view calendars." />
-      <n-spin v-else :show="loading">
-        <n-space vertical>
-          <n-select
-            v-if="scopeOptions.length"
-            v-model:value="selectedScope"
-            :options="scopeOptions"
-            placeholder="Select a calendar"
-          />
-          <n-empty v-if="!scopes.length" description="No calendars available." />
-          <n-empty v-else-if="!events.length" description="No events in the next 14 days." />
-          <n-list v-else bordered>
-            <n-list-item v-for="event in events" :key="event.id">
-              <n-thing :title="event.title" :description="formatEventTime(event)">
-                <template v-if="event.description" #footer>
-                  {{ event.description }}
-                </template>
-                <template #avatar>
-                  <n-tag type="success" size="small">Event</n-tag>
-                </template>
-              </n-thing>
-            </n-list-item>
-          </n-list>
-        </n-space>
-      </n-spin>
+  <n-space vertical>
+    <n-space justify="end">
+      <n-button size="small" :loading="loading" @click="loadScopes">刷新</n-button>
     </n-space>
-  </n-card>
+    <n-alert v-if="error" type="error" :title="error" />
+    <n-empty v-if="!capability" description="连接 Google 后查看日历。" />
+    <n-spin v-else :show="loading">
+      <n-space vertical>
+        <n-select
+          v-if="scopeOptions.length"
+          v-model:value="selectedScope"
+          :options="scopeOptions"
+          placeholder="选择日历"
+        />
+        <n-empty v-if="!scopes.length" description="暂无可用日历。" />
+        <n-empty v-else-if="!events.length" description="未来 14 天没有日程。" />
+        <n-list v-else bordered>
+          <n-list-item v-for="event in events" :key="event.id">
+            <n-thing :title="event.title" :description="formatEventTime(event)">
+              <template v-if="event.description" #footer>
+                {{ event.description }}
+              </template>
+              <template #avatar>
+                <n-tag type="success" size="small">日程</n-tag>
+              </template>
+            </n-thing>
+          </n-list-item>
+        </n-list>
+      </n-space>
+    </n-spin>
+  </n-space>
 </template>

@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
-  NCard,
   NEmpty,
   NList,
   NListItem,
@@ -47,7 +46,7 @@ async function loadScopes() {
     scopes.value = await capability.listScopes()
     selectedScope.value = scopes.value[0]?.id
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'Failed to load task lists.'
+    error.value = cause instanceof Error ? cause.message : '加载任务列表失败。'
   } finally {
     loading.value = false
   }
@@ -65,14 +64,14 @@ async function loadTasks() {
   try {
     tasks.value = await capability.forScope(selectedScope.value).list()
   } catch (cause) {
-    error.value = cause instanceof Error ? cause.message : 'Failed to load tasks.'
+    error.value = cause instanceof Error ? cause.message : '加载任务失败。'
   } finally {
     loading.value = false
   }
 }
 
 function formatDueDate(task: Task) {
-  return task.dueDate ? `Due ${task.dueDate}` : 'No due date'
+  return task.dueDate ? `截止于 ${task.dueDate}` : '无截止日期'
 }
 
 watch(
@@ -84,38 +83,35 @@ watch(selectedScope, () => void loadTasks())
 </script>
 
 <template>
-  <n-card title="Tasks">
-    <template #header-extra>
-      <n-button size="small" :loading="loading" @click="loadScopes">Refresh</n-button>
-    </template>
-
-    <n-space vertical>
-      <n-alert v-if="error" type="error" :title="error" />
-      <n-empty v-if="!capability" description="Connect Google to view tasks." />
-      <n-spin v-else :show="loading">
-        <n-space vertical>
-          <n-select
-            v-if="scopeOptions.length"
-            v-model:value="selectedScope"
-            :options="scopeOptions"
-            placeholder="Select a task list"
-          />
-          <n-empty v-if="!scopes.length" description="No task lists available." />
-          <n-empty v-else-if="!tasks.length" description="No tasks in this list." />
-          <n-list v-else bordered>
-            <n-list-item v-for="task in tasks" :key="task.id">
-              <n-thing :title="task.title" :description="formatDueDate(task)">
-                <template #avatar>
-                  <n-tag :type="task.completed ? 'success' : 'warning'" size="small">
-                    {{ task.completed ? 'Done' : 'Open' }}
-                  </n-tag>
-                </template>
-                <template v-if="task.notes" #footer>{{ task.notes }}</template>
-              </n-thing>
-            </n-list-item>
-          </n-list>
-        </n-space>
-      </n-spin>
+  <n-space vertical>
+    <n-space justify="end">
+      <n-button size="small" :loading="loading" @click="loadScopes">刷新</n-button>
     </n-space>
-  </n-card>
+    <n-alert v-if="error" type="error" :title="error" />
+    <n-empty v-if="!capability" description="连接 Google 后查看任务。" />
+    <n-spin v-else :show="loading">
+      <n-space vertical>
+        <n-select
+          v-if="scopeOptions.length"
+          v-model:value="selectedScope"
+          :options="scopeOptions"
+          placeholder="选择任务列表"
+        />
+        <n-empty v-if="!scopes.length" description="暂无可用任务列表。" />
+        <n-empty v-else-if="!tasks.length" description="此列表中没有任务。" />
+        <n-list v-else bordered>
+          <n-list-item v-for="task in tasks" :key="task.id">
+            <n-thing :title="task.title" :description="formatDueDate(task)">
+              <template #avatar>
+                <n-tag :type="task.completed ? 'success' : 'warning'" size="small">
+                  {{ task.completed ? '已完成' : '待处理' }}
+                </n-tag>
+              </template>
+              <template v-if="task.notes" #footer>{{ task.notes }}</template>
+            </n-thing>
+          </n-list-item>
+        </n-list>
+      </n-space>
+    </n-spin>
+  </n-space>
 </template>
