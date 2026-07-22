@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NGrid, NGridItem, NNotificationProvider } from 'naive-ui'
-import { computed, shallowRef } from 'vue'
+import { computed, shallowReactive, shallowRef } from 'vue'
 
 import type { GithubConnection } from './adapter/github'
 import type { GoogleConnection } from './adapter/google'
@@ -10,6 +10,10 @@ import type { AttendanceState } from './adapter/static/attendance'
 import AttendancePanel from './plugins/attendance/AttendancePanel.vue'
 import CalendarPlugin from './plugins/calendar/CalendarPlugin.vue'
 import MailPanel from './plugins/mail/MailPanel.vue'
+import ProjectPlugin, {
+  type ProjectCapabilities,
+  type ProjectState,
+} from './plugins/project/ProjectPlugin.vue'
 import RepoPlugin from './plugins/repo/RepoPlugin.vue'
 import TasksPlugin from './plugins/tasks/TasksPlugin.vue'
 import SyncManager from './components/SyncManager.vue'
@@ -21,7 +25,14 @@ const attendance = createPlugin({
   capabilities: (state) => [new AttendanceAdapter(state)] as const,
   component: AttendancePanel,
 })
-const syncSources = [attendance.syncSource!] as const
+const projectCapabilities = shallowReactive<ProjectCapabilities>({})
+const project = createPlugin({
+  id: 'project',
+  state: (): ProjectState => ({ projects: [] }),
+  capabilities: () => [projectCapabilities] as const,
+  component: ProjectPlugin,
+})
+const syncSources = [attendance.syncSource!, project.syncSource!] as const
 const googleConnection = shallowRef<GoogleConnection>()
 const githubConnection = shallowRef<GithubConnection>()
 const plugins = computed(() => {
@@ -30,6 +41,7 @@ const plugins = computed(() => {
 
   return [
     attendance,
+    project,
     ...(google
       ? [
           createPlugin({
@@ -64,6 +76,10 @@ const plugins = computed(() => {
 function setConnections(value: { google?: GoogleConnection; github?: GithubConnection }) {
   googleConnection.value = value.google
   githubConnection.value = value.github
+  projectCapabilities.repo = value.github?.repoCapability
+  projectCapabilities.repositories = value.github?.repositoryCapability
+  projectCapabilities.calendars = value.google?.calendarCapability
+  projectCapabilities.tasks = value.google?.taskCapability
 }
 </script>
 
