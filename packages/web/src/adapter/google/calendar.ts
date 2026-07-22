@@ -6,7 +6,7 @@ import type {
   CreateCalendarEventInput,
   UpdateCalendarEventInput,
 } from '@/capability/calendar'
-import type { Scope, Scoped } from '@/interfaces'
+import type { MutableScoped, Scope } from '@/interfaces'
 
 const CALENDAR_API_ROOT = 'https://www.googleapis.com/calendar/v3'
 
@@ -28,7 +28,7 @@ type GoogleEventPage = {
   nextPageToken?: string
 }
 
-export class GoogleCalendarCapability implements Scoped<CalendarCapability> {
+export class GoogleCalendarCapability implements MutableScoped<CalendarCapability> {
   constructor(
     private readonly request: (url: string | URL, init?: RequestInit) => Promise<Response>,
   ) {}
@@ -51,6 +51,15 @@ export class GoogleCalendarCapability implements Scoped<CalendarCapability> {
 
   forScope(id: string) {
     return new GoogleCalendar(this.request, id)
+  }
+
+  async createScope(name: string) {
+    const response = await this.request(`${CALENDAR_API_ROOT}/calendars`, {
+      method: 'POST',
+      body: JSON.stringify({ summary: name }),
+    })
+    const calendar = (await response.json()) as { id: string; summary: string }
+    return { id: calendar.id, name: calendar.summary }
   }
 }
 

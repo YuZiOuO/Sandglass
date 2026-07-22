@@ -4,13 +4,13 @@ import { GoogleMailCapability } from './mail'
 import { GoogleTaskCapability } from './task'
 import type { CalendarCapability } from '@/capability/calendar'
 import type { TaskCapability } from '@/capability/task'
-import type { Capability, Connection, Scoped } from '@/interfaces'
+import type { Capability, Connection, MutableScoped } from '@/interfaces'
 
 export class GoogleConnection implements Connection {
   readonly capabilities: readonly Capability[]
-  readonly calendarCapability: Scoped<CalendarCapability>
+  readonly calendarCapability: MutableScoped<CalendarCapability>
   readonly mailCapability: GoogleMailCapability
-  readonly taskCapability: Scoped<TaskCapability>
+  readonly taskCapability: MutableScoped<TaskCapability>
   private accessToken = ''
 
   constructor() {
