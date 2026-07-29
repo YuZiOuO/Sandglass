@@ -13,6 +13,6 @@
     "lint-staged": "^16.2.0"
   },
   "dependencies": {
-    "hono": "^4.12.31"
+    "hono": "^4.12.32"
   }
 }
