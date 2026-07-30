@@ -22,14 +22,14 @@
   "dependencies": {
     "@oslojs/encoding": "^1.1.0",
     "arctic": "^3.7.0",
-    "hono": "^4.12.31"
+    "hono": "^4.12.32"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260721.1",
-    "oxlint": "~1.74.0",
+    "@cloudflare/workers-types": "^5.20260729.1",
+    "oxlint": "~1.76.0",
     "prettier": "3.9.6",
     "typescript": "~6.0.0",
-    "wrangler": "^4.110.0"
+    "wrangler": "^4.115.0"
   },
   "exports": {
     ".": {
