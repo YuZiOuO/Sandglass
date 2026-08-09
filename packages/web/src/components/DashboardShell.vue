@@ -118,20 +118,20 @@ const formattedTime = computed(() =>
 )
 const connectionMeta = computed(() => {
   const values = {
-    checking: { label: '检查连接', color: '#909399' },
-    ready: { label: '连接正常', color: '#18a058' },
-    partial: { label: '部分连接', color: '#f0a020' },
-    error: { label: '连接异常', color: '#d03050' },
+    checking: { label: '检查连接', color: '#909399', loading: true },
+    ready: { label: '连接正常', color: '#18a058', loading: false },
+    partial: { label: '部分连接', color: '#f0a020', loading: false },
+    error: { label: '连接异常', color: '#d03050', loading: false },
   }
   return values[props.connectionStatus]
 })
 const syncMeta = computed(() => {
   const values = {
-    idle: { label: '尚未同步', color: '#909399', icon: CloudOutline, processing: false },
-    syncing: { label: '同步中', color: '#2080f0', icon: RefreshOutline, processing: true },
-    synced: { label: '已同步', color: '#18a058', icon: CloudDoneOutline, processing: false },
-    conflict: { label: '同步冲突', color: '#f0a020', icon: CloudOfflineOutline, processing: false },
-    error: { label: '同步异常', color: '#d03050', icon: CloudOfflineOutline, processing: false },
+    idle: { label: '尚未同步', color: '#909399', icon: CloudOutline, loading: true },
+    syncing: { label: '同步中', color: '#2080f0', icon: RefreshOutline, loading: true },
+    synced: { label: '已同步', color: '#18a058', icon: CloudDoneOutline, loading: false },
+    conflict: { label: '同步冲突', color: '#f0a020', icon: CloudOfflineOutline, loading: false },
+    error: { label: '同步异常', color: '#d03050', icon: CloudOfflineOutline, loading: false },
   }
   return values[props.syncStatus]
 })
@@ -308,7 +308,12 @@ onBeforeUnmount(() => {
       </div>
 
       <n-flex align="center" :wrap="false" :size="8">
-        <n-button quaternary class="status-button" @click="openSettings('connections')">
+        <n-button
+          quaternary
+          class="status-button"
+          :loading="connectionMeta.loading"
+          @click="openSettings('connections')"
+        >
           <template #icon>
             <n-badge dot :show="connectionStatus !== 'ready'" :color="connectionMeta.color">
               <n-icon><LinkOutline /></n-icon>
@@ -316,14 +321,14 @@ onBeforeUnmount(() => {
           </template>
           <span class="status-label">{{ connectionMeta.label }}</span>
         </n-button>
-        <n-button quaternary class="status-button" @click="openSettings('sync')">
+        <n-button
+          quaternary
+          class="status-button"
+          :loading="syncMeta.loading"
+          @click="openSettings('sync')"
+        >
           <template #icon>
-            <n-badge
-              dot
-              :show="syncStatus !== 'synced'"
-              :color="syncMeta.color"
-              :processing="syncMeta.processing"
-            >
+            <n-badge dot :show="syncStatus !== 'synced'" :color="syncMeta.color">
               <n-icon><component :is="syncMeta.icon" /></n-icon>
             </n-badge>
           </template>

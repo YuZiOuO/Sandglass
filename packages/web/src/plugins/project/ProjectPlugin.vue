@@ -73,7 +73,7 @@ const { capabilities, state } = defineProps<{
   state: StatePort<ProjectState>
 }>()
 
-const services = capabilities[0]
+const services = computed(() => capabilities[0])
 const projects = ref<readonly Project[]>([])
 const selectedProjectName = ref('')
 const newProjectName = ref('')
@@ -206,9 +206,9 @@ async function loadScopes() {
   scopeError.value = ''
 
   const [repositories, calendars, taskLists] = await Promise.allSettled([
-    services.repositories?.listScopes() ?? Promise.resolve([]),
-    services.calendars?.listScopes() ?? Promise.resolve([]),
-    services.tasks?.listScopes() ?? Promise.resolve([]),
+    services.value.repositories?.listScopes() ?? Promise.resolve([]),
+    services.value.calendars?.listScopes() ?? Promise.resolve([]),
+    services.value.tasks?.listScopes() ?? Promise.resolve([]),
   ])
 
   repoScopes.value = repositories.status === 'fulfilled' ? repositories.value : []
@@ -238,14 +238,14 @@ async function loadData() {
   to.setDate(to.getDate() + 14)
 
   const [activityResult, eventResult, taskResult] = await Promise.allSettled([
-    bindings.repo && services.repo && services.repositories
-      ? services.repositories.forScope(bindings.repo).list({ from, to: now })
+    bindings.repo && services.value.repo && services.value.repositories
+      ? services.value.repositories.forScope(bindings.repo).list({ from, to: now })
       : Promise.resolve([]),
-    bindings.calendar && services.calendars
-      ? services.calendars.forScope(bindings.calendar).list({ from: now, to })
+    bindings.calendar && services.value.calendars
+      ? services.value.calendars.forScope(bindings.calendar).list({ from: now, to })
       : Promise.resolve([]),
-    bindings.task && services.tasks
-      ? services.tasks.forScope(bindings.task).list()
+    bindings.task && services.value.tasks
+      ? services.value.tasks.forScope(bindings.task).list()
       : Promise.resolve([]),
   ])
 
@@ -274,10 +274,10 @@ async function createScope() {
   try {
     const scope =
       createKind.value === 'repo'
-        ? await services.repositories?.createScope({ name, private: createRepoPrivate.value })
+        ? await services.value.repositories?.createScope({ name, private: createRepoPrivate.value })
         : createKind.value === 'calendar'
-          ? await services.calendars?.createScope(name)
-          : await services.tasks?.createScope(name)
+          ? await services.value.calendars?.createScope(name)
+          : await services.value.tasks?.createScope(name)
 
     if (!scope) throw new Error('对应服务尚未连接。')
     updateBinding(createKind.value, scope.id)
@@ -310,7 +310,10 @@ watch(
   { deep: true },
 )
 watch(
-  () => [services.repo, services.repositories, services.calendars, services.tasks],
+  () => {
+    const s = services.value
+    return [s.repo, s.repositories, s.calendars, s.tasks]
+  },
   () => {
     void loadScopes()
     void loadData()
