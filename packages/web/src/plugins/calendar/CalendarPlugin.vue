@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
@@ -82,12 +82,8 @@ function formatEventTime(event: CalendarEvent) {
   return `${event.time.startAt.toLocaleString()} - ${event.time.endAt.toLocaleTimeString()}`
 }
 
-watch(
-  () => capability,
-  () => void loadScopes(),
-  { immediate: true },
-)
 watch(selectedScope, () => void loadEvents())
+onMounted(() => void loadScopes())
 </script>
 
 <template>

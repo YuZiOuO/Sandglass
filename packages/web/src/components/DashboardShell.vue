@@ -9,9 +9,6 @@ export type DashboardState = {
   }[]
 }
 
-export type ConnectionStatus = 'checking' | 'ready' | 'partial' | 'error'
-export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'conflict' | 'error'
-
 export const createDefaultDashboardState = (): DashboardState => ({
   items: [
     { id: 'attendance', x: 0, y: 0, w: 4, h: 8 },
@@ -67,6 +64,8 @@ import 'gridstack/dist/gridstack.min.css'
 
 import type { StatePort } from '@/interfaces'
 import type { PluginRuntime } from '@/lib'
+import type { ConnectionStatus } from '@/composables/useConnection'
+import type { SyncStatus } from '@/composables/useSync'
 
 const props = defineProps<{
   plugins: readonly PluginRuntime[]

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import {
   NAlert,
   NButton,
@@ -74,12 +74,8 @@ function formatDueDate(task: Task) {
   return task.dueDate ? `截止于 ${task.dueDate}` : '无截止日期'
 }
 
-watch(
-  () => capability,
-  () => void loadScopes(),
-  { immediate: true },
-)
 watch(selectedScope, () => void loadTasks())
+onMounted(() => void loadScopes())
 </script>
 
 <template>

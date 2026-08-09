@@ -4,6 +4,8 @@ import { GoogleConnection } from '../adapter/google'
 
 export type Provider = 'google' | 'github'
 
+export type ConnectionStatus = 'checking' | 'ready' | 'partial' | 'error'
+
 export interface ConnectionItem {
   name: string
   provider: Provider
@@ -43,7 +45,7 @@ export function useConnection() {
     github: items[1]!.connected ? github : undefined,
   }))
 
-  const status = computed<'checking' | 'ready' | 'partial' | 'error'>(() => {
+  const status = computed<ConnectionStatus>(() => {
     if (items.some((i) => i.loading)) return 'checking'
     const connected = items.filter((i) => i.connected).length
     return connected === items.length ? 'ready' : connected > 0 ? 'partial' : 'error'
