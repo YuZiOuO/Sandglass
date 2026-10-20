@@ -25,11 +25,11 @@
     "hono": "^4.13.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261011.1",
-    "oxlint": "~1.87.0",
+    "@cloudflare/workers-types": "^5.20261016.1",
+    "oxlint": "~1.88.0",
     "prettier": "3.9.10",
     "typescript": "~6.0.0",
-    "wrangler": "^4.149.0"
+    "wrangler": "^4.151.1"
   },
   "exports": {
     ".": {
